@@ -1,0 +1,48 @@
+{
+    "manifest_version": 2,
+    "name": "TestMonster",
+    "version": "0.0.1",
+    "description": "极简的操作复现插件!",
+    "icons": {
+        "16": "assets/logo16.png",
+        "48": "assets/logo64.png",
+        "128": "assets/logo.png"
+    },
+    "background": {
+        "page": "libs/views/background.html"
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "browser_action": {
+        "default_icon": "assets/logo64.png",
+        "default_title": "极简的操作复现插件!",
+        "default_popup": "libs/views/popup.html"
+    },
+    "web_accessible_resources": [
+        "libs/script/inject.js"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "libs/script/content.js"
+            ],
+            "css": [
+                "libs/style/testmonster.css"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "permissions": [
+        "contextMenus",
+        "webRequest",
+        "webRequestBlocking",
+        "storage",
+        "tabs"
+    ],
+    "options_page": "/libs/views/options.html",
+    "options_ui": {
+        "page": "/libs/views/option.html"
+    }
+}
