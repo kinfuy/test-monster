@@ -1,3 +1,9 @@
+/**
+ * url 是否存在于keys
+ * @param url
+ * @param keys
+ * @returns
+ */
 export const IsurlExait = (url: string, keys: Array<string>) => {
   let isExist = false;
   keys.forEach((val) => {
@@ -31,7 +37,12 @@ export const loadFile = (fileName: string, content: string) => {
   aLink.click();
   URL.revokeObjectURL(blob.toString());
 };
-
+/**
+ * 创建提示
+ * @param message
+ * @param type
+ */
+// TODO 样式未写
 export const createTips = function (message: string, type = 'success') {
   const tips = document.createElement('div');
   tips.className = `esayswitch-globl-tips esayswitch-${type}`;
@@ -45,49 +56,13 @@ export const createTips = function (message: string, type = 'success') {
   }, 3000);
 };
 
+/**
+ * 删除所有cookies
+ */
 export const clearAllCookie = () => {
   var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
   if (keys) {
     for (var i = keys.length; i--; ) document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString();
-  }
-};
-/**
- * 获取元素
- * @param key
- * @param elementConfig
- * @returns
- */
-import { SettingRule } from './../../source/type/storeType';
-import { elementConfig } from '../../config/index';
-export const getELement = (key: string, config: SettingRule): HTMLInputElement | undefined => {
-  let el = undefined;
-  if (config) {
-    // 加入预设字段
-    config.placeholderValue = config.placeholderValue + ',' + elementConfig[key].placeholderValue;
-    config.elementValue = config.elementValue + ',' + elementConfig[key].elementValue;
-  } else {
-    config = elementConfig[key];
-  }
-  if (config.ruleType === 'placeholder' && config.placeholderValue) {
-    const ruleList = Array.from(new Set(config.placeholderValue.split(',')));
-    for (let i = 0; i < ruleList.length; i++) {
-      el = document.querySelector(`input[placeholder*="${ruleList[i]}"]`);
-      if (el) break;
-    }
-  }
-  if (config.ruleType === 'element' && config.elementValue) {
-    const ruleList = Array.from(new Set(config.elementValue.split(',')));
-    try {
-      for (let i = 0; i < ruleList.length; i++) {
-        el = document.querySelector(config.elementValue);
-        if (el) break;
-      }
-    } catch (error) {
-      el = undefined;
-    }
-  }
-  if (el) {
-    return el as HTMLInputElement;
   }
 };
 /**
@@ -144,3 +119,19 @@ export const dispatchEventHandler = (eventName: string, el: Element) => {
   const event = new Event(eventName, { cancelable: true, bubbles: false });
   el.dispatchEvent(event);
 };
+/**
+ * img to base64
+ * @param img
+ * @returns
+ */
+export function image2Base64(img: any) {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    const dataURL = canvas.toDataURL('image/png');
+    return dataURL;
+  }
+}

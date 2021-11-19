@@ -1,8 +1,5 @@
-import { sendMessageToContentScript } from './postMessage';
-import { injectCustomJs } from './inject';
-import { getCurrentTabId } from './chrome';
-import { getStoreKey, setStore, clearStore } from './store';
-import { IsurlExait, createRandomCode, loadFile, createTips, getELement } from './util';
+import { getCurrentTabId, injectCustomJs, getStoreKey, setStore, clearStore, sendMessageToContentScript } from './chrome';
+import { IsurlExait, createRandomCode, loadFile, createTips, image2Base64 } from './util';
 
 export {
   sendMessageToContentScript,
@@ -15,5 +12,5 @@ export {
   setStore,
   clearStore,
   createTips,
-  getELement,
+  image2Base64,
 };
