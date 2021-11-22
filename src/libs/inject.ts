@@ -1,30 +1,25 @@
-import { getXPath, getELementXpath, createRandomCode, dispatchEventHandler } from './utils/util';
-document.addEventListener('click', (e: any) => {
-  console.log('捕获到点击事件');
-  if (e.target.id === 'testKey') return;
-  const path = getXPath(e.target);
-  const UUID = createRandomCode(16);
-  if (e.target.nodeName && e.target.nodeName === 'INPUT') {
-    e.target.addEventListener('blur', (res: any) => {});
-  } else {
-    if (path) {
-    }
-  }
-});
+// 该文件会注入到目标网站
+import { NativeMask, NativeTool } from './history/view';
+import { addEventListener } from './utils';
+const mask = new NativeMask();
+const tool = new NativeTool(handleStop);
+addEventListener(
+  'message',
+  (info: any) => {
+    if (info.data.key === 'MONSTER_CONTENT_RECORD') maskInit();
+  },
+  window
+);
 
-const createBtn = () => {
-  const btn = document.createElement('div');
-  btn.id = 'testKey';
-  btn.innerText = '操作复现';
-  btn.style.padding = '8px';
-  btn.style.color = '#fff';
-  btn.style.backgroundColor = 'red';
-  btn.style.position = 'fixed';
-  btn.style.top = '50%';
-  btn.style.left = '50%';
-  btn.style.zIndex = '9999';
-  btn.style.cursor = 'pointer';
-  btn.addEventListener('click', () => {});
-  document.body.appendChild(btn);
-};
-createBtn();
+/**
+ * 开始录制mask
+ */
+function maskInit() {
+  if (tool.status === 1) tool.hidden();
+  mask.init(5).then(() => {
+    tool.show();
+  });
+}
+function handleStop() {
+  tool.destroy();
+}

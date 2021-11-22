@@ -1,5 +1,13 @@
-import { getCurrentTabId, injectCustomJs, getStoreKey, setStore, clearStore, sendMessageToContentScript } from './chrome';
-import { IsurlExait, createRandomCode, loadFile, createTips, image2Base64 } from './util';
+import {
+  getCurrentTabId,
+  injectCustomJs,
+  getStoreKey,
+  setStore,
+  clearStore,
+  sendMessageToContentScript,
+  chromeAddListenerMessage,
+} from './chrome';
+import { IsurlExait, createRandomCode, loadFile, createTips, image2Base64, addEventListener } from './util';
 
 export {
   sendMessageToContentScript,
@@ -13,4 +21,6 @@ export {
   clearStore,
   createTips,
   image2Base64,
+  addEventListener,
+  chromeAddListenerMessage,
 };

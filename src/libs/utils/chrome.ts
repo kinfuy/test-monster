@@ -90,3 +90,12 @@ export const sendMessageToContentScript = function (message: object, callback?: 
     });
   });
 };
+/**
+ * 谷歌监听消息
+ * @param callback
+ */
+export const chromeAddListenerMessage = (callback: (request: any, sendResponse: (response?: any) => void) => void) => {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    callback(request, sendResponse);
+  });
+};

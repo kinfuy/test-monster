@@ -111,15 +111,6 @@ export const getELementXpath = (xpath: string) => {
   return result.iterateNext();
 };
 /**
- * 触发事件
- * @param eventName
- * @param el
- */
-export const dispatchEventHandler = (eventName: string, el: Element) => {
-  const event = new Event(eventName, { cancelable: true, bubbles: false });
-  el.dispatchEvent(event);
-};
-/**
  * img to base64
  * @param img
  * @returns
@@ -135,3 +126,28 @@ export function image2Base64(img: any) {
     return dataURL;
   }
 }
+/**
+ * 触发事件
+ * @param eventName
+ * @param el
+ */
+export const dispatchEventHandler = (eventName: string, el: Element) => {
+  const event = new Event(eventName, { cancelable: true, bubbles: false });
+  el.dispatchEvent(event);
+};
+/**
+ * 事件监听
+ * @param event
+ * @param callback
+ */
+export const addEventListener = (event: string, callback: <T>(e: T | Event | MouseEvent) => void, source: Document | Window = document) => {
+  source.addEventListener(event, callback);
+};
+/**
+ * 移除事件监听
+ * @param event
+ * @param callback
+ */
+export const removeEventListener = (event: string, callback: (e: Event) => void) => {
+  document.removeEventListener(event, callback);
+};
