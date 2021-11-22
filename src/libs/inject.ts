@@ -21,5 +21,5 @@ function maskInit() {
   });
 }
 function handleStop() {
-  tool.destroy();
+  tool.hidden();
 }
