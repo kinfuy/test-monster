@@ -29,12 +29,6 @@ export class NativeMask extends NativeBase {
     });
   }
 }
-// 事件记录tips
-export class NativeRecord extends NativeBase {
-  constructor() {
-    super('test-monster-record', 'block');
-  }
-}
 // 工具栏
 export class NativeTool extends NativeBase {
   constructor(handleStop: () => void) {
@@ -44,13 +38,76 @@ export class NativeTool extends NativeBase {
   appendChild(handleStop: () => void) {
     if (this.example) {
       const stop = document.createElement('div');
+      stop.dataset.testMonster = 'true';
       stop.className = 'test-monster-tool-stop';
       stop.addEventListener('click', handleStop);
       const text = document.createElement('div');
+      text.dataset.testMonster = 'true';
       text.className = 'test-monster-tool-text';
       text.innerText = 'Test Monster 记录中';
       this.example.appendChild(text);
       this.example.appendChild(stop);
     }
+  }
+}
+// 事件记录tips
+import { createRandomCode } from './../../utils/index';
+const recordList: Array<{ id: string; el: HTMLDivElement }> = [];
+export class NativeRecord extends NativeBase {
+  id = createRandomCode(32);
+  message = '';
+  constructor(message: string, className: string = '') {
+    super(`test-monster-record ${className}`, 'block');
+    this.message = message;
+    if (this.example) {
+      this.example.style.top = (recordList.length + 1) * 50 + 'px';
+      recordList.push({
+        id: this.id,
+        el: this.example,
+      });
+      this.updateRecord();
+    }
+    this.appendChild();
+  }
+  updateRecord() {
+    recordList.forEach((x, index) => {
+      x.el.style.top = (index + 1) * 60 + 'px';
+    });
+  }
+  appendChild() {
+    if (this.example) {
+      const close = document.createElement('div');
+      close.className = 'test-monster-record-close';
+      close.dataset.testMonster = 'true';
+      close.innerText = '×';
+      close.addEventListener('click', () => {
+        this.destroy();
+      });
+      const text = document.createElement('div');
+      text.className = 'test-monster-record-message';
+      text.dataset.testMonster = 'true';
+      text.innerHTML = `<div data-test-monster='true'>${this.message}</div>`;
+      this.example.appendChild(text);
+      this.example.appendChild(close);
+    }
+  }
+  destroy() {
+    if (this.example) document.body.removeChild(this.example);
+    this.example = undefined;
+    this.status = 0;
+    for (let i = 0; i < recordList.length; i++) {
+      if (recordList[i].id === this.id) {
+        recordList.splice(i, 1);
+        i--;
+      }
+    }
+    this.updateRecord();
+  }
+  autoClose(time: number) {
+    this.show();
+    let t = setTimeout(() => {
+      this.destroy();
+      clearTimeout(t);
+    }, time);
   }
 }

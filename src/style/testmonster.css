@@ -40,11 +40,13 @@
   pointer-events: auto;
 }
 .test-monster-tool-text {
-  background-image: -webkit-linear-gradient(left, #e6a23c, #fff 25%, #fff 50%, #e6a23c 75%, #fff);
+  background-image: -webkit-linear-gradient(left, #ff8c00, #fff 25%, #fff 50%, #ff8c00 75%, #fff);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   -webkit-background-size: 200% 100%;
+  background-size: 200% 100%;
   -webkit-animation: masked-animation 4s infinite linear;
+  animation: masked-animation 4s infinite linear;
   background-clip: text;
   font-size: 17px;
   font-weight: 700;
@@ -57,8 +59,67 @@
     background-position: -100% 0;
   }
 }
+@keyframes masked-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
 .test-monster-record {
   position: fixed;
-  top: 0;
   right: 10px;
+  transition: top 0.5s;
+  top: 50px;
+  padding: 0 20px;
+  width: auto;
+  height: 50px;
+  line-height: 50px;
+  display: block;
+  font-size: 16px;
+  box-shadow: 0 0 4px #ccc;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-sizing: border-box;
+  border-radius: 4px;
+  animation: enter 0.2s linear;
+  pointer-events: none;
+  z-index: 99999;
+}
+.test-monster-record-success {
+  color: green;
+}
+.test-monster-record-error {
+  color: red;
+}
+.test-monster-record-info {
+  color: #666;
+}
+.test-monster-record-warning {
+  color: #ed8552;
+}
+@-webkit-keyframes enter {
+  0% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes enter {
+  0% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.test-monster-record-close {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  pointer-events: auto;
 }

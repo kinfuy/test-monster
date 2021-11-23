@@ -26,6 +26,7 @@ export class NativeBase implements NativeUI {
   constructor(className: string, display: string, target?: Element) {
     const base = document.createElement('div');
     base.className = className;
+    base.dataset.testMonster = 'true'; // 给注入的元素打上标记
     this.display = display;
     this.example = base;
     target ? target.appendChild(this.example) : document.body.appendChild(this.example);

@@ -37,24 +37,6 @@ export const loadFile = (fileName: string, content: string) => {
   aLink.click();
   URL.revokeObjectURL(blob.toString());
 };
-/**
- * 创建提示
- * @param message
- * @param type
- */
-// TODO 样式未写
-export const createTips = function (message: string, type = 'success') {
-  const tips = document.createElement('div');
-  tips.className = `esayswitch-globl-tips esayswitch-${type}`;
-  tips.innerText = message;
-  document.body.appendChild(tips);
-  setTimeout(() => {
-    tips.style.top = '-50px';
-    setTimeout(() => {
-      document.body.removeChild(tips);
-    }, 1000);
-  }, 3000);
-};
 
 /**
  * 删除所有cookies
@@ -148,6 +130,6 @@ export const addEventListener = (event: string, callback: <T>(e: T | Event | Mou
  * @param event
  * @param callback
  */
-export const removeEventListener = (event: string, callback: (e: Event) => void) => {
-  document.removeEventListener(event, callback);
+export const removeEventListener = (event: string, callback: (e: Event) => void, source: Document | Window = document) => {
+  source.removeEventListener(event, callback);
 };
