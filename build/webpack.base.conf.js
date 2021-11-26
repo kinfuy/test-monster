@@ -80,30 +80,6 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
-      {
-        test: /\.(png|jpg|jpeg|gif)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: '../../assets',
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(eot|svg|ttf|woff|woff2)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: '../../assets/font',
-            },
-          },
-        ],
-      },
     ],
   },
   resolve: {
