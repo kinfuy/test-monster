@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = merge(webapckBaseConfig, {
   mode: 'development',
   entry: {
-    main: path.resolve(__dirname, '../src/source/popup.ts'),
+    main: path.resolve(__dirname, '../src/source/script.ts'),
   },
   module: {
     rules: [
@@ -47,7 +47,7 @@ module.exports = merge(webapckBaseConfig, {
       __VUE_PROD_DEVTOOLS__: false,
     }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, './../src/views/popup.html'),
+      template: path.resolve(__dirname, './../src/views/script.html'),
       filename: 'index.html',
       inject: true,
     }),

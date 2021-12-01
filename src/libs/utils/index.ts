@@ -6,6 +6,7 @@ import {
   clearStore,
   sendMessageToContentScript,
   chromeAddListenerMessage,
+  sendMessageToExtension,
 } from './chrome';
 import {
   IsurlExait,
@@ -36,4 +37,5 @@ export {
   getXPath,
   getELementXpath,
   dispatchEventHandler,
+  sendMessageToExtension,
 };

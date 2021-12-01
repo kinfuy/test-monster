@@ -4,12 +4,13 @@ import { eventMonsterList } from './history';
 import { EventMonster } from './history/event';
 import cloneDeep from 'lodash.clonedeep';
 import { addEventListener, removeEventListener, getXPath } from './utils';
+import { Eventkey } from './utils/const';
 const mask = new NativeMask();
 const tool = new NativeTool(handleStop);
 addEventListener(
   'message',
   (info: any) => {
-    if (info.data.key === 'MONSTER_CONTENT_RECORD') maskInit();
+    if (info.data.key === Eventkey.MONSTER_RECORD_INIT) maskInit();
   },
   window
 );
@@ -39,7 +40,7 @@ function startListener(e: any) {
 }
 // 停止记录
 function handleStop() {
-  window.postMessage({ key: 'MONSTER_INJECT_SET_EVENT', eventMonsterList: eventMonsterList }, '*');
+  window.postMessage({ key: Eventkey.MONSTER_RECORD_STOP, eventMonsterList: eventMonsterList }, '*');
   clearEventListener();
   tool.hidden();
   eventMonsterList.clear();

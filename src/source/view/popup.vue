@@ -26,6 +26,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { sendMessageToContentScript } from './../../libs/utils';
+import { Eventkey } from './../../libs/utils/const';
 import { VideoPlay, Promotion, Setting } from '@element-plus/icons';
 export default defineComponent({
   name: 'TestMonster',
@@ -36,7 +37,7 @@ export default defineComponent({
     };
     const handleRecord = () => {
       sendMessageToContentScript({
-        key: 'MONSTER_POPUP_RECORD',
+        key: Eventkey.MONSTER_RECORD_INIT,
       });
       window.close();
     };

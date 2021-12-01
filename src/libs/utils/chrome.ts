@@ -103,3 +103,10 @@ export const chromeAddListenerMessage = (callback: (request: any, sendResponse: 
     callback(request, sendResponse);
   });
 };
+// 发送消息给插件
+export const sendMessageToExtension = (key: string, data: any) => {
+  chrome.runtime.sendMessage({
+    key: 'pageLoad',
+    info: data,
+  });
+};

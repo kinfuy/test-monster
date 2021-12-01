@@ -31,6 +31,7 @@ module.exports = merge(webapckBaseConfig, {
   entry: {
     popup: path.resolve(__dirname, '../src/source/popup.ts'),
     option: path.resolve(__dirname, '../src/source/option.ts'),
+    script: path.resolve(__dirname, '../src/source/script.ts'),
     content: path.resolve(__dirname, '../src/libs/content.ts'),
     inject: path.resolve(__dirname, '../src/libs/inject.ts'),
     background: path.resolve(__dirname, '../src/libs/background.ts'),
@@ -80,6 +81,11 @@ module.exports = merge(webapckBaseConfig, {
       chunks: ['popup'],
     }),
     new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, './../src/views/script.html'),
+      filename: '../views/script.html',
+      chunks: ['script'],
+    }),
+    new HtmlWebpackPlugin({
       template: path.resolve(__dirname, './../src/views/option.html'),
       filename: '../views/option.html',
       chunks: ['option'],
@@ -89,10 +95,10 @@ module.exports = merge(webapckBaseConfig, {
       filename: '../views/background.html',
       chunks: ['background'],
     }),
-    // new CompressPlugin({
-    //   fileName: `EasySwitch-V${pkg.version}.zip`,
-    //   target: 'version',
-    // }),
+    new CompressPlugin({
+      fileName: `TestMonster-V${pkg.version}.zip`,
+      target: 'version',
+    }),
     // new FileManagerPlugin({
     //   events: {
     //     onEnd: {
