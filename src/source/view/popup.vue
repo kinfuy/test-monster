@@ -25,7 +25,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { sendMessageToContentScript } from './../../libs/utils';
+import { sendMessageToContentScript, createNotifications, getChromeUrl, UUID } from './../../libs/utils';
 import { Eventkey } from './../../libs/utils/const';
 import { VideoPlay, Promotion, Setting } from '@element-plus/icons';
 export default defineComponent({
@@ -33,11 +33,18 @@ export default defineComponent({
   components: { VideoPlay, Promotion, Setting },
   setup() {
     const handleClick = (page: string) => {
-      window.open(chrome.extension.getURL(`/libs/views/${page}.html`));
+      window.open(getChromeUrl(`/libs/views/${page}.html`));
     };
     const handleRecord = () => {
       sendMessageToContentScript({
         key: Eventkey.MONSTER_RECORD_INIT,
+      }).then(() => {
+        createNotifications(UUID(), {
+          type: 'basic',
+          title: 'TestMoster',
+          iconUrl: getChromeUrl('assets/logo.png'),
+          message: 'TestMoster开始记录!',
+        });
       });
       window.close();
     };
@@ -62,6 +69,7 @@ export default defineComponent({
       margin-right: 8px;
     }
     .monster-title {
+      font-size: 18px;
       line-height: 40px;
     }
   }

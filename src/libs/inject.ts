@@ -1,12 +1,13 @@
 // 该文件会注入到目标网站
 import { NativeMask, NativeTool, NativeRecord } from './history/view';
-import { eventMonsterList } from './history';
-import { EventMonster } from './history/event';
+import { EventMonsterList, EventMonster } from './history';
 import cloneDeep from 'lodash.clonedeep';
+import throttle from 'lodash.throttle';
 import { addEventListener, removeEventListener, getXPath } from './utils';
 import { Eventkey } from './utils/const';
 const mask = new NativeMask();
 const tool = new NativeTool(handleStop);
+let eventMonsterList: EventMonsterList;
 addEventListener(
   'message',
   (info: any) => {
@@ -14,11 +15,13 @@ addEventListener(
   },
   window
 );
+
 /**
  * 开始录制mask
  */
 function maskInit() {
   if (tool.status === 1) tool.hidden();
+  eventMonsterList = new EventMonsterList(window.location.href);
   mask.init(3).then(() => {
     tool.show();
     initForm();
@@ -46,14 +49,19 @@ function handleStop() {
   eventMonsterList.clear();
 }
 // 初始化表单，给每个表单添加focus，change监听事件
-function initForm() {
-  const inputList = document.getElementsByTagName('input');
-  const textareaList = document.getElementsByTagName('textarea');
-  const formList = [...Array.from(inputList), ...Array.from(textareaList)];
-  formList.forEach((val) => {
-    val.addEventListener('focus', handleFocus);
-    val.addEventListener('change', handleChange);
-  });
+function initForm(target?: Element) {
+  if (target) {
+    target.addEventListener('focus', handleFocus);
+    target.addEventListener('change', handleChange);
+  } else {
+    const inputList = document.getElementsByTagName('input');
+    const textareaList = document.getElementsByTagName('textarea');
+    const formList = [...Array.from(inputList), ...Array.from(textareaList)];
+    formList.forEach((val) => {
+      val.addEventListener('focus', handleFocus);
+      val.addEventListener('change', handleChange);
+    });
+  }
 }
 // 删除表单事件监听
 function uninstallForm() {

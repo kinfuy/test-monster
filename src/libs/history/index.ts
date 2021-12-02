@@ -1,3 +1,1 @@
-import { EventMonsterList } from './event';
-
-export const eventMonsterList = new EventMonsterList();
+export { EventMonsterList, EventMonster } from './event';

@@ -51,10 +51,10 @@ export class NativeTool extends NativeBase {
   }
 }
 // 事件记录tips
-import { createRandomCode } from './../../utils/index';
+import { UUID } from './../../utils/index';
 const recordList: Array<{ id: string; el: HTMLDivElement }> = [];
 export class NativeRecord extends NativeBase {
-  id = createRandomCode(32);
+  id = UUID();
   message = '';
   constructor(message: string, className: string = '') {
     super(`test-monster-record ${className}`, 'block');
@@ -109,5 +109,11 @@ export class NativeRecord extends NativeBase {
       this.destroy();
       clearTimeout(t);
     }, time);
+  }
+}
+
+export class NativeTray extends NativeBase {
+  constructor() {
+    super('test-monster-tray', 'block');
   }
 }

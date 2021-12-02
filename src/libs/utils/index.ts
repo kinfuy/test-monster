@@ -7,10 +7,14 @@ import {
   sendMessageToContentScript,
   chromeAddListenerMessage,
   sendMessageToExtension,
+  createContextMenus,
+  createNotifications,
+  getChromeUrl,
 } from './chrome';
 import {
   IsurlExait,
   createRandomCode,
+  UUID,
   loadFile,
   image2Base64,
   addEventListener,
@@ -26,6 +30,7 @@ export {
   IsurlExait,
   loadFile,
   createRandomCode,
+  UUID,
   injectCustomJs,
   getStoreKey,
   setStore,
@@ -38,4 +43,7 @@ export {
   getELementXpath,
   dispatchEventHandler,
   sendMessageToExtension,
+  createContextMenus,
+  createNotifications,
+  getChromeUrl,
 };

@@ -1,4 +1,4 @@
-import { dispatchEventHandler, getELementXpath } from './../../utils/util';
+import { dispatchEventHandler, getELementXpath, UUID } from './../../utils/util';
 export type IEventType = 'CLICK' | 'INPUT' | 'FOCUS';
 
 export type FormType = 'INPUT' | 'TEXTAREA';
@@ -34,23 +34,28 @@ export class EventMonster {
   }
 }
 export class EventMonsterList {
-  list: Array<EventMonster> = [];
+  id = UUID();
+  url = '';
+  constructor(url: string) {
+    this.url = url;
+  }
+  eventList: Array<EventMonster> = [];
   push(node: EventMonster) {
-    return this.list.push(node);
+    return this.eventList.push(node);
   }
   pop() {
-    return this.list.shift();
+    return this.eventList.shift();
   }
   peck() {
-    return this.list[0];
+    return this.eventList[0];
   }
   size() {
-    return this.list.length;
+    return this.eventList.length;
   }
   isEmpty() {
-    return this.list.length === 0 ? true : false;
+    return this.eventList.length === 0 ? true : false;
   }
   clear() {
-    this.list = [];
+    this.eventList = [];
   }
 }
