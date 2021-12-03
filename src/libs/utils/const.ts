@@ -6,4 +6,5 @@ export const Eventkey = {
   MONSTER_RECORD_INIT: 'monster_record_init',
   /**停止记录 */
   MONSTER_RECORD_STOP: 'monster_record_stop',
+  MONSTER_EVENTS_RUN: 'monster_events_run',
 };

@@ -1,4 +1,4 @@
-import { NativeBase } from './../types';
+import { NativeBase } from '../../types';
 // 记录提示倒计时
 export class NativeMask extends NativeBase {
   constructor() {

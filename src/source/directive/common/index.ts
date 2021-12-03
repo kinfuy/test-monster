@@ -10,7 +10,7 @@ const getHeight = function getHeight() {
 const Height = {
   name: 'Height',
   fn: {
-    mounted: function(el: HTMLElement) {
+    mounted: function (el: HTMLElement) {
       el.style.height = getHeight() - 2 + 'px';
     },
   },

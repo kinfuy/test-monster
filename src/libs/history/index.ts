@@ -1,1 +1,1 @@
-export { EventMonsterList, EventMonster } from './event';
+export { EventMonsterList, EventMonster, runEvent } from './event';

@@ -21,6 +21,11 @@
         </div>
       </el-button>
     </div>
+    <el-button class="record-btn" type="success" plain @click="handleRun">
+      <div class="">
+        <el-icon><VideoPlay /></el-icon><span style="margin-left: 5px">开始复现</span>
+      </div>
+    </el-button>
   </div>
 </template>
 <script lang="ts">
@@ -35,6 +40,11 @@ export default defineComponent({
     const handleClick = (page: string) => {
       window.open(getChromeUrl(`/libs/views/${page}.html`));
     };
+    const handleRun = () => {
+      sendMessageToContentScript({
+        key: Eventkey.MONSTER_EVENTS_RUN,
+      }).then(() => {});
+    };
     const handleRecord = () => {
       sendMessageToContentScript({
         key: Eventkey.MONSTER_RECORD_INIT,
@@ -48,7 +58,7 @@ export default defineComponent({
       });
       window.close();
     };
-    return { handleRecord, handleClick };
+    return { handleRecord, handleClick, handleRun };
   },
 });
 </script>
@@ -76,7 +86,7 @@ export default defineComponent({
   .record-btn {
     display: block;
     width: 100%;
-    margin-bottom: 10px;
+    margin: 5px 0;
   }
   .operate-box {
     display: flex;

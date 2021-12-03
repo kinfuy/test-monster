@@ -1,13 +1,12 @@
-export type IEventType = 'CLICK' | 'FORM_INPUT';
-export type OperateStatus = 'RUNED' | 'WAIT';
+export type IEventType = 'CLICK' | 'INPUT' | 'FOCUS' | 'SCORLL';
+
+export type FormType = 'INPUT' | 'TEXTAREA';
 // 操作记录
 export interface IOperateRecord {
   id: string;
   eventType: IEventType;
   xPath: string;
-  formValue?: any;
-  status: OperateStatus;
-  run?: (callBack: Function) => void;
+  formValue: any;
 }
 
 export type IOperateSet = Map<string, IOperateRecord>;

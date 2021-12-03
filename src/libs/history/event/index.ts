@@ -1,8 +1,5 @@
 import { dispatchEventHandler, getELementXpath, UUID } from './../../utils/util';
-export type IEventType = 'CLICK' | 'INPUT' | 'FOCUS';
-
-export type FormType = 'INPUT' | 'TEXTAREA';
-
+import { IEventType } from './../../types';
 export class EventMonster {
   xpath = '';
   formValue = '';
@@ -11,26 +8,6 @@ export class EventMonster {
     this.xpath = xpath;
     this.eventType = eventType;
     formValue && (this.formValue = formValue);
-  }
-  run(): Promise<boolean | string> {
-    return new Promise((resolve, reject) => {
-      try {
-        const el = getELementXpath(this.xpath);
-        if (this.eventType === 'CLICK') {
-          dispatchEventHandler('click', el as Element);
-        }
-        if (this.eventType === 'INPUT') {
-          (el as HTMLInputElement).value = this.formValue;
-          dispatchEventHandler('input', el as HTMLInputElement);
-        }
-        if (this.eventType === 'FOCUS') {
-          dispatchEventHandler('focus', el as Element);
-        }
-        resolve(true);
-      } catch (error) {
-        reject('事件触发失败！');
-      }
-    });
   }
 }
 export class EventMonsterList {
@@ -59,3 +36,24 @@ export class EventMonsterList {
     this.eventList = [];
   }
 }
+export const runEvent = (xpath: string, eventType: IEventType, formValue: any): Promise<boolean | string> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const el = getELementXpath(xpath);
+      if (eventType === 'CLICK') {
+        dispatchEventHandler('click', el as Element);
+      }
+      if (eventType === 'INPUT') {
+        (el as HTMLInputElement).value = formValue;
+        dispatchEventHandler('input', el as HTMLInputElement);
+      }
+      if (eventType === 'FOCUS') {
+        dispatchEventHandler('click', el as Element);
+        dispatchEventHandler('focus', el as Element);
+      }
+      resolve(true);
+    } catch (error) {
+      reject('事件触发失败！');
+    }
+  });
+};
