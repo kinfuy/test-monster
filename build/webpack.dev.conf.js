@@ -53,6 +53,12 @@ module.exports = merge(webapckBaseConfig, {
     }),
   ],
   devServer: {
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
     port: 8000,
     hot: true,
     host: 'localhost',

@@ -44,6 +44,7 @@
     ],
     "options_page": "/libs/views/options.html",
     "options_ui": {
-        "page": "/libs/views/option.html"
+        "page": "/libs/views/option.html",
+        "chrome_style": true
     }
 }

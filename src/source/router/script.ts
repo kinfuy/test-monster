@@ -4,11 +4,22 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: () => import('../view/script.vue'),
+    children: [
+      {
+        path: '',
+        name: 'script',
+        component: () => import('./../view/script/scriptBase.vue'),
+      },
+      {
+        path: 'website',
+        name: 'website',
+        component: () => import('./../view/script/website.vue'),
+      },
+    ],
   },
   {
     path: '/libs/views/script.html',
-    name: 'script',
-    component: () => import('../view/script.vue'),
+    redirect: 'home',
   },
 ];
 

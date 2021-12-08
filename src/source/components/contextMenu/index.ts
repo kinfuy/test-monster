@@ -1,25 +1,53 @@
-import { createVNode, render } from 'vue';
+import { createApp, h } from 'vue';
 import ContextMenuConstructor from './ContextMenu.vue';
-import { getWindowSize } from './../../lib/utils/index';
-import { defaultConfig } from './config';
-import { PositionType, ContextMenuConfigType } from './contextMenuType';
-let instence: HTMLElement | undefined;
+import { getWindowSize } from './../../lib/utils';
+import { PositionType, ContextMenuConfigType, ContextMenueProps, ContextMenuInstance } from './contextMenuType';
+export { PositionType, ContextMenuConfigType, ContextMenueProps, ContextMenuInstance } from './contextMenuType';
+const defaultConfig = { width: 160, height: 200 };
 /**
  *
- * @param propsData 传递给组件props
+ * @param props 传递给组件props
  * @param position 组件位置
  * @returns instence 当前实例
  */
-const ContextMenu = function (propsData: any, position: PositionType, config?: ContextMenuConfigType) {
-  if (instence) {
-    document.body.removeChild(instence);
-    instence = undefined;
+export const ContextMenu = function (
+  props: ContextMenueProps,
+  position: PositionType,
+  config?: ContextMenuConfigType
+): ContextMenuInstance {
+  const vm = document.createElement('div');
+  const app = createApp({
+    render() {
+      return h(ContextMenuConstructor, {
+        ref: 'contextMenuRef',
+        ...props,
+      });
+    },
+  });
+  const instance = app.mount(vm);
+  const ContextMenuInstance = instance.$refs.contextMenuRef as ContextMenuInstance;
+  sideRationalization(ContextMenuInstance.$el, position, config);
+  document.body.appendChild(ContextMenuInstance.$el);
+  return ContextMenuInstance;
+};
+/**
+ * 设置样式
+ * @param instence
+ * @param style
+ */
+function setStyle(instence: HTMLElement, style: Record<string, any>) {
+  for (const key in style) {
+    instence.style[key as any] = style[key];
   }
-  const vm = createVNode(ContextMenuConstructor, propsData);
-  const container = document.createElement('div');
-  render(vm, container);
-  instence = container.firstElementChild as HTMLElement;
-  instence.style.position = 'absolute';
+}
+
+/**
+ * 计算合理位置合理
+ * @param position
+ * @param config
+ * @returns
+ */
+function sideRationalization(instence: HTMLElement, position: PositionType, config?: ContextMenuConfigType) {
   const { width, height } = getWindowSize();
   const compatibleHeight = config?.height || defaultConfig.height;
   const compatibleWidth = config?.width || defaultConfig.width;
@@ -29,16 +57,9 @@ const ContextMenu = function (propsData: any, position: PositionType, config?: C
   if (position.left + compatibleWidth > width) {
     position.left -= compatibleWidth;
   }
-  instence.style.top = position.top + 'px';
-  instence.style.left = position.left + 'px';
-  document.body.appendChild(instence);
-  return instence;
-};
-const close = () => {
-  if (instence) {
-    document.body.removeChild(instence);
-    instence = undefined;
-  }
-};
-
-export { ContextMenu, close };
+  setStyle(instence, {
+    position: 'absolute',
+    top: position.top + 'px',
+    left: position.left + 'px',
+  });
+}

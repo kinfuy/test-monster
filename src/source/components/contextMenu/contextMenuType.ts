@@ -13,10 +13,25 @@ export interface ContextMenuConfigType {
   width: number;
   height: number;
 }
-export interface MenuListitem {
+export interface Menuitem {
   icon: string;
   name: string;
-  code?: string;
-  keys?: Array<string>;
-  children?: Array<MenuListitem>;
+  key?: string;
+  group?: string[];
+  render?: () => void;
+  children?: Array<Menuitem>;
+}
+
+export interface StyleParams {
+  position?: 'static' | 'relative' | 'absolute' | 'sticky';
+  top: string;
+  left: string;
+}
+export interface ContextMenueProps {
+  menuConfig: Array<Menuitem>;
+  onClick?: (key: any) => void;
+  onClose?: () => void;
+}
+export interface ContextMenuInstance extends ContextMenueProps {
+  $el: HTMLElement;
 }

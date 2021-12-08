@@ -1,43 +1,41 @@
-<!--
- * @Author: jinhu.yang
- * @Date: 2021-07-12 16:24:44
- * @LastEditors: jinhu.yang
- * @LastEditTime: 2021-07-23 17:46:43
--->
 <template>
   <div class="contextmenu">
-    <div v-for="item in menuList" :key="item.code" class="context-menu-item" @click="headleClick(item)">
-      <IconSvg :name="item.icon"></IconSvg>
-      <span class="menu-text">{{ item.name }}</span>
-      <IconSvg v-if="item.children" fix-class="fix-class" name="week-arrow-right-copy-copy"></IconSvg>
-      <div v-if="item.children" class="children-menu">
-        <ContextMenu :menu-list="item.children"></ContextMenu>
-      </div>
+    <div v-for="item in menuConfig" :key="item.key" class="context-menu-item" @click.stop="headleClick(item)">
+      <Render v-if="item.render" :render="item.render"></Render>
+      <template v-else>
+        <IconSvg :name="item.icon"></IconSvg>
+        <span class="menu-text">{{ item.name }}</span>
+        <IconSvg v-if="item.children" fix-class="fix-class" name="week-arrow-right-copy-copy"></IconSvg>
+        <div v-if="item.children" class="children-menu">
+          <ContextMenu :menu-config="item.children" :onClick="onClick"></ContextMenu>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import IconSvg from './../Icon/IconSvg.vue';
 import { defineComponent, PropType } from 'vue';
-import { MenuListitem } from './contextMenuType';
+import { Menuitem, ContextMenueProps, StyleParams } from './contextMenuType';
+import IconSvg from './../Icon/IconSvg.vue';
+import Render from './../Render/Render';
 export default defineComponent({
   name: 'ContextMenu',
-  components: { IconSvg },
+  components: { IconSvg, Render },
   props: {
-    menuList: {
-      type: Array as PropType<Array<MenuListitem>>,
+    menuConfig: {
+      type: Array as PropType<Array<Menuitem>>,
       required: true,
     },
     onClick: {
-      type: Function,
-      default: () => {},
+      type: Function as PropType<(key: any) => void>,
+      required: true,
     },
   },
   setup(props) {
-    const headleClick = (item: MenuListitem) => {
-      if (item.code) {
-        props.onClick(item.code);
+    const headleClick = (item: Menuitem) => {
+      if (item.key && props.onClick) {
+        props.onClick(item.key);
       }
     };
     return {

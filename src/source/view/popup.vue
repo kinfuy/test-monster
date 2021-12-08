@@ -5,25 +5,13 @@
       <span class="monster-title">TestMonster</span>
     </div>
     <el-button class="record-btn" type="danger" @click="handleRecord">
-      <div class="">
+      <div>
         <el-icon><VideoPlay /></el-icon><span style="margin-left: 5px">开始记录</span>
       </div>
     </el-button>
-    <div class="operate-box">
-      <el-button type="primary" plain @click="handleClick('script')">
-        <div class="">
-          <el-icon><Promotion /></el-icon><span style="margin-left: 5px">脚本库</span>
-        </div>
-      </el-button>
-      <el-button type="primary" plain @click="handleClick('option')">
-        <div class="">
-          <el-icon><Setting /></el-icon><span style="margin-left: 5px">配置屋</span>
-        </div>
-      </el-button>
-    </div>
-    <el-button class="record-btn" type="success" plain @click="handleRun">
-      <div class="">
-        <el-icon><VideoPlay /></el-icon><span style="margin-left: 5px">开始复现</span>
+    <el-button class="record-btn" plain @click="handleClick('script')">
+      <div>
+        <el-icon><Setting /></el-icon><span style="margin-left: 5px">配置中心</span>
       </div>
     </el-button>
   </div>
@@ -32,18 +20,13 @@
 import { defineComponent } from 'vue';
 import { sendMessageToContentScript, createNotifications, getChromeUrl, UUID } from './../../libs/utils';
 import { Eventkey } from './../../libs/utils/const';
-import { VideoPlay, Promotion, Setting } from '@element-plus/icons';
+import { VideoPlay, Setting } from '@element-plus/icons';
 export default defineComponent({
   name: 'TestMonster',
-  components: { VideoPlay, Promotion, Setting },
+  components: { VideoPlay, Setting },
   setup() {
     const handleClick = (page: string) => {
       window.open(getChromeUrl(`/libs/views/${page}.html`));
-    };
-    const handleRun = () => {
-      sendMessageToContentScript({
-        key: Eventkey.MONSTER_EVENTS_RUN,
-      }).then(() => {});
     };
     const handleRecord = () => {
       sendMessageToContentScript({
@@ -58,7 +41,7 @@ export default defineComponent({
       });
       window.close();
     };
-    return { handleRecord, handleClick, handleRun };
+    return { handleRecord, handleClick };
   },
 });
 </script>

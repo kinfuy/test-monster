@@ -13,18 +13,35 @@
         <el-icon class="menu-icon"><Monitor /></el-icon>
         <span class="menu-text">站点</span>
       </div>
+      <div @click="handleClick('task')" :class="['menu-item', { 'menu-active': activeMenu === 'task' }]">
+        <el-icon class="menu-icon"><AlarmClock /></el-icon>
+        <span class="menu-text">任务</span>
+      </div>
+      <div @click="handleClick('log')" :class="['menu-item', { 'menu-active': activeMenu === 'log' }]">
+        <el-icon class="menu-icon"><Calendar /></el-icon>
+        <span class="menu-text">日志</span>
+      </div>
+      <div @click="handleClick('setting')" :class="['menu-item', { 'menu-active': activeMenu === 'setting' }]">
+        <el-icon class="menu-icon"><Setting /></el-icon>
+        <span class="menu-text">设置</span>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { Promotion, Monitor } from '@element-plus/icons';
+import { Promotion, Monitor, AlarmClock, Setting, Calendar } from '@element-plus/icons';
+import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'NavMenu',
-  components: { Promotion, Monitor },
+  components: { Promotion, Monitor, AlarmClock, Setting, Calendar },
   setup() {
+    const router = useRouter();
     const activeMenu = ref('script');
     const handleClick = (val: string) => {
+      router.push({
+        name: val,
+      });
       activeMenu.value = val;
     };
     return {
@@ -39,7 +56,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 200px;
+  width: 100%;
   height: 100%;
   background-color: #f4f4f4;
   padding-top: 50px;
