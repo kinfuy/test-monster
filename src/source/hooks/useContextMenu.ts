@@ -1,22 +1,19 @@
-import { ContextMenu, ContextMenuInstance } from '../components/contextMenu';
-
-import { getContextMenu } from '../lib/config/contextMenu';
+import { ContextMenu, ContextMenuInstance, Menuitem } from '../components/contextMenu';
 interface ContextMenuParam {
+  menuConfig?: Array<Menuitem>;
   click?: (code: any) => void;
 }
 let instence: ContextMenuInstance | undefined = undefined;
+/**
+ *
+ * @param options
+ * @returns
+ */
 export const useContextMenu = (options?: ContextMenuParam) => {
   const createContextMenu = (e: MouseEvent) => {
     e.preventDefault();
     if (instence) closeContextMenu();
-    const option = {
-      menuConfig: getContextMenu('empty'),
-      onClick: options?.click,
-    };
-    instence = ContextMenu(option, {
-      top: e.clientY,
-      left: e.clientX,
-    });
+    instence = ContextMenu({ menuConfig: options?.menuConfig || [], onClick: options?.click }, { top: e.clientY, left: e.clientX });
   };
   const closeContextMenu = () => {
     if (instence) {

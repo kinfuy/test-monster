@@ -1,8 +1,10 @@
 import { Menuitem } from './../../components/contextMenu/contextMenuType';
+// 有key就会响应click事件
 const folderMenuOption: Array<Menuitem> = [
   {
     icon: 'week-wenjianjia_',
     name: '新建',
+    group: [],
     children: [
       {
         icon: 'week-xinjian',

@@ -7,11 +7,13 @@
 import { defineComponent } from 'vue';
 import BreadCrumb from './../../components/common/breadcrumb.vue';
 import { useContextMenu } from './../../hooks/useContextMenu';
+import { getContextMenu } from './../../lib/config/contextMenu';
 export default defineComponent({
   name: 'ScriptBase',
   components: { BreadCrumb },
   setup() {
     const { createContextMenu, closeContextMenu } = useContextMenu({
+      menuConfig: getContextMenu('empty'),
       click: (code) => {
         console.log(code);
       },
