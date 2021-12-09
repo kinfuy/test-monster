@@ -1,26 +1,35 @@
 <template>
-  <div class="script-base" @click="closeContextMenu()" @contextmenu="createContextMenu($event)">
-    <bread-crumb></bread-crumb>
+  <div class="script-base">
+    <div class="bread-crumb">
+      <bread-crumb :virtual-crumb="virtualCrumb" @click="handleClick"></bread-crumb>
+    </div>
+    <div class="folder-content-warper">
+      <folder-content />
+    </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import BreadCrumb from './../../components/common/breadcrumb.vue';
-import { useContextMenu } from './../../hooks/useContextMenu';
-import { getContextMenu } from './../../lib/config/contextMenu';
+
+import FolderContent from './component/FolderContent.vue';
 export default defineComponent({
   name: 'ScriptBase',
-  components: { BreadCrumb },
+  components: { BreadCrumb, FolderContent },
   setup() {
-    const { createContextMenu, closeContextMenu } = useContextMenu({
-      menuConfig: getContextMenu('empty'),
-      click: (code) => {
-        console.log(code);
+    const virtualCrumb = ref([
+      {
+        name: '脚本',
+        active: true,
       },
-    });
+    ]);
+
+    const handleClick = (data: any) => {
+      console.log(data);
+    };
     return {
-      createContextMenu,
-      closeContextMenu,
+      virtualCrumb,
+      handleClick,
     };
   },
 });
@@ -29,5 +38,12 @@ export default defineComponent({
 .script-base {
   padding: 10px;
   height: 100%;
+  .bread-crumb {
+    padding: 0 10px;
+  }
+  .folder-content-warper {
+    height: calc(100% - 50px);
+    width: 100%;
+  }
 }
 </style>

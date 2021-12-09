@@ -1,6 +1,6 @@
 <template>
   <div class="contextmenu">
-    <div v-for="item in menuConfig" :key="item.key" class="context-menu-item" @click.stop="headleClick(item)">
+    <div v-for="item in menuConfig" :key="item.id" class="context-menu-item" @click.stop="headleClick(item)">
       <Render v-if="item.render" :render="item.render"></Render>
       <template v-else>
         <IconSvg :name="item.icon"></IconSvg>
@@ -28,7 +28,7 @@ export default defineComponent({
       required: true,
     },
     onClick: {
-      type: Function as PropType<(key: any) => void>,
+      type: Function as PropType<(code: any) => void>,
       required: true,
     },
   },

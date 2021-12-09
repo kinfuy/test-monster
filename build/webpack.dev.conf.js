@@ -5,6 +5,7 @@ const webapckBaseConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = merge(webapckBaseConfig, {
   mode: 'development',
+  devtool: 'source-map',
   entry: {
     main: path.resolve(__dirname, '../src/source/script.ts'),
   },

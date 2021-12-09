@@ -14,9 +14,10 @@ export interface ContextMenuConfigType {
   height: number;
 }
 export interface Menuitem {
+  id: string;
   icon: string;
   name: string;
-  key?: string;
+  key: string;
   group?: string[];
   render?: () => void;
   children?: Array<Menuitem>;

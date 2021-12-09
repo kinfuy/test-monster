@@ -5,7 +5,7 @@
     "author": "Yonghu",
     "license": "MIT",
     "scripts": {
-        "dev": "webpack serve --config build/webpack.dev.conf.js",
+        "serve": "webpack serve --config build/webpack.dev.conf.js",
         "build": "yarn cg:version && webpack --config build/webpack.prod.conf.js",
         "cg:version": "node script/version.js",
         "log": "conventional-changelog -p custom-config  -i CHANGELOG.md -s -n ./changelog-option.js"

@@ -1,142 +1,137 @@
 import { Menuitem } from './../../components/contextMenu/contextMenuType';
 // 有key就会响应click事件
-const folderMenuOption: Array<Menuitem> = [
+
+const commonMenuOptions: Array<Menuitem> = [
   {
-    icon: 'week-wenjianjia_',
-    name: '新建',
-    group: [],
-    children: [
-      {
-        icon: 'week-xinjian',
-        name: '新建脚本',
-        key: 'CREATE_FILE',
-      },
-      {
-        icon: 'week-xinjianwenjianjia',
-        name: '新建分组',
-        key: 'CREATE_FOLDER',
-        children: [
-          {
-            icon: 'week-xinjianwenjianjia',
-            name: '分组1',
-            key: 'CREATE_FOLDER1',
-          },
-        ],
-      },
-    ],
+    id: '1',
+    icon: 'week-dakai',
+    name: '打开',
+    group: ['folder', 'file'],
+    key: 'OPEN',
   },
   {
+    id: '2',
+    icon: 'week-fuzhi',
+    name: '复制',
+    group: ['folder', 'file'],
+    key: 'COPY',
+  },
+  {
+    id: '3',
+    icon: 'week-tupianjianqie',
+    name: '剪切',
+    group: ['folder', 'file'],
+    key: 'CUT',
+  },
+  {
+    id: '4',
+    icon: 'week-zhongmingming',
+    name: '重命名',
+    group: ['folder', 'file'],
+    key: 'EDIT',
+  },
+  {
+    id: '5',
     icon: 'week-niantie',
     name: '粘贴',
+    group: ['paste'],
     key: 'PASTE',
   },
   {
+    id: '6',
+    icon: 'week-shezhi-',
+    group: ['folder', 'file'],
+    name: '设置',
+    key: 'SET',
+  },
+  {
+    id: '7',
+    icon: 'week-shanchu1',
+    group: ['folder', 'file'],
+    name: '删除',
+    key: 'DELETE',
+  },
+];
+const scriptMenuOptions: Array<Menuitem> = [
+  {
+    id: '8',
+    icon: 'week-wenjianjia_',
+    name: '新建脚本',
+    group: ['script'],
+    key: 'CREATE_SCRIPT',
+  },
+  {
+    id: '10',
+    group: ['script'],
+    icon: 'week-xinjianwenjianjia',
+    name: '新建分组',
+    key: 'CREATE_GROUP',
+  },
+  {
+    id: '9',
     icon: 'week-paixu',
     name: '排序',
+    key: 'CREATE_FILE',
+    group: ['script'],
     children: [
       {
+        id: '9-1',
         icon: 'week-wenben2',
         name: '名称',
         key: 'PASTE',
       },
       {
-        icon: 'week-zitidaxiao-',
-        name: '大小',
-        key: 'PASTE',
-      },
-      {
+        id: '9-2',
         icon: 'week-shijian',
         name: '时间',
         key: 'PASTE',
       },
       {
+        id: '9-3',
         icon: 'week-fuwuleixing',
         name: '类型',
         key: 'PASTE',
       },
     ],
   },
+];
+const folderMenuOptions: Array<Menuitem> = [
   {
-    icon: 'week-chakan',
-    name: '视图',
-    children: [
-      {
-        icon: 'week-liebiao',
-        name: '列表',
-        key: 'OPEN',
-      },
-      {
-        icon: 'week-tubiao',
-        name: '图标',
-        key: 'OPEN',
-      },
-    ],
-  },
-  {
-    icon: 'week-dakai',
-    name: '打开',
-    key: 'OPEN',
-  },
-  {
-    icon: 'week-fuzhi',
-    name: '复制',
-    key: 'COPY',
-  },
-  {
-    icon: 'week-tupianjianqie',
-    name: '剪切',
-    key: 'CUT',
-  },
-  {
-    icon: 'week-zhongmingming',
-    name: '重命名',
-    key: 'EDIT',
-  },
-  {
+    id: '1',
     icon: 'week-fenxiang',
     name: '分享',
+    key: 'CREATE_FILE',
     children: [
       {
+        id: '1',
         icon: 'week-link',
         name: '生成链接',
         key: 'SHARE_LINK',
       },
       {
+        id: '1',
         icon: 'week-erweima',
         name: '生成二维码',
-        key: 'SHARE_key',
+        key: 'SHARE_CODE',
       },
       {
+        id: '1',
         icon: 'week-tuandui1',
         name: '分享好友',
         key: 'SHARE_FRIENDS',
       },
     ],
   },
-  {
-    icon: 'week-danganziliao-guidangziliao',
-    name: '归档',
-    key: 'SAVE',
-  },
-  {
-    icon: 'week-shezhi-',
-    name: '设置',
-    key: 'SET',
-  },
-  {
-    icon: 'week-shanchu1',
-    name: '删除',
-    key: 'DELETE',
-  },
 ];
+
 /**
  * @description 获取鼠标右键菜单
- * @param {string} key 菜单标识（empty,folder)
+ * @param {string} key 菜单标识（script,file,folder)
  */
-export const getContextMenu = (group: string) => {
+export const getContextMenu = (group: Array<string> = []) => {
   let menulist = [];
-  menulist = folderMenuOption.filter((x) => {
-    return x.group ? x.group.includes(group) : true;
+  menulist = [...commonMenuOptions, ...scriptMenuOptions, ...folderMenuOptions].filter((x) => {
+    return group.some((l) => x.group?.includes(l));
   });
   return menulist;
 };
