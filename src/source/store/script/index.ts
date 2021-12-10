@@ -1,10 +1,9 @@
 import folderStoreModule from './module/folder';
-export { FileOrFolder } from './module/folder';
+import clipboardStoreModule from './module/clipboard';
+export { FileOrFolder, Breadcrumb } from './module/folder';
 export const useStore = () => {
   return {
-    [folderStoreModule.namespace]: {
-      store: folderStoreModule.store,
-      action: folderStoreModule.action,
-    },
+    folderStoreModule,
+    clipboardStoreModule,
   };
 };

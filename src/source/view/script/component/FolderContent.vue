@@ -5,9 +5,11 @@
       :key="item.id"
       :draggable="true"
       :icon="item.icon"
+      :cutting="item.cutting"
       :fileTitle="item.name"
       :contenteditable="item.contenteditable"
       @contextmenu.stop="handleContextmenu($event, item)"
+      @dblclick="handleDblclick(item)"
       @blur="handleBlur($event, item)"
     />
   </div>
@@ -15,55 +17,71 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useContextMenu } from './../../../hooks/useContextMenu';
-import { getContextMenu } from './../../../lib/config/contextMenu';
 import { useStore, FileOrFolder } from './../../../store/script';
 import FolderOrFile from './../../../components/FolderOrFile/FolderOrFile.vue';
-import folderStoreModule from '../../../store/script/module/folder';
+import { ElMessage } from 'element-plus';
 export default defineComponent({
   name: 'FolderContent',
   components: { FolderOrFile },
   setup() {
-    const { FolderStore } = useStore();
+    const { folderStoreModule, clipboardStoreModule } = useStore();
     const folderList = computed(() => {
-      return FolderStore.store.flieList.filter(
-        (x) => x.level == FolderStore.store.currentLevel && x.parentId == FolderStore.store.currentID
+      return folderStoreModule.store.flieList.filter(
+        (x) => x.level == folderStoreModule.store.currentLevel && x.parentId == folderStoreModule.store.currentID
       );
     });
     const { createContextMenu, closeContextMenu } = useContextMenu({
-      menuConfig: getContextMenu(['script']),
+      menuConfig: ['script'],
       click: (code) => {
         if (code === 'CREATE_SCRIPT') {
-          FolderStore.action.createFolder({
-            type: 'file',
-            name: '新建脚本',
-          });
+          folderStoreModule.action.createFolder({ type: 'file', name: '新建脚本' });
         }
         if (code === 'CREATE_GROUP') {
-          FolderStore.action.createFolder({
-            type: 'floder',
-            name: '新建分组',
-          });
+          folderStoreModule.action.createFolder({ type: 'floder', name: '新建分组' });
         }
-        if (code === 'SORT_NAME') FolderStore.action.sortFloder('name');
-        if (code === 'SORT_TIME') FolderStore.action.sortFloder('time');
-        if (code === 'SORT_TYPE') FolderStore.action.sortFloder('type');
+        if (code === 'SORT_NAME') folderStoreModule.action.sortFloder('name');
+        if (code === 'SORT_TIME') folderStoreModule.action.sortFloder('time');
+        if (code === 'SORT_TYPE') folderStoreModule.action.sortFloder('type');
         closeContextMenu();
       },
     });
     const handleBlur = (data: any, item: FileOrFolder) => {
-      folderStoreModule.action.updateFloder(item.id, 'name', data.value);
+      folderStoreModule.action.updateFloder(item.id, [
+        { key: 'name', value: data.value },
+        { key: 'contenteditable', value: false },
+      ]);
     };
     const handleContextmenu = (e: MouseEvent, item: FileOrFolder) => {
       const { createContextMenu, closeContextMenu } = useContextMenu({
-        menuConfig: getContextMenu(['folder']),
+        menuConfig: ['folder'],
         click: (code) => {
           if (code === 'EDIT') {
-            folderStoreModule.action.updateFloder(item.id, 'contenteditable', true);
+            folderStoreModule.action.updateFloder(item.id, [{ key: 'contenteditable', value: true }]);
+          }
+          if (code === 'OPEN') {
+            if (item.type === 'floder') {
+              folderStoreModule.action.updateCurrent(item.id, item.level + 1);
+              folderStoreModule.action.createCrumb(item.id, item.name, item.level + 1);
+            } else {
+              ElMessage.error('无法打开该文件');
+            }
+          }
+          if (code === 'CUT') {
+            folderStoreModule.action.updateFloder(item.id, [{ key: 'cutting', value: true }]);
+            clipboardStoreModule.action.updateCurrectClipboard(item.id, item.type, item);
           }
           closeContextMenu();
         },
       });
       createContextMenu(e);
+    };
+    const handleDblclick = (item: FileOrFolder) => {
+      if (item.type === 'floder') {
+        folderStoreModule.action.updateCurrent(item.id, item.level + 1);
+        folderStoreModule.action.createCrumb(item.id, item.name, item.level + 1);
+      } else {
+        ElMessage.error('无法打开该文件');
+      }
     };
     return {
       folderList,
@@ -71,6 +89,7 @@ export default defineComponent({
       closeContextMenu,
       handleContextmenu,
       handleBlur,
+      handleDblclick,
     };
   },
 });

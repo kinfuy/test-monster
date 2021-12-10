@@ -1,46 +1,106 @@
 import { UUID } from './../../../../lib/utils';
 import { folderStore } from './index';
-export const createFolder = ({ type, name, icon }: { type: 'file' | 'floder'; name: string; icon?: string }) => {
+import { unref } from 'vue';
+/**
+ * 创建文件
+ * @param param
+ */
+const createFolder = ({ type, name, icon }: { type: 'file' | 'floder'; name: string; icon?: string }) => {
   folderStore.value.flieList.push({
     id: UUID(),
     type: type,
     name: name,
     icon: icon ? icon : getIcon(type),
     contenteditable: true,
+    disabled: false,
+    cutting: false,
     createTime: new Date(),
     updateTime: new Date(),
-    level: folderStore.value.currentLevel,
-    parentId: folderStore.value.currentID,
+    level: unref(folderStore.value.currentLevel),
+    parentId: unref(folderStore.value.currentID),
   });
 };
 /**
  * 更新文件（夹）消息
  * @param id
- * @param key 需更新key
+ * @param key 需更新key (id type name icon contenteditable createTime updateTime level parentId)
  * @param value
  */
-export const updateFloder = (id: string, key: string, value: any) => {
+const updateFloder = (id: string, info: Array<{ key: string; value: any }>) => {
   folderStore.value.flieList.forEach((x) => {
-    if (x.id === id) {
-      x[key] = value;
-    }
+    info.forEach((s) => {
+      if (x.id === id) {
+        x[s.key] = s.value;
+        x.updateTime = new Date();
+      }
+    });
   });
 };
-
-export const sortFloder = (sortType: 'time' | 'type' | 'name') => {
+/**
+ * 更新排序
+ * @param sortType time type name
+ */
+const sortFloder = (sortType: 'time' | 'type' | 'name') => {
   folderStore.value.flieList = folderStore.value.flieList.sort((a, b) => {
     if (sortType === 'name') return a.name.localeCompare(b.name);
     if (sortType === 'time') return a.createTime.getTime() - b.createTime.getTime();
-    if (sortType === 'type') return a.name.localeCompare(b.name);
+    if (sortType === 'type') return -a.type.localeCompare(b.type);
     return 1;
   });
 };
-const action = {
-  updateFloder,
-  createFolder,
-  sortFloder,
+/**
+ * 更新当前层级
+ * @param currentID 当前ID
+ * @param currentLevel 当前层级
+ */
+const updateCurrent = (currentID: string, currentLevel: number) => {
+  folderStore.value.currentID = currentID;
+  folderStore.value.currentLevel = currentLevel;
 };
-export type FolderAction = typeof action;
+
+/**
+ * 创建虚拟目录
+ * @param id
+ * @param name
+ * @param options
+ */
+const createCrumb = (id: string, name: string, level: number, options?: { disabled: boolean; active: boolean }) => {
+  folderStore.value.virtualCrumb.push({
+    id: id,
+    name: name,
+    level: level,
+    disabled: options?.disabled || false,
+    active: options?.active || false,
+  });
+};
+/**
+ *
+ * @param id 跳转id
+ */
+const goCrumb = (id: string) => {
+  let findKey = false;
+  folderStore.value.virtualCrumb = folderStore.value.virtualCrumb.filter((x) => {
+    if (x.id === id) {
+      findKey = true;
+      return true;
+    }
+    if (x.id !== id && !findKey) {
+      return true;
+    }
+    return false;
+  });
+};
+
+export const createAction = () => {
+  return {
+    updateFloder,
+    createFolder,
+    sortFloder,
+    updateCurrent,
+    createCrumb,
+    goCrumb,
+  };
+};
 function getIcon(type: string) {
   if (type === 'file') return 'week-daimaxiang';
   if (type === 'floder') return 'week-wenjianjia';

@@ -25,16 +25,20 @@
         <el-icon class="menu-icon"><Setting /></el-icon>
         <span class="menu-text">设置</span>
       </div>
+      <div @click="handleClick('dustbin')" :class="['menu-item', { 'menu-active': activeMenu === 'dustbin' }]">
+        <el-icon class="menu-icon"><DeleteFilled /></el-icon>
+        <span class="menu-text">回收站</span>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { Promotion, Monitor, AlarmClock, Setting, Calendar } from '@element-plus/icons';
+import { Promotion, Monitor, AlarmClock, Setting, Calendar, DeleteFilled } from '@element-plus/icons';
 import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'NavMenu',
-  components: { Promotion, Monitor, AlarmClock, Setting, Calendar },
+  components: { Promotion, Monitor, AlarmClock, Setting, Calendar, DeleteFilled },
   setup() {
     const router = useRouter();
     const activeMenu = ref('script');

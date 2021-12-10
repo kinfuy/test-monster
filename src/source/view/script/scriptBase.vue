@@ -9,24 +9,27 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, computed, onUnmounted } from 'vue';
 import BreadCrumb from './../../components/common/breadcrumb.vue';
-
+import { useStore, Breadcrumb } from './../../store/script';
 import FolderContent from './component/FolderContent.vue';
 export default defineComponent({
   name: 'ScriptBase',
   components: { BreadCrumb, FolderContent },
   setup() {
-    const virtualCrumb = ref([
-      {
-        name: '脚本',
-        active: true,
-      },
-    ]);
-
-    const handleClick = (data: any) => {
-      console.log(data);
+    const { folderStoreModule } = useStore();
+    const virtualCrumb = computed(() => {
+      return folderStoreModule.store.virtualCrumb;
+    });
+    const handleClick = (data: Breadcrumb) => {
+      folderStoreModule.action.goCrumb(data.id);
+      folderStoreModule.action.updateCurrent(data.id, data.level);
     };
+    onUnmounted(() => {
+      folderStoreModule.action.updateCurrent('script_uuid', 0);
+      folderStoreModule.action.goCrumb('script_uuid');
+    });
+
     return {
       virtualCrumb,
       handleClick,

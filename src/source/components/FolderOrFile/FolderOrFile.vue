@@ -1,5 +1,5 @@
 <template>
-  <div :class="['file', fixClass]">
+  <div :class="['file', fixClass, { 'file-cutting': cutting }]">
     <IconSvg :fix-class="fixIconClass" :name="icon"></IconSvg>
     <div
       ref="edit"
@@ -31,6 +31,14 @@ export default defineComponent({
       type: String,
       default: 'week-wenjianjia', // week-wenjianjia  文件夹 week-daimaxiang 脚本
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    cutting: {
+      type: Boolean,
+      default: false,
+    },
     fileTitle: {
       type: String,
       default: '新建分组',
@@ -52,16 +60,9 @@ export default defineComponent({
             document.execCommand('selectAll', false);
           });
         }
-      }
+      },
+      { immediate: true }
     );
-    onMounted(() => {
-      if (props.contenteditable) {
-        nextTick(() => {
-          if (edit.value) edit.value.focus();
-          document.execCommand('selectAll', false);
-        });
-      }
-    });
     const headleBlur = () => {
       emit('blur', {
         value: (edit.value && edit.value.innerText) || '新建分组',
@@ -77,6 +78,9 @@ export default defineComponent({
 </script>
 <style lang="less" scoped>
 .file {
+  &.file-cutting {
+    opacity: 0.5;
+  }
   display: inline-block;
   text-align: center;
   padding: 10px 30px;

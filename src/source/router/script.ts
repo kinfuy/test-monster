@@ -2,11 +2,10 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'home',
     component: () => import('../view/script.vue'),
     children: [
       {
-        path: '',
+        path: '/',
         name: 'script',
         component: () => import('./../view/script/scriptBase.vue'),
       },
@@ -19,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/libs/views/script.html',
-    redirect: 'home',
+    redirect: '/',
   },
 ];
 

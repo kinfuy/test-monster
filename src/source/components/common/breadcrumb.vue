@@ -51,9 +51,11 @@ export default defineComponent({
 .el-breadcrumb {
   margin-bottom: 20px;
   .el-breadcrumb__item:last-child {
-    cursor: auto;
-    &:hover {
-      color: inherit;
+    .breadcrumb-text {
+      cursor: auto;
+      &:hover {
+        color: inherit;
+      }
     }
   }
 }
