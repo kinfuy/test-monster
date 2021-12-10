@@ -42,6 +42,9 @@ export default defineComponent({
         if (code === 'SORT_NAME') folderStoreModule.action.sortFloder('name');
         if (code === 'SORT_TIME') folderStoreModule.action.sortFloder('time');
         if (code === 'SORT_TYPE') folderStoreModule.action.sortFloder('type');
+        if (code === 'PASTE') {
+          ElMessage.success('粘贴成功');
+        }
         closeContextMenu();
       },
     });
@@ -55,6 +58,7 @@ export default defineComponent({
       const { createContextMenu, closeContextMenu } = useContextMenu({
         menuConfig: ['folder'],
         click: (code) => {
+          console.log(code);
           if (code === 'EDIT') {
             folderStoreModule.action.updateFloder(item.id, [{ key: 'contenteditable', value: true }]);
           }
@@ -65,6 +69,10 @@ export default defineComponent({
             } else {
               ElMessage.error('无法打开该文件');
             }
+          }
+          if (code === 'COPY') {
+            clipboardStoreModule.action.updateCurrectClipboard(item.id, item.type, item);
+            ElMessage.success('复制成功');
           }
           if (code === 'CUT') {
             folderStoreModule.action.updateFloder(item.id, [{ key: 'cutting', value: true }]);
