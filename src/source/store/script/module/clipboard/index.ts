@@ -7,7 +7,7 @@ interface ClipboardStoreModule {
 }
 interface CopyObject {
   id: string;
-  type: 'file' | 'floder';
+  type: 'copy' | 'cut';
   content: any;
 }
 interface ClipboardStore {

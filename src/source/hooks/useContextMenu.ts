@@ -13,16 +13,17 @@ let instence: ContextMenuInstance | undefined = undefined;
  * @returns
  */
 export const useContextMenu = (options?: ContextMenuParam) => {
-  const menu = options?.menuConfig || [];
-  const { clipboardStoreModule } = useStore();
-  const menuList = computed(() => {
-    if (clipboardStoreModule.store.currect && !menu.includes('folder') && !menu.includes('file')) {
-      menu.push('paste');
-    }
-    return menu;
-  });
   const createContextMenu = (e: MouseEvent) => {
     e.preventDefault();
+    let menu: Array<string> = [];
+    if (options?.menuConfig) menu = [...options.menuConfig];
+    const { clipboardStoreModule } = useStore();
+    const menuList = computed(() => {
+      if (clipboardStoreModule.store.currect && !menu.includes('folder') && !menu.includes('file')) {
+        menu.push('paste');
+      }
+      return menu;
+    });
     if (instence) closeContextMenu();
     instence = ContextMenu({ menuConfig: getContextMenu(menuList.value), onClick: options?.click }, { top: e.clientY, left: e.clientX });
   };

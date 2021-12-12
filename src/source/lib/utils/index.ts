@@ -1,3 +1,6 @@
+import { FileOrFolder } from '../../store/script';
+import { folderStore } from '../../store/script/module/folder';
+import clonedeep from 'lodash.clonedeep';
 interface WindowSize {
   height: number;
   width: number;
@@ -23,3 +26,60 @@ export const UUID = (): string => {
   });
   return uuid;
 };
+/**
+ * 复制建树
+ * @param id
+ * @param floderList
+ */
+export const buildCopyTree = (id: string, floderList: Array<FileOrFolder>) => {
+  let target = floderList.filter((x) => x.id === id)[0];
+  const copyId = UUID();
+  target.childs = getChild(copyId, clonedeep(target), floderList);
+  target.id = copyId;
+  target.parentId = folderStore.value.currentID;
+  target.level = folderStore.value.currentLevel;
+  return target as ChildReLationShip;
+};
+
+export const flatTree = (floderList: ChildReLationShip) => {
+  debugger;
+  let target = clonedeep(floderList);
+  const rst = [] as Array<FileOrFolder>;
+  if (floderList.childs.length > 0) {
+    rst.push(...flatChild(target.childs));
+  }
+  const temp = clonedeep(target);
+  delete (temp as FileOrFolder).childs;
+  rst.push(temp as FileOrFolder);
+  return rst;
+};
+interface ChildReLationShip extends FileOrFolder {
+  childs: Array<ChildReLationShip>;
+}
+function getChild(copyId: string, target: FileOrFolder, floderList: Array<FileOrFolder>) {
+  const child = floderList.filter((x) => x.parentId === target.id);
+  if (child.length > 0) {
+    child.forEach((l) => {
+      const newId = UUID();
+      l.childs = getChild(newId, clonedeep(l), floderList);
+      l.id = newId;
+      l.level = target.level + 1;
+      l.parentId = copyId;
+    });
+  }
+  return child as Array<ChildReLationShip>;
+}
+
+function flatChild(list: Array<ChildReLationShip>) {
+  let rst = [] as Array<FileOrFolder>;
+  list.forEach((x) => {
+    let target = clonedeep(x);
+    if (target.childs.length > 0) {
+      rst.push(...flatChild(target.childs));
+    }
+    const temp = clonedeep(target);
+    delete (temp as FileOrFolder).childs;
+    rst.push(temp as FileOrFolder);
+  });
+  return rst;
+}

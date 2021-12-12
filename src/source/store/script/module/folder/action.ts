@@ -1,6 +1,7 @@
-import { UUID } from './../../../../lib/utils';
+import { UUID, buildCopyTree, flatTree } from './../../../../lib/utils';
 import { folderStore } from './index';
 import { unref } from 'vue';
+import clonedeep from 'lodash.clonedeep';
 /**
  * 创建文件
  * @param param
@@ -13,7 +14,6 @@ const createFolder = ({ type, name, icon }: { type: 'file' | 'floder'; name: str
     icon: icon ? icon : getIcon(type),
     contenteditable: true,
     disabled: false,
-    cutting: false,
     createTime: new Date(),
     updateTime: new Date(),
     level: unref(folderStore.value.currentLevel),
@@ -47,6 +47,14 @@ const sortFloder = (sortType: 'time' | 'type' | 'name') => {
     if (sortType === 'type') return -a.type.localeCompare(b.type);
     return 1;
   });
+};
+
+const copyFloder = (id: string) => {
+  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList));
+  const copyList = flatTree(list);
+  console.log(copyList);
+  folderStore.value.flieList.push(...copyList);
+  console.log(folderStore.value.flieList);
 };
 /**
  * 更新当前层级
@@ -99,6 +107,7 @@ export const createAction = () => {
     updateCurrent,
     createCrumb,
     goCrumb,
+    copyFloder,
   };
 };
 function getIcon(type: string) {

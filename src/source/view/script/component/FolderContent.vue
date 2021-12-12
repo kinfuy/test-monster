@@ -5,7 +5,7 @@
       :key="item.id"
       :draggable="true"
       :icon="item.icon"
-      :cutting="item.cutting"
+      :cutting="getCutting(item.id)"
       :fileTitle="item.name"
       :contenteditable="item.contenteditable"
       @contextmenu.stop="handleContextmenu($event, item)"
@@ -43,8 +43,11 @@ export default defineComponent({
         if (code === 'SORT_TIME') folderStoreModule.action.sortFloder('time');
         if (code === 'SORT_TYPE') folderStoreModule.action.sortFloder('type');
         if (code === 'PASTE') {
+          const copyId = clipboardStoreModule.store.currect?.id;
+          if (copyId) folderStoreModule.action.copyFloder(copyId);
           ElMessage.success('粘贴成功');
         }
+        clipboardStoreModule.action.clearCurrectClipboard();
         closeContextMenu();
       },
     });
@@ -58,7 +61,7 @@ export default defineComponent({
       const { createContextMenu, closeContextMenu } = useContextMenu({
         menuConfig: ['folder'],
         click: (code) => {
-          console.log(code);
+          clipboardStoreModule.action.clearCurrectClipboard();
           if (code === 'EDIT') {
             folderStoreModule.action.updateFloder(item.id, [{ key: 'contenteditable', value: true }]);
           }
@@ -71,12 +74,12 @@ export default defineComponent({
             }
           }
           if (code === 'COPY') {
-            clipboardStoreModule.action.updateCurrectClipboard(item.id, item.type, item);
+            clipboardStoreModule.action.updateCurrectClipboard(item.id, 'copy', item);
             ElMessage.success('复制成功');
           }
           if (code === 'CUT') {
             folderStoreModule.action.updateFloder(item.id, [{ key: 'cutting', value: true }]);
-            clipboardStoreModule.action.updateCurrectClipboard(item.id, item.type, item);
+            clipboardStoreModule.action.updateCurrectClipboard(item.id, 'cut', item);
           }
           closeContextMenu();
         },
@@ -91,8 +94,18 @@ export default defineComponent({
         ElMessage.error('无法打开该文件');
       }
     };
+    const getCutting = computed(() => {
+      return (id: string) => {
+        return (
+          clipboardStoreModule.store.currect &&
+          clipboardStoreModule.store.currect.id === id &&
+          clipboardStoreModule.store.currect.type === 'cut'
+        );
+      };
+    });
     return {
       folderList,
+      getCutting,
       createContextMenu,
       closeContextMenu,
       handleContextmenu,

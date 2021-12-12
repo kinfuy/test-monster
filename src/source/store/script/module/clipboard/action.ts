@@ -1,6 +1,6 @@
 import { unref } from 'vue';
 import { clipboardStore } from './index';
-const updateCurrectClipboard = (id: string, type: 'file' | 'floder', content = {}) => {
+const updateCurrectClipboard = (id: string, type: 'copy' | 'cut', content = {}) => {
   clipboardStore.value.currect = {
     id: id,
     content: content,

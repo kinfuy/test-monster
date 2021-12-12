@@ -20,7 +20,6 @@ export interface FileOrFolder extends Record<string, any> {
   contenteditable: boolean;
   level: number;
   disabled: boolean;
-  cutting: boolean;
   size?: Number;
   parentId: string | null;
 }
