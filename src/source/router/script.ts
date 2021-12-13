@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: () => import('../view/script.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         name: 'script',
         component: () => import('./../view/script/scriptBase.vue'),
       },
@@ -16,14 +16,10 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
-  {
-    path: '/libs/views/script.html',
-    redirect: '/',
-  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory('/libs/views/script.html'),
   routes,
 });
 

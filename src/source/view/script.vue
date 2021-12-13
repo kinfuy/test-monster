@@ -21,10 +21,26 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NavMenu from './../components/common/navMenu.vue';
+import { useStore } from './../store/script';
+import { getStoreKey, setStore } from './../../libs/utils';
+import { EventMonsterList } from './../../libs/history';
 export default defineComponent({
   name: 'Script',
   components: { NavMenu },
-  setup() {},
+  setup() {
+    const { folderStoreModule } = useStore();
+    folderStoreModule.action.initFolderModule();
+    getStoreKey<{ currectEventList: EventMonsterList }>(['currectEventList']).then(({ currectEventList }) => {
+      if (currectEventList) {
+        folderStoreModule.action.createFolder({
+          type: 'file',
+          name: '录制脚本',
+          contentScript: currectEventList,
+        });
+        setStore({ currectEventList: null });
+      }
+    });
+  },
 });
 </script>
 <style lang="less">

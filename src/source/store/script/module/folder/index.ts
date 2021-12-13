@@ -1,3 +1,4 @@
+import { EventMonsterList } from './../../../../../libs/history';
 interface FolderStoreModule {
   namespace: string;
   store: Readonly<FolderStore>;
@@ -15,13 +16,14 @@ export interface FileOrFolder extends Record<string, any> {
   type: 'file' | 'floder';
   icon: string;
   name: string;
-  createTime: Date;
-  updateTime: Date;
+  createTime: string;
+  updateTime: string;
   contenteditable: boolean;
   level: number;
   disabled: boolean;
   size?: Number;
   parentId: string | null;
+  contentScript?: EventMonsterList;
 }
 export interface FolderStore {
   flieList: Array<FileOrFolder>;

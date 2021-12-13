@@ -9,7 +9,6 @@ chromeAddListenerMessage((request, sendResponse) => {
   sendResponse();
   if (request.key === Eventkey.MONSTER_RECORD_STOP) {
     window.open(getChromeUrl(`/libs/views/script.html`));
-    setStore({ EventList: request.data });
-    console.log(request);
+    setStore({ currectEventList: request.data });
   }
 });

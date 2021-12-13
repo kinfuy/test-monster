@@ -1,24 +1,59 @@
 import { UUID, buildCopyTree, flatTree, getChildID } from './../../../../lib/utils';
-import { folderStore } from './index';
+import { folderStore, FolderStore } from './index';
 import { unref } from 'vue';
+import { EventMonsterList } from './../../../../../libs/history';
+import { setStore, getStoreKey } from './../../../../../libs/utils';
 import clonedeep from 'lodash.clonedeep';
+import Dayjs from 'dayjs';
+
+/**
+ * 同步到本地store
+ */
+const syncFolderModule = () => {
+  setStore({ folderModule: clonedeep(folderStore.value) });
+};
+/**
+ * 初始化FolderModule
+ */
+const initFolderModule = () => {
+  getStoreKey<{ folderModule: FolderStore }>(['folderModule']).then(({ folderModule }) => {
+    if (folderModule) {
+      folderStore.value.currentID = folderModule.currentID;
+      folderStore.value.currentLevel = folderModule.currentLevel;
+      folderStore.value.flieList = folderModule.flieList;
+      folderStore.value.virtualCrumb = folderModule.virtualCrumb;
+    }
+  });
+};
 /**
  * 创建文件
  * @param param
  */
-const createFolder = ({ type, name, icon }: { type: 'file' | 'floder'; name: string; icon?: string }) => {
-  folderStore.value.flieList.push({
+const createFolder = ({
+  type,
+  name,
+  contentScript,
+  icon,
+}: {
+  type: 'file' | 'floder';
+  name: string;
+  contentScript?: EventMonsterList;
+  icon?: string;
+}) => {
+  folderStore.value.flieList.unshift({
     id: UUID(),
     type: type,
     name: name,
+    contentScript: contentScript || undefined,
     icon: icon ? icon : getIcon(type),
     contenteditable: true,
     disabled: false,
-    createTime: new Date(),
-    updateTime: new Date(),
+    createTime: Dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    updateTime: Dayjs().format('YYYY-MM-DD HH:mm:ss'),
     level: unref(folderStore.value.currentLevel),
     parentId: unref(folderStore.value.currentID),
   });
+  syncFolderModule();
 };
 /**
  * 更新文件（夹）消息
@@ -31,7 +66,8 @@ const updateFloder = (id: string, info: Array<{ key: string; value: any }>) => {
     info.forEach((s) => {
       if (x.id === id) {
         x[s.key] = s.value;
-        x.updateTime = new Date();
+        x.updateTime = Dayjs().format('YYYY-MM-DD HH:mm:ss');
+        syncFolderModule();
       }
     });
   });
@@ -43,10 +79,11 @@ const updateFloder = (id: string, info: Array<{ key: string; value: any }>) => {
 const sortFloder = (sortType: 'time' | 'type' | 'name') => {
   folderStore.value.flieList = folderStore.value.flieList.sort((a, b) => {
     if (sortType === 'name') return a.name.localeCompare(b.name);
-    if (sortType === 'time') return a.createTime.getTime() - b.createTime.getTime();
+    if (sortType === 'time') return new Date(a.createTime).getTime() - new Date(b.createTime).getTime();
     if (sortType === 'type') return -a.type.localeCompare(b.type);
     return 1;
   });
+  syncFolderModule();
 };
 /**
  * 复制文件
@@ -56,6 +93,7 @@ const copyFloder = (id: string) => {
   const list = buildCopyTree(id, clonedeep(folderStore.value.flieList));
   const copyList = flatTree(list);
   folderStore.value.flieList.push(...copyList);
+  syncFolderModule();
 };
 /**
  * 剪切文件
@@ -64,6 +102,7 @@ const copyFloder = (id: string) => {
 const cutFloder = async (id: string) => {
   await copyFloder(id);
   await deleteFloder(id);
+  syncFolderModule();
 };
 /**
  * 删除文件
@@ -77,6 +116,7 @@ const deleteFloder = (id: string) => {
       i--;
     }
   }
+  syncFolderModule();
 };
 /**
  * 更新当前层级
@@ -123,6 +163,7 @@ const goCrumb = (id: string) => {
 
 export const createAction = () => {
   return {
+    initFolderModule,
     updateFloder,
     createFolder,
     sortFloder,
