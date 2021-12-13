@@ -44,8 +44,10 @@ export default defineComponent({
         if (code === 'SORT_TYPE') folderStoreModule.action.sortFloder('type');
         if (code === 'PASTE') {
           const copyId = clipboardStoreModule.store.currect?.id;
-          if (copyId) folderStoreModule.action.copyFloder(copyId);
-          ElMessage.success('粘贴成功');
+          const type = clipboardStoreModule.store.currect?.type;
+          if (type === 'copy' && copyId) folderStoreModule.action.copyFloder(copyId);
+          if (type === 'cut' && copyId) folderStoreModule.action.cutFloder(copyId);
+          ElMessage.success(`${type === 'copy' ? '粘贴' : '剪切'}成功`);
         }
         clipboardStoreModule.action.clearCurrectClipboard();
         closeContextMenu();
@@ -66,12 +68,7 @@ export default defineComponent({
             folderStoreModule.action.updateFloder(item.id, [{ key: 'contenteditable', value: true }]);
           }
           if (code === 'OPEN') {
-            if (item.type === 'floder') {
-              folderStoreModule.action.updateCurrent(item.id, item.level + 1);
-              folderStoreModule.action.createCrumb(item.id, item.name, item.level + 1);
-            } else {
-              ElMessage.error('无法打开该文件');
-            }
+            handleDblclick(item);
           }
           if (code === 'COPY') {
             clipboardStoreModule.action.updateCurrectClipboard(item.id, 'copy', item);
@@ -81,12 +78,20 @@ export default defineComponent({
             folderStoreModule.action.updateFloder(item.id, [{ key: 'cutting', value: true }]);
             clipboardStoreModule.action.updateCurrectClipboard(item.id, 'cut', item);
           }
+          if (code === 'DELETE') {
+            folderStoreModule.action.deleteFloder(item.id);
+            ElMessage.success('删除成功');
+          }
           closeContextMenu();
         },
       });
       createContextMenu(e);
     };
     const handleDblclick = (item: FileOrFolder) => {
+      if (clipboardStoreModule.store.currect?.id === item.id && clipboardStoreModule.store.currect?.type === 'cut') {
+        ElMessage.error('该文件已经被锁定');
+        return;
+      }
       if (item.type === 'floder') {
         folderStoreModule.action.updateCurrent(item.id, item.level + 1);
         folderStoreModule.action.createCrumb(item.id, item.name, item.level + 1);

@@ -1,4 +1,4 @@
-import { UUID, buildCopyTree, flatTree } from './../../../../lib/utils';
+import { UUID, buildCopyTree, flatTree, getChildID } from './../../../../lib/utils';
 import { folderStore } from './index';
 import { unref } from 'vue';
 import clonedeep from 'lodash.clonedeep';
@@ -48,13 +48,35 @@ const sortFloder = (sortType: 'time' | 'type' | 'name') => {
     return 1;
   });
 };
-
+/**
+ * 复制文件
+ * @param id
+ */
 const copyFloder = (id: string) => {
   const list = buildCopyTree(id, clonedeep(folderStore.value.flieList));
   const copyList = flatTree(list);
-  console.log(copyList);
   folderStore.value.flieList.push(...copyList);
-  console.log(folderStore.value.flieList);
+};
+/**
+ * 剪切文件
+ * @param id
+ */
+const cutFloder = async (id: string) => {
+  await copyFloder(id);
+  await deleteFloder(id);
+};
+/**
+ * 删除文件
+ * @param id
+ */
+const deleteFloder = (id: string) => {
+  const rst = [id, ...getChildID(id, clonedeep(folderStore.value.flieList))];
+  for (let i = 0; i < folderStore.value.flieList.length; i++) {
+    if (rst.includes(folderStore.value.flieList[i].id)) {
+      folderStore.value.flieList.splice(i, 1);
+      i--;
+    }
+  }
 };
 /**
  * 更新当前层级
@@ -108,6 +130,8 @@ export const createAction = () => {
     createCrumb,
     goCrumb,
     copyFloder,
+    cutFloder,
+    deleteFloder,
   };
 };
 function getIcon(type: string) {

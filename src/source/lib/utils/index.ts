@@ -34,7 +34,7 @@ export const UUID = (): string => {
 export const buildCopyTree = (id: string, floderList: Array<FileOrFolder>) => {
   let target = floderList.filter((x) => x.id === id)[0];
   const copyId = UUID();
-  target.childs = getChild(copyId, clonedeep(target), floderList);
+  target.childs = updateChild(copyId, clonedeep(folderStore.value.currentLevel), clonedeep(target), floderList);
   target.id = copyId;
   target.parentId = folderStore.value.currentID;
   target.level = folderStore.value.currentLevel;
@@ -42,7 +42,6 @@ export const buildCopyTree = (id: string, floderList: Array<FileOrFolder>) => {
 };
 
 export const flatTree = (floderList: ChildReLationShip) => {
-  debugger;
   let target = clonedeep(floderList);
   const rst = [] as Array<FileOrFolder>;
   if (floderList.childs.length > 0) {
@@ -53,17 +52,45 @@ export const flatTree = (floderList: ChildReLationShip) => {
   rst.push(temp as FileOrFolder);
   return rst;
 };
+/**
+ * 获取子节点id
+ * @param id
+ * @param floderList
+ * @returns
+ */
+export const getChildID = (id: string, floderList: Array<FileOrFolder>) => {
+  let rst: Array<string> = [];
+  floderList.forEach((x) => {
+    if (x.parentId === id) {
+      rst.push(x.id);
+    }
+  });
+  if (rst.length > 0) {
+    rst.forEach((l) => {
+      rst.push(...getChildID(l, floderList));
+    });
+  }
+  return rst;
+};
 interface ChildReLationShip extends FileOrFolder {
   childs: Array<ChildReLationShip>;
 }
-function getChild(copyId: string, target: FileOrFolder, floderList: Array<FileOrFolder>) {
+/**
+ *
+ * @param copyId 新的父节点id
+ * @param newLevel 新的父节点level
+ * @param target old父节点
+ * @param floderList
+ * @returns
+ */
+function updateChild(copyId: string, newLevel: number, target: FileOrFolder, floderList: Array<FileOrFolder>) {
   const child = floderList.filter((x) => x.parentId === target.id);
   if (child.length > 0) {
     child.forEach((l) => {
       const newId = UUID();
-      l.childs = getChild(newId, clonedeep(l), floderList);
+      l.childs = updateChild(newId, newLevel + 1, clonedeep(l), floderList);
       l.id = newId;
-      l.level = target.level + 1;
+      l.level = newLevel + 1;
       l.parentId = copyId;
     });
   }
