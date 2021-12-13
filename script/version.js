@@ -10,7 +10,7 @@ const rl = readline.createInterface({
 rl.question(`是否需要修改(当前:${pkg.version})版本号:(Y/N)：`, (answer) => {
   if (answer === 'Y' || answer === 'y') {
     rl.question('请输入版本号：', (version) => {
-      let reg = /^([1-9]\d|[1-9])(\.([1-9]\d|\d)){2}$/;
+      let reg = /^([0-9]\d|[0-9])(\.([0-9]\d|\d)){2}$/;
       if (reg.test(version)) {
         rl.close();
         fileList.forEach((x) => {
