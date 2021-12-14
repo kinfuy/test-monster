@@ -1,5 +1,5 @@
 <template>
-  <div :data-drag="isDrag" :class="['file', fixClass, { 'file-cutting': cutting }]">
+  <div :class="['file', fixClass, { 'file-cutting': cutting }]">
     <IconSvg :fix-class="fixIconClass" :name="icon"></IconSvg>
     <div
       ref="edit"
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, nextTick, computed, PropType } from 'vue';
+import { defineComponent, ref, watch, nextTick, onMounted } from 'vue';
 export default defineComponent({
   name: 'FolderOrFile',
   props: {
@@ -26,10 +26,6 @@ export default defineComponent({
     contenteditable: {
       type: Boolean,
       default: false,
-    },
-    type: {
-      type: String as PropType<'file' | 'floder'>,
-      required: true,
     },
     icon: {
       type: String,
@@ -73,12 +69,8 @@ export default defineComponent({
         html: (edit.value && edit.value.innerHTML) || '新建分组',
       });
     };
-    const isDrag = computed(() => {
-      return props.type === 'floder' ? 'drag' : null;
-    });
     return {
       edit,
-      isDrag,
       headleBlur,
     };
   },

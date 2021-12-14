@@ -15,7 +15,7 @@
       @dragstart="handleDragStart($event, item.id)"
       @dragover="handleDragOver($event, item.id)"
       @dragleave="handleDragLeave($event, item.id)"
-      @drop="handleDrop($event, item.id)"
+      @drag="handleDrag($event, item.id)"
     />
   </div>
 </template>
@@ -138,16 +138,14 @@ export default defineComponent({
         event.target.style.backgroundColor = 'inherit';
       }
     };
-    const handleDrop = (event: DragEvent, id: string) => {
-      event.preventDefault();
+    const handleDrag = (event: DragEvent, id: string) => {
+      debugger;
       if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
-      }
-      if (id !== dragID.value) {
         const target = folderStoreModule.action.getFloder(id);
         if (target && dragID.value) {
           folderStoreModule.action.updateFloder(dragID.value, [{ key: 'cutting', value: true }]);
           clipboardStoreModule.action.updateCurrectClipboard(dragID.value, 'cut', target);
+
           folderStoreModule.action.cutFloder(dragID.value, target.id, target.level + 1);
           ElMessage.success(`移动成功`);
         }
@@ -164,7 +162,7 @@ export default defineComponent({
       handleDragStart,
       handleDragLeave,
       handleDragOver,
-      handleDrop,
+      handleDrag,
     };
   },
 });

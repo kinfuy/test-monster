@@ -36,8 +36,8 @@ export const buildCopyTree = (id: string, floderList: Array<FileOrFolder>, targe
   const copyId = UUID();
   target.childs = updateChild(copyId, clonedeep(folderStore.value.currentLevel), clonedeep(target), floderList);
   target.id = copyId;
-  target.parentId = targetID || folderStore.value.currentID;
-  target.level = targetLevel || folderStore.value.currentLevel;
+  target.parentId = folderStore.value.currentID;
+  target.level = folderStore.value.currentLevel;
   return target as ChildReLationShip;
 };
 

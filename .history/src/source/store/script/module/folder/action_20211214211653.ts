@@ -90,7 +90,7 @@ const sortFloder = (sortType: 'time' | 'type' | 'name') => {
  * @param id
  */
 const copyFloder = (id: string, targetID?: string, targetLevel?: number) => {
-  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList), targetID, targetLevel);
+  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList));
   const copyList = flatTree(list);
   folderStore.value.flieList.push(...copyList);
   syncFolderModule();
@@ -100,8 +100,8 @@ const copyFloder = (id: string, targetID?: string, targetLevel?: number) => {
  * @param id
  */
 const cutFloder = async (id: string, targetID?: string, targetLevel?: number) => {
-  await copyFloder(id, targetID, targetLevel);
-  await deleteFloder(id);
+  await copyFloder(id);
+  await deleteFloder(id, targetID, targetLevel);
   syncFolderModule();
 };
 /**

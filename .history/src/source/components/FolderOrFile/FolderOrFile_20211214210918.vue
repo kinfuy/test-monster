@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, nextTick, computed, PropType } from 'vue';
+import { defineComponent, ref, watch, nextTick, computed } from 'vue';
 export default defineComponent({
   name: 'FolderOrFile',
   props: {
@@ -28,7 +28,7 @@ export default defineComponent({
       default: false,
     },
     type: {
-      type: String as PropType<'file' | 'floder'>,
+      type: String,
       required: true,
     },
     icon: {
@@ -73,9 +73,7 @@ export default defineComponent({
         html: (edit.value && edit.value.innerHTML) || '新建分组',
       });
     };
-    const isDrag = computed(() => {
-      return props.type === 'floder' ? 'drag' : null;
-    });
+    const isDrag = computed(() => {});
     return {
       edit,
       isDrag,

@@ -15,7 +15,7 @@
       @dragstart="handleDragStart($event, item.id)"
       @dragover="handleDragOver($event, item.id)"
       @dragleave="handleDragLeave($event, item.id)"
-      @drop="handleDrop($event, item.id)"
+      @drag="handleDrag($event, item.id)"
     />
   </div>
 </template>
@@ -138,12 +138,9 @@ export default defineComponent({
         event.target.style.backgroundColor = 'inherit';
       }
     };
-    const handleDrop = (event: DragEvent, id: string) => {
-      event.preventDefault();
-      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
-      }
-      if (id !== dragID.value) {
+    const handleDrag = (event: DragEvent, id: string) => {
+      debugger;
+      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag' && dragID !== id) {
         const target = folderStoreModule.action.getFloder(id);
         if (target && dragID.value) {
           folderStoreModule.action.updateFloder(dragID.value, [{ key: 'cutting', value: true }]);
@@ -164,7 +161,7 @@ export default defineComponent({
       handleDragStart,
       handleDragLeave,
       handleDragOver,
-      handleDrop,
+      handleDrag,
     };
   },
 });

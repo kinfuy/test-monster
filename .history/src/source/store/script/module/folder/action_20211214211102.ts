@@ -16,14 +16,14 @@ const syncFolderModule = () => {
  * 初始化FolderModule
  */
 const initFolderModule = () => {
-  // getStoreKey<{ folderModule: FolderStore }>(['folderModule']).then(({ folderModule }) => {
-  //   if (folderModule) {
-  //     folderStore.value.currentID = folderModule.currentID;
-  //     folderStore.value.currentLevel = folderModule.currentLevel;
-  //     folderStore.value.flieList = folderModule.flieList;
-  //     folderStore.value.virtualCrumb = folderModule.virtualCrumb;
-  //   }
-  // });
+  getStoreKey<{ folderModule: FolderStore }>(['folderModule']).then(({ folderModule }) => {
+    if (folderModule) {
+      folderStore.value.currentID = folderModule.currentID;
+      folderStore.value.currentLevel = folderModule.currentLevel;
+      folderStore.value.flieList = folderModule.flieList;
+      folderStore.value.virtualCrumb = folderModule.virtualCrumb;
+    }
+  });
 };
 /**
  * 创建文件
@@ -89,8 +89,8 @@ const sortFloder = (sortType: 'time' | 'type' | 'name') => {
  * 复制文件
  * @param id
  */
-const copyFloder = (id: string, targetID?: string, targetLevel?: number) => {
-  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList), targetID, targetLevel);
+const copyFloder = (id: string) => {
+  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList));
   const copyList = flatTree(list);
   folderStore.value.flieList.push(...copyList);
   syncFolderModule();
@@ -99,8 +99,8 @@ const copyFloder = (id: string, targetID?: string, targetLevel?: number) => {
  * 剪切文件
  * @param id
  */
-const cutFloder = async (id: string, targetID?: string, targetLevel?: number) => {
-  await copyFloder(id, targetID, targetLevel);
+const cutFloder = async (id: string) => {
+  await copyFloder(id);
   await deleteFloder(id);
   syncFolderModule();
 };

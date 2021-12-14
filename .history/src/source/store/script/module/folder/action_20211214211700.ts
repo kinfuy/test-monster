@@ -90,7 +90,7 @@ const sortFloder = (sortType: 'time' | 'type' | 'name') => {
  * @param id
  */
 const copyFloder = (id: string, targetID?: string, targetLevel?: number) => {
-  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList), targetID, targetLevel);
+  const list = buildCopyTree(id, clonedeep(folderStore.value.flieList));
   const copyList = flatTree(list);
   folderStore.value.flieList.push(...copyList);
   syncFolderModule();

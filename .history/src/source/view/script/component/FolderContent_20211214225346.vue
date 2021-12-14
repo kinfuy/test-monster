@@ -15,6 +15,7 @@
       @dragstart="handleDragStart($event, item.id)"
       @dragover="handleDragOver($event, item.id)"
       @dragleave="handleDragLeave($event, item.id)"
+      @dragend="handleDragEnd"
       @drop="handleDrop($event, item.id)"
     />
   </div>
@@ -140,9 +141,6 @@ export default defineComponent({
     };
     const handleDrop = (event: DragEvent, id: string) => {
       event.preventDefault();
-      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
-      }
       if (id !== dragID.value) {
         const target = folderStoreModule.action.getFloder(id);
         if (target && dragID.value) {

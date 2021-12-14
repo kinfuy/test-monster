@@ -74,7 +74,7 @@ export default defineComponent({
       });
     };
     const isDrag = computed(() => {
-      return props.type === 'floder' ? 'drag' : null;
+      return props;
     });
     return {
       edit,

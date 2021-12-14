@@ -15,7 +15,7 @@
       @dragstart="handleDragStart($event, item.id)"
       @dragover="handleDragOver($event, item.id)"
       @dragleave="handleDragLeave($event, item.id)"
-      @drop="handleDrop($event, item.id)"
+      @drag="handleDrag(item.id)"
     />
   </div>
 </template>
@@ -121,28 +121,25 @@ export default defineComponent({
       if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
       dragID.value = id;
     };
-    const handleDragOver = (event: DragEvent, id: string) => {
-      event.preventDefault();
-      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        if (id !== dragID.value) {
-          event.target.style.backgroundColor = '#faecd8';
-        } else {
-          if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
-        }
-      } else {
-        if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
-      }
+    const handleDragOver = (id: string) => {
+      console.log(id);
+      // event.preventDefault();
+      // if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
+      //   if (id !== dragID.value) {
+      //     event.target.style.backgroundColor = '#faecd8';
+      //   } else {
+      //     if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+      //   }
+      // } else {
+      //   if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+      // }
     };
     const handleDragLeave = (event: DragEvent, id: string) => {
       if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
         event.target.style.backgroundColor = 'inherit';
       }
     };
-    const handleDrop = (event: DragEvent, id: string) => {
-      event.preventDefault();
-      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
-      }
+    const handleDrag = (event: DragEvent, id: string) => {
       if (id !== dragID.value) {
         const target = folderStoreModule.action.getFloder(id);
         if (target && dragID.value) {
@@ -164,7 +161,7 @@ export default defineComponent({
       handleDragStart,
       handleDragLeave,
       handleDragOver,
-      handleDrop,
+      handleDrag,
     };
   },
 });
