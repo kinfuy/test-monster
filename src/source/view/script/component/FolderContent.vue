@@ -20,10 +20,12 @@ import { useContextMenu } from './../../../hooks/useContextMenu';
 import { useStore, FileOrFolder } from './../../../store/script';
 import FolderOrFile from './../../../components/FolderOrFile/FolderOrFile.vue';
 import { ElMessage } from 'element-plus';
+import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'FolderContent',
   components: { FolderOrFile },
   setup() {
+    const router = useRouter();
     const { folderStoreModule, clipboardStoreModule } = useStore();
     const folderList = computed(() => {
       return folderStoreModule.store.flieList.filter(
@@ -96,7 +98,7 @@ export default defineComponent({
         folderStoreModule.action.updateCurrent(item.id, item.level + 1);
         folderStoreModule.action.createCrumb(item.id, item.name, item.level + 1);
       } else {
-        ElMessage.error('无法打开该文件');
+        router.push({ name: 'scriptFlow', query: { id: item.id } });
       }
     };
     const getCutting = computed(() => {

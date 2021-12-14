@@ -126,6 +126,7 @@ const deleteFloder = (id: string) => {
 const updateCurrent = (currentID: string, currentLevel: number) => {
   folderStore.value.currentID = currentID;
   folderStore.value.currentLevel = currentLevel;
+  syncFolderModule();
 };
 
 /**
@@ -142,6 +143,7 @@ const createCrumb = (id: string, name: string, level: number, options?: { disabl
     disabled: options?.disabled || false,
     active: options?.active || false,
   });
+  syncFolderModule();
 };
 /**
  *

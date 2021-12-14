@@ -16,10 +16,16 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: '/scriptFlow',
+    name: 'scriptFlow',
+    component: () => import('../view/script/scriptEdit.vue'),
+  },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory('/libs/views/script.html'),
+  history: createWebHashHistory(process.env.BASE_URL),
+  // history: createWebHashHistory('/libs/views/script.html'),
   routes,
 });
 

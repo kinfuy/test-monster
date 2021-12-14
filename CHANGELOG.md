@@ -1,4 +1,9 @@
-## 0.0.2 (2021-12-13)
+## 0.0.2 (2021-12-14)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* detal" ([5b517a8](https://gitee.com/Y_onghu/test-monster/commit/5b517a8))
 
 
 
