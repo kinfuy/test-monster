@@ -1,5 +1,5 @@
 import { UUID, buildCopyTree, flatTree, getChildID } from './../../../../lib/utils';
-import { FileOrFolder, folderStore, FolderStore } from './index';
+import { folderStore, FolderStore } from './index';
 import { unref } from 'vue';
 import { EventMonsterList } from './../../../../../libs/history';
 import { setStore, getStoreKey } from './../../../../../libs/utils';
@@ -118,12 +118,6 @@ const deleteFloder = (id: string) => {
   }
   syncFolderModule();
 };
-
-const getFloder = (id: string) => {
-  const rst = folderStore.value.flieList.filter((x) => x.id === id);
-  if (rst.length > 0) return rst[0] as FileOrFolder;
-  return undefined;
-};
 /**
  * 更新当前层级
  * @param currentID 当前ID
@@ -181,7 +175,6 @@ export const createAction = () => {
     copyFloder,
     cutFloder,
     deleteFloder,
-    getFloder,
   };
 };
 function getIcon(type: string) {

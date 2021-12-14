@@ -5,17 +5,12 @@
       :key="item.id"
       :draggable="true"
       :icon="item.icon"
-      :type="item.type"
       :cutting="getCutting(item.id)"
       :fileTitle="item.name"
       :contenteditable="item.contenteditable"
       @contextmenu.stop="handleContextmenu($event, item)"
       @dblclick="handleDblclick(item)"
       @blur="handleBlur($event, item)"
-      @dragstart="handleDragStart($event, item.id)"
-      @dragover="handleDragOver($event, item.id)"
-      @dragleave="handleDragLeave($event, item.id)"
-      @drag="handleDrag($event, item.id)"
     />
   </div>
 </template>
@@ -115,36 +110,6 @@ export default defineComponent({
         );
       };
     });
-
-    const dragID = ref<undefined | string>(undefined);
-    const handleDragStart = (event: DragEvent, id: string) => {
-      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
-      dragID.value = id;
-    };
-    const handleDragOver = (event: DragEvent, id: string) => {
-      event.preventDefault();
-      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        if (id !== dragID.value) {
-          event.target.style.backgroundColor = '#faecd8';
-        } else {
-          if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
-        }
-      } else {
-        if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
-      }
-    };
-    const handleDragLeave = (event: DragEvent, id: string) => {
-      if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
-      }
-    };
-    const handleDrag = (event: DragEvent, id: string) => {
-      const target = folderStoreModule.action.getFloder(id);
-      if (target && dragID.value) {
-        folderStoreModule.action.updateFloder(dragID.value, [{ key: 'cutting', value: true }]);
-        clipboardStoreModule.action.updateCurrectClipboard(dragID.value, 'cut', target);
-      }
-    };
     return {
       folderList,
       getCutting,
@@ -153,10 +118,6 @@ export default defineComponent({
       handleContextmenu,
       handleBlur,
       handleDblclick,
-      handleDragStart,
-      handleDragLeave,
-      handleDragOver,
-      handleDrag,
     };
   },
 });

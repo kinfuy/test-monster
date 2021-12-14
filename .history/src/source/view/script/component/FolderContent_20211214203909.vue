@@ -140,9 +140,9 @@ export default defineComponent({
     };
     const handleDrag = (event: DragEvent, id: string) => {
       const target = folderStoreModule.action.getFloder(id);
-      if (target && dragID.value) {
-        folderStoreModule.action.updateFloder(dragID.value, [{ key: 'cutting', value: true }]);
-        clipboardStoreModule.action.updateCurrectClipboard(dragID.value, 'cut', target);
+      if (target) {
+        folderStoreModule.action.updateFloder(item.id, [{ key: 'cutting', value: true }]);
+        clipboardStoreModule.action.updateCurrectClipboard(item.id, 'cut', item);
       }
     };
     return {

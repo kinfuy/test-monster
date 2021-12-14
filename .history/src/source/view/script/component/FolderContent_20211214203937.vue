@@ -142,7 +142,7 @@ export default defineComponent({
       const target = folderStoreModule.action.getFloder(id);
       if (target && dragID.value) {
         folderStoreModule.action.updateFloder(dragID.value, [{ key: 'cutting', value: true }]);
-        clipboardStoreModule.action.updateCurrectClipboard(dragID.value, 'cut', target);
+        clipboardStoreModule.action.updateCurrectClipboard(dragID.value, 'cut', item);
       }
     };
     return {
