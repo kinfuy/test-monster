@@ -10,6 +10,7 @@ import {
   createContextMenus,
   createNotifications,
   getChromeUrl,
+  commandAddListener,
 } from './chrome';
 import {
   IsurlExait,
@@ -46,4 +47,5 @@ export {
   createContextMenus,
   createNotifications,
   getChromeUrl,
+  commandAddListener,
 };

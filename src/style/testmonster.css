@@ -123,3 +123,58 @@
   cursor: pointer;
   pointer-events: auto;
 }
+
+.test-monster-tray {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1000px;
+  height: 50px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  box-shadow: 0 0 4px #ccc;
+  z-index: 9999999;
+}
+.test-monster-tray-input {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border: none;
+  font-size: 20px;
+  padding-left: 20px;
+}
+.test-monster-tray-options {
+  padding: 0 10px;
+  background-color: #fff;
+  width: 100%;
+  border-top: 1.5px solid #ccc;
+}
+.test-monster-tray-option-item {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+  line-height: 40px;
+  border-top: 1.5px solid #ccc;
+}
+.test-monster-tray-option-item:hover {
+  background-color: #e8eef5;
+}
+.test-monster-tray-option-btn {
+  min-height: 28px;
+  padding: 7px 15px;
+  font-size: 12px;
+  border-radius: 4;
+  background-color: #e6a23c;
+  color: #fff;
+  cursor: pointer;
+}
+.test-monster-tray-option-btn:hover {
+  opacity: 0.8;
+}

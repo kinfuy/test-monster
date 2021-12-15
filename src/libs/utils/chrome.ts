@@ -161,3 +161,12 @@ export const createNotifications = (notificationId: string, options: chrome.noti
 export const getChromeUrl = (path: string) => {
   return chrome.extension.getURL(path);
 };
+
+/**
+ * 监听快捷键
+ */
+export const commandAddListener = (callback: Function) => {
+  chrome.commands.onCommand.addListener((command) => {
+    callback(command);
+  });
+};

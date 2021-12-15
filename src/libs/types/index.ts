@@ -13,7 +13,7 @@ export type IOperateSet = Map<string, IOperateRecord>;
 
 export interface NativeUI {
   status: number;
-  example: undefined | HTMLDivElement;
+  example: undefined | HTMLElement;
   show: () => void;
   hidden: () => void;
   destroy: () => void;
@@ -21,9 +21,9 @@ export interface NativeUI {
 export class NativeBase implements NativeUI {
   display = 'block';
   status = 0;
-  example: HTMLDivElement | undefined = undefined;
-  constructor(className: string, display: string, target?: Element) {
-    const base = document.createElement('div');
+  example: HTMLElement | undefined = undefined;
+  constructor(className: string, display: string, tagClassName: string = 'div', target?: Element) {
+    const base = document.createElement(tagClassName);
     base.className = className;
     base.dataset.testMonster = 'true'; // 给注入的元素打上标记
     this.display = display;

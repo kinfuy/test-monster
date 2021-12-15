@@ -42,6 +42,15 @@
     "tabs",
     "notifications"
   ],
+  "commands": {
+    "script-search": {
+      "suggested_key": {
+        "default": "Ctrl+Space",
+        "mac": "Command+Space"
+      },
+      "description": "唤醒脚本检索"
+    }
+  },
   "options_page": "/libs/views/options.html",
   "options_ui": {
     "page": "/libs/views/option.html",

@@ -1,11 +1,16 @@
 // 该文件会注入到目标网站
-import { NativeMask, NativeTool, NativeRecord } from './history/view';
+import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
 import { EventMonsterList, EventMonster } from './history';
 import { addEventListener, removeEventListener, getXPath } from './utils';
 import { Eventkey } from './utils/const';
 let mask: NativeMask;
 let tool: NativeTool;
+let tray: NativeTray;
 let eventMonsterList: EventMonsterList;
+addEventListener('click', (e: any) => {
+  if (e.target.dataset.testMonster) return; // 排除注入元素
+  if (tray) tray.destroy();
+});
 addEventListener(
   'message',
   (info: any) => {
@@ -13,6 +18,12 @@ addEventListener(
       mask = new NativeMask();
       tool = new NativeTool(handleStop);
       maskInit();
+    }
+    if (info.data.key === Eventkey.MONSTER_SCRIPT_TRAY) {
+      tray = new NativeTray({
+        input: handleInput,
+      });
+      tray.show();
     }
   },
   window
@@ -102,4 +113,9 @@ function handleFocus(e: any) {
 function clearEventListener() {
   removeEventListener('click', startListener);
   uninstallForm();
+}
+
+function handleInput(value: any) {
+  console.log(value.target.value);
+  tray.updateOptions();
 }

@@ -52,7 +52,7 @@ export class NativeTool extends NativeBase {
 }
 // 事件记录tips
 import { UUID } from './../../utils/index';
-const recordList: Array<{ id: string; el: HTMLDivElement }> = [];
+const recordList: Array<{ id: string; el: HTMLElement }> = [];
 export class NativeRecord extends NativeBase {
   id = UUID();
   message = '';
@@ -112,8 +112,59 @@ export class NativeRecord extends NativeBase {
   }
 }
 
+interface NativeTrayHandle {
+  change?: (value: any) => void;
+  input?: (value: any) => void;
+}
+interface NativeTrayOptions {
+  value: string;
+  label: string;
+}
+/** 脚本检索 */
 export class NativeTray extends NativeBase {
-  constructor() {
+  trayInput = new NativeBase('test-monster-tray-input', 'block', 'input');
+  trayOption = new NativeBase('test-monster-tray-options', 'block');
+  constructor({ change, input }: NativeTrayHandle) {
     super('test-monster-tray', 'block');
+    const Tray = this.example;
+    if (this.example && this.trayInput.example) {
+      (this.trayInput.example as HTMLInputElement).placeholder = 'Hi，Test-Monster！';
+      (this.trayInput.example as HTMLInputElement).autofocus = true;
+      if (change) {
+        this.trayInput.example.addEventListener('change', (Event) => {
+          change(Event);
+        });
+      }
+      if (input) {
+        const trayInput = this.trayInput;
+        const trayOption = this.trayOption;
+        if (trayInput.example) {
+          trayInput.example.addEventListener('input', (Event) => {
+            if (Tray && trayOption.example) {
+              if ((Event.target as HTMLInputElement).value) {
+                Tray.appendChild(trayOption.example);
+              } else {
+                Tray.removeChild(trayOption.example);
+              }
+              input(Event);
+            }
+          });
+        }
+      }
+      this.example.appendChild(this.trayInput.example);
+    }
+  }
+  // options: Array<NativeTrayOptions>, handleRun: (value: string) => void
+  updateOptions() {
+    if (this.trayOption.example) {
+      const trayOptionItem = new NativeBase('test-monster-tray-option-item', 'block');
+      const trayOptionBtn = new NativeBase('test-monster-tray-option-btn', 'block');
+      if (trayOptionBtn.example && trayOptionItem.example) {
+        trayOptionItem.example.innerText = '录制脚本001';
+        this.trayOption.example.appendChild(trayOptionItem.example);
+        trayOptionBtn.example.innerText = '执行';
+        trayOptionItem.example.appendChild(trayOptionBtn.example);
+      }
+    }
   }
 }

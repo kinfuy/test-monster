@@ -19,6 +19,9 @@ chromeAddListenerMessage(async (request, sendResponse) => {
   if (request.key === Eventkey.MONSTER_RECORD_INIT) {
     window.postMessage({ key: Eventkey.MONSTER_RECORD_INIT }, '*');
   }
+  if (request.key === Eventkey.MONSTER_SCRIPT_TRAY) {
+    window.postMessage({ key: Eventkey.MONSTER_SCRIPT_TRAY }, '*');
+  }
   if (request.key === Eventkey.MONSTER_EVENTS_RUN) {
     const { EventList } = await getStoreKey<{ EventList: EventMonsterList }>(['EventList']);
     EventList.eventList.forEach(async (x) => {
