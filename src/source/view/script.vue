@@ -29,17 +29,17 @@ export default defineComponent({
   components: { NavMenu },
   setup() {
     const { folderStoreModule } = useStore();
-    // folderStoreModule.action.initFolderModule();
-    // getStoreKey<{ currectEventList: EventMonsterList }>(['currectEventList']).then(({ currectEventList }) => {
-    //   if (currectEventList) {
-    //     folderStoreModule.action.createFolder({
-    //       type: 'file',
-    //       name: '录制脚本',
-    //       contentScript: currectEventList,
-    //     });
-    //     setStore({ currectEventList: null });
-    //   }
-    // });
+    folderStoreModule.action.initFolderModule();
+    getStoreKey<{ currectEventList: EventMonsterList }>(['currectEventList']).then(({ currectEventList }) => {
+      if (currectEventList) {
+        folderStoreModule.action.createFolder({
+          type: 'file',
+          name: '录制脚本',
+          contentScript: currectEventList,
+        });
+        setStore({ currectEventList: null });
+      }
+    });
   },
 });
 </script>

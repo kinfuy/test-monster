@@ -7,4 +7,10 @@ export default defineComponent({
   name: 'FlowMap',
 });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.flow-map {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+</style>

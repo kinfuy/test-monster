@@ -1,13 +1,13 @@
 <template>
   <div class="flow-design">
-    <div class="flow-tool"><FlowTool></FlowTool></div>
-    <div class="flow-map"><FlowMap></FlowMap></div>
+    <div class="flow-tool-warper"><FlowTool></FlowTool></div>
+    <div class="flow-map-warper"><FlowMap></FlowMap></div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import FlowMap from './FlowMap/FlowMap.vue';
-import FlowTool from './FlowTool/FlowTool.vue';
+import FlowMap from './components/FlowMap/FlowMap.vue';
+import FlowTool from './components/FlowTool/FlowTool.vue';
 export default defineComponent({
   name: 'FlowDesign',
   components: { FlowMap, FlowTool },
@@ -19,11 +19,11 @@ export default defineComponent({
   justify-content: space-between;
   height: 100%;
   width: 100%;
-  .flow-tool {
-    width: 300px;
+  .flow-tool-warper {
+    width: 260px;
   }
-  .flow-map {
-    width: calc(100% - 300px);
+  .flow-map-warper {
+    width: calc(100% - 260px);
     min-width: 600px;
   }
 }

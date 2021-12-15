@@ -104,6 +104,8 @@ export default defineComponent({
         folderStoreModule.action.createCrumb(item.id, item.name, item.level + 1);
       } else {
         router.push({ name: 'scriptFlow', query: { id: item.id } });
+        folderStoreModule.action.updateCurrent('script_uuid', 0);
+        folderStoreModule.action.goCrumb('script_uuid');
       }
     };
     const getCutting = computed(() => {
@@ -135,13 +137,13 @@ export default defineComponent({
     };
     const handleDragLeave = (event: DragEvent, id: string) => {
       if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
+        event.target.style.backgroundColor = '';
       }
     };
     const handleDrop = (event: DragEvent, id: string) => {
       event.preventDefault();
       if (event && event.target instanceof HTMLElement && event.target.dataset.drag === 'drag') {
-        event.target.style.backgroundColor = 'inherit';
+        event.target.style.backgroundColor = '';
       }
       if (id !== dragID.value) {
         const target = folderStoreModule.action.getFloder(id);

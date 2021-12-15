@@ -1,6 +1,7 @@
 import { dispatchEventHandler, getELementXpath, UUID } from './../../utils/util';
 import { IEventType } from './../../types';
 export class EventMonster {
+  id = UUID();
   xpath = '';
   formValue = '';
   eventType: IEventType = 'CLICK';

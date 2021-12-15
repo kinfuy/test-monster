@@ -10,20 +10,20 @@ import Dayjs from 'dayjs';
  * 同步到本地store
  */
 const syncFolderModule = () => {
-  // setStore({ folderModule: clonedeep(folderStore.value) });
+  setStore({ folderModule: clonedeep(folderStore.value) });
 };
 /**
  * 初始化FolderModule
  */
 const initFolderModule = () => {
-  // getStoreKey<{ folderModule: FolderStore }>(['folderModule']).then(({ folderModule }) => {
-  //   if (folderModule) {
-  //     folderStore.value.currentID = folderModule.currentID;
-  //     folderStore.value.currentLevel = folderModule.currentLevel;
-  //     folderStore.value.flieList = folderModule.flieList;
-  //     folderStore.value.virtualCrumb = folderModule.virtualCrumb;
-  //   }
-  // });
+  getStoreKey<{ folderModule: FolderStore }>(['folderModule']).then(({ folderModule }) => {
+    if (folderModule) {
+      folderStore.value.currentID = folderModule.currentID;
+      folderStore.value.currentLevel = folderModule.currentLevel;
+      folderStore.value.flieList = folderModule.flieList;
+      folderStore.value.virtualCrumb = folderModule.virtualCrumb;
+    }
+  });
 };
 /**
  * 创建文件
@@ -118,7 +118,11 @@ const deleteFloder = (id: string) => {
   }
   syncFolderModule();
 };
-
+/**
+ * 获取文件夹
+ * @param id
+ * @returns
+ */
 const getFloder = (id: string) => {
   const rst = folderStore.value.flieList.filter((x) => x.id === id);
   if (rst.length > 0) return rst[0] as FileOrFolder;

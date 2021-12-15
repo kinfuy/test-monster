@@ -11,7 +11,7 @@
     </el-button>
     <el-button class="record-btn" plain @click="handleClick('script')">
       <div>
-        <el-icon><Setting /></el-icon><span style="margin-left: 5px">配置中心</span>
+        <el-icon><Setting /></el-icon><span style="margin-left: 5px">脚本中心</span>
       </div>
     </el-button>
   </div>

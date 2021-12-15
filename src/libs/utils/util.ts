@@ -143,3 +143,20 @@ export const addEventListener = (event: string, callback: <T>(e: T | Event | Mou
 export const removeEventListener = (event: string, callback: (e: Event) => void, source: Document | Window = document) => {
   source.removeEventListener(event, callback);
 };
+
+/**
+ * 等待几秒
+ * @param time
+ * @returns
+ */
+export const sleep = (time: number): Promise<void> => {
+  return new Promise((reslove, reject) => {
+    try {
+      setTimeout(() => {
+        reslove();
+      }, time);
+    } catch (error) {
+      reject();
+    }
+  });
+};
