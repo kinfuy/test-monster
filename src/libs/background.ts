@@ -37,7 +37,5 @@ chromeAddListenerMessage(async (request, sendResponse) => {
       key: Eventkey.MONSTER_SCRIPT_SEARCH_RESULT,
       data: searchScript,
     });
-    console.log(searchScript);
-    console.log(request.data);
   }
 });

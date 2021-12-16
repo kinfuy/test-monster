@@ -10,15 +10,15 @@ export class NativeMask extends NativeBase {
    *
    * @param time 持续时间
    */
-  init(time: number) {
+  init(time: number, title: string = '开始记录') {
     return new Promise((resolve, reject) => {
       if (this.example) {
-        this.example.innerHTML = `<span class='test-monster-mask-text'>开始记录:${time}</span>`;
+        this.example.innerHTML = `<span class='test-monster-mask-text'>${title}:${time}</span>`;
         this.show();
         let t1 = setInterval(() => {
           if (!this.example) return;
           time--;
-          this.example.innerHTML = `<span class='test-monster-mask-text'>开始记录:${time}</span>`;
+          this.example.innerHTML = `<span class='test-monster-mask-text'>${title}:${time}</span>`;
           if (time === 0) {
             this.hidden();
             clearInterval(t1);
@@ -33,11 +33,11 @@ export class NativeMask extends NativeBase {
 }
 // 工具栏
 export class NativeTool extends NativeBase {
-  constructor(handleStop: () => void) {
+  constructor(handleStop: () => void, title: string = '记录中') {
     super('test-monster-tool', 'flex');
-    this.appendChild(handleStop);
+    this.appendChild(handleStop, title);
   }
-  appendChild(handleStop: () => void) {
+  appendChild(handleStop: () => void, title: string) {
     if (this.example) {
       const stop = document.createElement('div');
       stop.dataset.testMonster = 'true';
@@ -46,7 +46,7 @@ export class NativeTool extends NativeBase {
       const text = document.createElement('div');
       text.dataset.testMonster = 'true';
       text.className = 'test-monster-tool-text';
-      text.innerText = 'Test Monster 记录中';
+      text.innerText = `Test Monster ${title}`;
       this.example.appendChild(text);
       this.example.appendChild(stop);
     }

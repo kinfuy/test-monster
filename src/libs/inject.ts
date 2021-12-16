@@ -1,6 +1,6 @@
 // 该文件会注入到目标网站
 import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
-import { EventMonsterList, EventMonster, runEventSleep } from './history';
+import { EventMonsterList, EventMonster, runEventSleep, cancelEvent } from './history';
 import { addEventListener, removeEventListener, getXPath } from './utils';
 import { Eventkey } from './utils/const';
 import throttle from 'lodash.throttle';
@@ -29,7 +29,6 @@ addEventListener(
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_SEARCH_RESULT) {
       tray.updateOptions(info.data.data, async (item: FileOrFolder) => {
-        console.log(item);
         const eventList = item.contentScript?.eventList.map((x) => {
           return {
             xpath: x.xpath,
@@ -37,10 +36,21 @@ addEventListener(
             formValue: x.formValue,
           };
         });
-        if (eventList)
-          runEventSleep(eventList, 2000, () => {
-            tray.destroy();
+        if (eventList) {
+          tray.destroy();
+          const tool = new NativeTool(() => {
+            const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
+            record.autoClose(3000);
+            cancelEvent();
+            tool.destroy();
+          }, '脚本执行中');
+          tool.show();
+          runEventSleep(eventList, 1000, () => {
+            const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
+            record.autoClose(3000);
+            tool.destroy();
           });
+        }
       });
     }
   },

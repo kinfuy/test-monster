@@ -1,5 +1,6 @@
 import { dispatchEventHandler, getELementXpath, UUID, sleep } from './../../utils/util';
 import { IEventType } from './../../types';
+import { NativeRecord } from './../view';
 export class EventMonster {
   id = UUID();
   xpath = '';
@@ -41,6 +42,7 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
   return new Promise((resolve, reject) => {
     try {
       const el = getELementXpath(xpath);
+      if (!el) throw new Error(`${xpath}的元素没有找到`);
       if (eventType === 'CLICK') {
         dispatchEventHandler('click', el as Element);
       }
@@ -54,24 +56,36 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
       }
       resolve(true);
     } catch (error) {
+      const record = new NativeRecord(`事件触发失败:${error}`, 'test-monster-record-error');
+      record.autoClose(5000);
       reject('事件触发失败！');
     }
   });
 };
 
+// 事件取消钩子
+let cancelKey = false;
 /**
  * 事件执行
  * @param list
  * @param sleepTime 每个事件延迟事件
  */
-export const runEventSleep = (
+export const runEventSleep = async (
   list: Array<{ xpath: string; eventType: IEventType; formValue: any }>,
   sleepTime: number,
   callback: Function
 ) => {
-  list.forEach(async (x) => {
-    await runEvent(x.xpath, x.eventType, x.formValue);
+  cancelKey = false;
+  for (let i = 0; i < list.length; i++) {
+    if (cancelKey) return;
     await sleep(sleepTime);
-  });
+    await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
+  }
   callback();
+};
+/**
+ * 取消执行事件
+ */
+export const cancelEvent = () => {
+  cancelKey = true;
 };

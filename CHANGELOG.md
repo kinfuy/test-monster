@@ -1,8 +1,22 @@
-## 0.0.2 (2021-12-14)
+## 0.0.3 (2021-12-16)
+
+
+
+## 0.0.3 (2021-12-16)
+
+
+### ✨ Features | 新功能
+
+* 编辑节点 ([6b7c995](https://gitee.com/Y_onghu/test-monster/commit/6b7c995))
+* 事件录制执行 ([3d51bd5](https://gitee.com/Y_onghu/test-monster/commit/3d51bd5))
+* drag file ([37a24cd](https://gitee.com/Y_onghu/test-monster/commit/37a24cd))
+* flow-design ([75ac565](https://gitee.com/Y_onghu/test-monster/commit/75ac565))
 
 
 ### 🐛 Bug Fixes | Bug 修复
 
+* detail ([67117e7](https://gitee.com/Y_onghu/test-monster/commit/67117e7))
+* detail ([412b6ea](https://gitee.com/Y_onghu/test-monster/commit/412b6ea))
 * detal" ([5b517a8](https://gitee.com/Y_onghu/test-monster/commit/5b517a8))
 
 

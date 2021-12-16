@@ -124,7 +124,7 @@ export function image2Base64(img: any) {
  * @param el
  */
 export const dispatchEventHandler = (eventName: string, el: Element) => {
-  const event = new Event(eventName, { cancelable: true, bubbles: false });
+  const event = new Event(eventName, { cancelable: true, bubbles: true });
   el.dispatchEvent(event);
 };
 /**
@@ -152,8 +152,9 @@ export const removeEventListener = (event: string, callback: (e: Event) => void,
 export const sleep = (time: number): Promise<void> => {
   return new Promise((reslove, reject) => {
     try {
-      setTimeout(() => {
+      let tirmer = setInterval(() => {
         reslove();
+        clearInterval(tirmer);
       }, time);
     } catch (error) {
       reject();
