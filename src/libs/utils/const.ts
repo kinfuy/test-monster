@@ -10,4 +10,8 @@ export const Eventkey = {
   MONSTER_EVENTS_RUN: 'monster_events_run',
   /** 脚本托盘 */
   MONSTER_SCRIPT_TRAY: 'monster_script_tray',
+  /** 脚本检索 */
+  MONSTER_SCRIPT_SEARCH: 'monster_script_search',
+  /** 脚本检索结果 */
+  MONSTER_SCRIPT_SEARCH_RESULT: 'monster_script_search_result',
 };

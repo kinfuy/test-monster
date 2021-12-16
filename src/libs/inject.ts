@@ -1,8 +1,10 @@
 // 该文件会注入到目标网站
 import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
-import { EventMonsterList, EventMonster } from './history';
+import { EventMonsterList, EventMonster, runEventSleep } from './history';
 import { addEventListener, removeEventListener, getXPath } from './utils';
 import { Eventkey } from './utils/const';
+import throttle from 'lodash.throttle';
+import { FileOrFolder } from '../source/store/script';
 let mask: NativeMask;
 let tool: NativeTool;
 let tray: NativeTray;
@@ -21,9 +23,25 @@ addEventListener(
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_TRAY) {
       tray = new NativeTray({
-        input: handleInput,
+        input: throttle(handleInput, 500),
       });
       tray.show();
+    }
+    if (info.data.key === Eventkey.MONSTER_SCRIPT_SEARCH_RESULT) {
+      tray.updateOptions(info.data.data, async (item: FileOrFolder) => {
+        console.log(item);
+        const eventList = item.contentScript?.eventList.map((x) => {
+          return {
+            xpath: x.xpath,
+            eventType: x.eventType,
+            formValue: x.formValue,
+          };
+        });
+        if (eventList)
+          runEventSleep(eventList, 2000, () => {
+            tray.destroy();
+          });
+      });
     }
   },
   window
@@ -115,7 +133,6 @@ function clearEventListener() {
   uninstallForm();
 }
 
-function handleInput(value: any) {
-  console.log(value.target.value);
-  tray.updateOptions();
+function handleInput(Event: any) {
+  window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH, url: window.location.href, inputValue: Event.target.value }, '*');
 }

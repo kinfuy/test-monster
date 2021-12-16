@@ -1,4 +1,4 @@
-import { dispatchEventHandler, getELementXpath, UUID } from './../../utils/util';
+import { dispatchEventHandler, getELementXpath, UUID, sleep } from './../../utils/util';
 import { IEventType } from './../../types';
 export class EventMonster {
   id = UUID();
@@ -57,4 +57,21 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
       reject('事件触发失败！');
     }
   });
+};
+
+/**
+ * 事件执行
+ * @param list
+ * @param sleepTime 每个事件延迟事件
+ */
+export const runEventSleep = (
+  list: Array<{ xpath: string; eventType: IEventType; formValue: any }>,
+  sleepTime: number,
+  callback: Function
+) => {
+  list.forEach(async (x) => {
+    await runEvent(x.xpath, x.eventType, x.formValue);
+    await sleep(sleepTime);
+  });
+  callback();
 };

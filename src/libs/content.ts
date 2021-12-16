@@ -11,6 +11,9 @@ addEventListener(
     if (info.data.key === Eventkey.MONSTER_RECORD_STOP) {
       sendMessageToExtension(Eventkey.MONSTER_RECORD_STOP, info.data.eventMonsterList);
     }
+    if (info.data.key === Eventkey.MONSTER_SCRIPT_SEARCH) {
+      sendMessageToExtension(Eventkey.MONSTER_SCRIPT_SEARCH, { url: info.data.url, inputValue: info.data.inputValue });
+    }
   },
   window
 );
@@ -21,6 +24,9 @@ chromeAddListenerMessage(async (request, sendResponse) => {
   }
   if (request.key === Eventkey.MONSTER_SCRIPT_TRAY) {
     window.postMessage({ key: Eventkey.MONSTER_SCRIPT_TRAY }, '*');
+  }
+  if (request.key === Eventkey.MONSTER_SCRIPT_SEARCH_RESULT) {
+    window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH_RESULT, data: request.data }, '*');
   }
   if (request.key === Eventkey.MONSTER_EVENTS_RUN) {
     const { EventList } = await getStoreKey<{ EventList: EventMonsterList }>(['EventList']);

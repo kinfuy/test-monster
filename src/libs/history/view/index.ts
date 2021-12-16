@@ -1,4 +1,6 @@
+import { FileOrFolder } from '../../../source/store/script';
 import { NativeBase } from '../../types';
+import { IsurlExait } from './../../utils';
 // 记录提示倒计时
 export class NativeMask extends NativeBase {
   constructor() {
@@ -116,10 +118,6 @@ interface NativeTrayHandle {
   change?: (value: any) => void;
   input?: (value: any) => void;
 }
-interface NativeTrayOptions {
-  value: string;
-  label: string;
-}
 /** 脚本检索 */
 export class NativeTray extends NativeBase {
   trayInput = new NativeBase('test-monster-tray-input', 'block', 'input');
@@ -154,17 +152,34 @@ export class NativeTray extends NativeBase {
       this.example.appendChild(this.trayInput.example);
     }
   }
-  // options: Array<NativeTrayOptions>, handleRun: (value: string) => void
-  updateOptions() {
-    if (this.trayOption.example) {
-      const trayOptionItem = new NativeBase('test-monster-tray-option-item', 'block');
-      const trayOptionBtn = new NativeBase('test-monster-tray-option-btn', 'block');
-      if (trayOptionBtn.example && trayOptionItem.example) {
-        trayOptionItem.example.innerText = '录制脚本001';
-        this.trayOption.example.appendChild(trayOptionItem.example);
-        trayOptionBtn.example.innerText = '执行';
-        trayOptionItem.example.appendChild(trayOptionBtn.example);
-      }
+  updateOptions(options: Array<FileOrFolder>, handleRun: (value: FileOrFolder) => void) {
+    const trayOption = this.trayOption;
+    if (trayOption && trayOption.example) {
+      trayOption.example.innerHTML = '';
+      options.forEach((x) => {
+        let macthed = false;
+        if (x.contentScript && x.contentScript.url) {
+          macthed = IsurlExait(window.location.href, x.contentScript.url.split(','));
+        }
+        const trayOptionItem = new NativeBase('test-monster-tray-option-item', 'flex');
+        const trayOptionBtn = new NativeBase('test-monster-tray-option-btn', 'block');
+        const trayOptionConetnt = new NativeBase('test-monster-tray-option-conetnt', 'block');
+        const trayOptionTip = new NativeBase(`test-monster-tray-option-tip test-monster-tip-${macthed ? 'success' : 'error'}`, 'block');
+        if (trayOption.example && trayOptionBtn.example && trayOptionItem.example && trayOptionConetnt.example && trayOptionTip.example) {
+          trayOptionConetnt.example.innerText = x.name;
+          trayOptionTip.example.innerText = macthed ? '该网站脚本' : '非网站脚本';
+          if (!macthed) trayOptionTip.example.title = '非该网站脚本可能会执行失败！';
+          trayOptionItem.example.appendChild(trayOptionConetnt.example);
+          x;
+          trayOptionConetnt.example.appendChild(trayOptionTip.example);
+          trayOption.example.appendChild(trayOptionItem.example);
+          trayOptionBtn.example.innerText = '执行';
+          trayOptionBtn.example.addEventListener('click', () => {
+            handleRun(x);
+          });
+          trayOptionItem.example.appendChild(trayOptionBtn.example);
+        }
+      });
     }
   }
 }
