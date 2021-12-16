@@ -45,11 +45,16 @@ addEventListener(
             tool.destroy();
           }, '脚本执行中');
           tool.show();
-          runEventSleep(eventList, 1000, () => {
-            const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
-            record.autoClose(3000);
-            tool.destroy();
-          });
+          runEventSleep(
+            eventList,
+            1000,
+            () => {
+              const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
+              record.autoClose(3000);
+              tool.destroy();
+            },
+            item.contentScript?.loop
+          );
         }
       });
     }

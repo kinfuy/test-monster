@@ -15,6 +15,7 @@ export class EventMonster {
 export class EventMonsterList {
   id = UUID();
   url = '';
+  loop = 1;
   constructor(url: string) {
     this.url = url;
   }
@@ -66,20 +67,28 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
 // 事件取消钩子
 let cancelKey = false;
 /**
- * 事件执行
+ *  事件执行
  * @param list
- * @param sleepTime 每个事件延迟事件
+ * @param sleepTime 事件延迟时间
+ * @param callback
+ * @param loop 循环次数
+ * @returns
  */
 export const runEventSleep = async (
   list: Array<{ xpath: string; eventType: IEventType; formValue: any }>,
   sleepTime: number,
-  callback: Function
+  callback: Function,
+  loop: number = 1
 ) => {
   cancelKey = false;
-  for (let i = 0; i < list.length; i++) {
-    if (cancelKey) return;
-    await sleep(sleepTime);
-    await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
+  let count = 1;
+  while (count <= loop) {
+    for (let i = 0; i < list.length; i++) {
+      if (cancelKey) return;
+      await sleep(sleepTime);
+      await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
+    }
+    count++;
   }
   callback();
 };

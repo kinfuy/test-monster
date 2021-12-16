@@ -2,6 +2,7 @@
   <div v-height class="script-edit">
     <div class="edit-opreate">
       <el-button size="mini" @click="handleAdd" type="primary">新建节点</el-button>
+      <el-button size="mini" @click="handleEdit" type="primary">配置节点</el-button>
       <el-button size="mini" @click="handleBack">返回</el-button>
     </div>
     <div v-if="stepEvent" class="edit-view">
@@ -162,6 +163,8 @@ export default defineComponent({
         ElMessage.success('节点已删除');
       }
     };
+
+    const handleEdit = () => {};
     onMounted(() => {
       if (!route.query.id) {
         router.back();
@@ -181,6 +184,7 @@ export default defineComponent({
       resetForm,
       handleDelete,
       handleAdd,
+      handleEdit,
     };
   },
 });
