@@ -5,13 +5,13 @@ import { addEventListener, removeEventListener, getXPath } from './utils';
 import { Eventkey } from './utils/const';
 import throttle from 'lodash.throttle';
 import { FileOrFolder } from '../source/store/script';
+import { PositioningElement } from '../libs/utils/element';
 let mask: NativeMask;
 let tool: NativeTool;
 let tray: NativeTray;
 let eventMonsterList: EventMonsterList;
 addEventListener('click', (e: any) => {
-  if (e.target.dataset.testMonster) return; // 排除注入元素
-  if (tray) tray.destroy();
+  PositioningElement(e.target);
 });
 addEventListener(
   'message',
