@@ -71,20 +71,26 @@ export const getXPath = (el: Element) => {
   while (nodeElem && nodeElem.nodeType === Node.ELEMENT_NODE) {
     let nbOfPreviousSiblings = 0;
     let hasNextSiblings = false;
-    let sibling = nodeElem.previousSibling;
+    let sibling = nodeElem.previousElementSibling;
     while (sibling && sibling !== document.body) {
       if (sibling.nodeType !== Node.DOCUMENT_TYPE_NODE && sibling.nodeName === nodeElem.nodeName) {
-        nbOfPreviousSiblings++;
+        if (!(sibling as any).dataset.testMonster) {
+          // 排除注入元素
+          nbOfPreviousSiblings++;
+        }
       }
-      sibling = sibling.previousSibling;
+      sibling = sibling.previousElementSibling;
     }
-    sibling = nodeElem.nextSibling;
+    sibling = nodeElem.nextElementSibling;
     while (sibling && sibling !== document.body) {
       if (sibling.nodeName === nodeElem.nodeName) {
-        hasNextSiblings = true;
-        break;
+        if (!(sibling as any).dataset.testMonster) {
+          // 排除注入元素
+          hasNextSiblings = true;
+          break;
+        }
       }
-      sibling = sibling.nextSibling;
+      sibling = sibling.nextElementSibling;
     }
     const prefix = nodeElem.prefix ? nodeElem.prefix + ':' : '';
     const nth = nbOfPreviousSiblings || hasNextSiblings ? `[${nbOfPreviousSiblings + 1}]` : '';
@@ -156,7 +162,7 @@ export const removeEventListener = (event: string, callback: (e: Event) => void,
 export const sleep = (time: number): Promise<void> => {
   return new Promise((reslove, reject) => {
     try {
-      let tirmer = setInterval(() => {
+      let tirmer = setTimeout(() => {
         reslove();
         clearInterval(tirmer);
       }, time);
@@ -166,8 +172,9 @@ export const sleep = (time: number): Promise<void> => {
   });
 };
 
+// 监听元素变动
 export const mutationObserver = (target: Element, callback: MutationCallback) => {
-  const config = { attributes: false, childList: true, subtree: false };
+  const config = { attributes: false, childList: true, subtree: true };
   const observer = new MutationObserver(callback);
   observer.observe(target, config);
   return observer;

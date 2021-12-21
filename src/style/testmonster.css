@@ -192,6 +192,10 @@
   border-radius: 4px;
   cursor: pointer;
 }
+.test-monster-tray-btn-conetnt {
+  display: flex;
+  align-items: center;
+}
 .test-monster-tip-success {
   background-color: #19be6b;
 }
@@ -214,6 +218,7 @@
   background-color: #4d9bee;
   color: #fff;
   cursor: pointer;
+  margin: 0 5px;
 }
 .test-monster-tray-option-btn:hover {
   opacity: 0.8;

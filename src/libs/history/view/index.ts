@@ -13,12 +13,12 @@ export class NativeMask extends NativeBase {
   init(time: number, title: string = '开始记录') {
     return new Promise((resolve, reject) => {
       if (this.example) {
-        this.example.innerHTML = `<span class='test-monster-mask-text'>${title}:${time}</span>`;
+        this.example.innerHTML = `<span data-test-monster='true' class='test-monster-mask-text'>${title}:${time}</span>`;
         this.show();
         let t1 = setInterval(() => {
           if (!this.example) return;
           time--;
-          this.example.innerHTML = `<span class='test-monster-mask-text'>${title}:${time}</span>`;
+          this.example.innerHTML = `<span data-test-monster='true' class='test-monster-mask-text'>${title}:${time}</span>`;
           if (time === 0) {
             this.hidden();
             clearInterval(t1);
@@ -94,7 +94,8 @@ export class NativeRecord extends NativeBase {
     }
   }
   destroy() {
-    if (this.example) document.body.removeChild(this.example);
+    const App = document.querySelector('#app');
+    if (this.example) App ? App.removeChild(this.example) : document.body.removeChild(this.example);
     this.example = undefined;
     this.status = 0;
     for (let i = 0; i < recordList.length; i++) {
@@ -152,7 +153,7 @@ export class NativeTray extends NativeBase {
       this.example.appendChild(this.trayInput.example);
     }
   }
-  updateOptions(options: Array<FileOrFolder>, handleRun: (value: FileOrFolder) => void) {
+  updateOptions(options: Array<FileOrFolder>, handleRun: (value: FileOrFolder) => void, handleVerify: (value: FileOrFolder) => void) {
     const trayOption = this.trayOption;
     if (trayOption && trayOption.example) {
       trayOption.example.innerHTML = '';
@@ -162,22 +163,45 @@ export class NativeTray extends NativeBase {
           macthed = IsurlExait(window.location.href, x.contentScript.url.split(','));
         }
         const trayOptionItem = new NativeBase('test-monster-tray-option-item', 'flex');
-        const trayOptionBtn = new NativeBase('test-monster-tray-option-btn', 'block');
+        const trayOptionRunBtn = new NativeBase('test-monster-tray-option-btn', 'block');
+        const trayOptionVerifyBtn = new NativeBase('test-monster-tray-option-btn', 'block');
         const trayOptionConetnt = new NativeBase('test-monster-tray-option-conetnt', 'block');
+        const trayBtnContent = new NativeBase('test-monster-tray-btn-conetnt', 'block');
+        const trayOptionVerifyTip = new NativeBase(
+          `test-monster-tray-option-tip test-monster-tip-${x.verify ? 'success' : 'error'}`,
+          'block'
+        );
         const trayOptionTip = new NativeBase(`test-monster-tray-option-tip test-monster-tip-${macthed ? 'success' : 'error'}`, 'block');
-        if (trayOption.example && trayOptionBtn.example && trayOptionItem.example && trayOptionConetnt.example && trayOptionTip.example) {
+        if (
+          trayOptionVerifyTip.example &&
+          trayOption.example &&
+          trayOptionRunBtn.example &&
+          trayOptionItem.example &&
+          trayOptionConetnt.example &&
+          trayOptionTip.example &&
+          trayBtnContent.example &&
+          trayOptionVerifyBtn.example
+        ) {
           trayOptionConetnt.example.innerText = x.name;
+          trayOptionVerifyTip.example.innerText = x.verify ? '通过验证脚本' : '未通过验证脚本';
           trayOptionTip.example.innerText = macthed ? '该网站脚本' : '非网站脚本';
           if (!macthed) trayOptionTip.example.title = '非该网站脚本可能会执行失败！';
           trayOptionItem.example.appendChild(trayOptionConetnt.example);
           x;
           trayOptionConetnt.example.appendChild(trayOptionTip.example);
+          trayOptionConetnt.example.appendChild(trayOptionVerifyTip.example);
           trayOption.example.appendChild(trayOptionItem.example);
-          trayOptionBtn.example.innerText = '执行';
-          trayOptionBtn.example.addEventListener('click', () => {
+          trayOptionRunBtn.example.innerText = '执行';
+          trayOptionVerifyBtn.example.innerText = '验证';
+          trayOptionRunBtn.example.addEventListener('click', () => {
             handleRun(x);
           });
-          trayOptionItem.example.appendChild(trayOptionBtn.example);
+          trayOptionVerifyBtn.example.addEventListener('click', () => {
+            handleVerify(x);
+          });
+          trayBtnContent.example.appendChild(trayOptionVerifyBtn.example);
+          trayBtnContent.example.appendChild(trayOptionRunBtn.example);
+          trayOptionItem.example.appendChild(trayBtnContent.example);
         }
       });
     }

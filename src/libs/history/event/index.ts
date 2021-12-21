@@ -6,10 +6,12 @@ export class EventMonster {
   xpath = '';
   formValue = '';
   eventType: IEventType = 'CLICK';
-  constructor({ xpath, eventType, formValue }: { xpath: string; eventType: IEventType; formValue?: any }) {
+  lastRunTime = 1000;
+  constructor({ xpath, eventType, formValue, lastRunTime }: { xpath: string; eventType: IEventType; formValue: any; lastRunTime: number }) {
     this.xpath = xpath;
     this.eventType = eventType;
-    formValue && (this.formValue = formValue);
+    this.formValue = formValue;
+    this.lastRunTime = lastRunTime;
   }
 }
 export class EventMonsterList {
@@ -50,6 +52,7 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
       if (eventType === 'INPUT') {
         (el as HTMLInputElement).value = formValue;
         dispatchEventHandler('input', el as HTMLInputElement);
+        // dispatchEventHandler('blur', el as HTMLInputElement);
       }
       if (eventType === 'FOCUS') {
         dispatchEventHandler('click', el as Element);
@@ -75,7 +78,7 @@ let cancelKey = false;
  * @returns
  */
 export const runEventSleep = async (
-  list: Array<{ xpath: string; eventType: IEventType; formValue: any }>,
+  list: Array<{ xpath: string; eventType: IEventType; formValue: any; lastRunTime: number }>,
   sleepTime: number,
   callback: Function,
   loop: number = 1
@@ -86,8 +89,8 @@ export const runEventSleep = async (
     for (let i = 0; i < list.length; i++) {
       if (cancelKey) return;
       try {
+        await sleep(list[i].lastRunTime || sleepTime);
         await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
-        await sleep(sleepTime);
       } catch (error) {
         throw error;
       }

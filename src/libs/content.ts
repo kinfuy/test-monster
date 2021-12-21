@@ -35,7 +35,6 @@ chromeAddListenerMessage(async (request, sendResponse) => {
     const { EventList } = await getStoreKey<{ EventList: EventMonsterList }>(['EventList']);
     EventList.eventList.forEach(async (x) => {
       await runEvent(x.xpath, x.eventType, x.formValue);
-      console.log(x);
     });
   }
 });

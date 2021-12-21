@@ -28,7 +28,8 @@ export class NativeBase implements NativeUI {
     base.dataset.testMonster = 'true'; // 给注入的元素打上标记
     this.display = display;
     this.example = base;
-    target ? target.appendChild(this.example) : document.body.appendChild(this.example);
+    const App = document.querySelector('#app');
+    target ? target.appendChild(this.example) : App ? App.appendChild(this.example) : document.body.appendChild(this.example);
   }
   show() {
     if (this.example) {
@@ -43,7 +44,8 @@ export class NativeBase implements NativeUI {
     }
   }
   destroy() {
-    if (this.example) document.body.removeChild(this.example);
+    const App = document.querySelector('#app');
+    if (this.example) App ? App.removeChild(this.example) : document.body.removeChild(this.example);
     this.example = undefined;
     this.status = 0;
   }
