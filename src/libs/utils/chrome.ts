@@ -170,3 +170,12 @@ export const commandAddListener = (callback: Function) => {
     callback(command);
   });
 };
+
+/**
+ * 截取当前窗口
+ */
+export const screenShot = () => {
+  // chrome.tabs.captureVisibleTab(null, {}, function (dataUrl) {
+  //   sendResponse({ imgSrc: dataUrl });
+  // });
+};

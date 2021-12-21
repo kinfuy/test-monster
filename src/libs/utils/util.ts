@@ -52,9 +52,9 @@ export const loadFile = (fileName: string, content: string) => {
  * 删除所有cookies
  */
 export const clearAllCookie = () => {
-  var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+  let keys = document.cookie.match(/[^ =;]+(?=\=)/g);
   if (keys) {
-    for (var i = keys.length; i--; ) document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString();
+    for (let i = keys.length; i--; ) document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString();
   }
 };
 /**
@@ -72,14 +72,14 @@ export const getXPath = (el: Element) => {
     let nbOfPreviousSiblings = 0;
     let hasNextSiblings = false;
     let sibling = nodeElem.previousSibling;
-    while (sibling) {
+    while (sibling && sibling !== document.body) {
       if (sibling.nodeType !== Node.DOCUMENT_TYPE_NODE && sibling.nodeName === nodeElem.nodeName) {
         nbOfPreviousSiblings++;
       }
       sibling = sibling.previousSibling;
     }
     sibling = nodeElem.nextSibling;
-    while (sibling) {
+    while (sibling && sibling !== document.body) {
       if (sibling.nodeName === nodeElem.nodeName) {
         hasNextSiblings = true;
         break;
@@ -99,7 +99,7 @@ export const getXPath = (el: Element) => {
  * @returns
  */
 export const getELementXpath = (xpath: string) => {
-  var result = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+  let result = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
   return result.iterateNext();
 };
 /**
@@ -132,15 +132,19 @@ export const dispatchEventHandler = (eventName: string, el: Element) => {
  * @param event
  * @param callback
  */
-export const addEventListener = (event: string, callback: <T>(e: T | Event | MouseEvent) => void, source: Document | Window = document) => {
-  source.addEventListener(event, callback);
+export const addEventListener = (
+  event: string,
+  callback: <T>(e: T | Event | MouseEvent) => void,
+  source: Document | Window | Node = document
+) => {
+  source.addEventListener(event, callback, { capture: true });
 };
 /**
  * 移除事件监听
  * @param event
  * @param callback
  */
-export const removeEventListener = (event: string, callback: (e: Event) => void, source: Document | Window = document) => {
+export const removeEventListener = (event: string, callback: (e: Event) => void, source: Document | Window | Node = document) => {
   source.removeEventListener(event, callback);
 };
 
@@ -160,4 +164,11 @@ export const sleep = (time: number): Promise<void> => {
       reject();
     }
   });
+};
+
+export const mutationObserver = (target: Element, callback: MutationCallback) => {
+  const config = { attributes: false, childList: true, subtree: false };
+  const observer = new MutationObserver(callback);
+  observer.observe(target, config);
+  return observer;
 };

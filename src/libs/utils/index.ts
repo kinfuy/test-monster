@@ -11,6 +11,7 @@ import {
   createNotifications,
   getChromeUrl,
   commandAddListener,
+  screenShot,
 } from './chrome';
 import {
   IsurlExait,
@@ -23,6 +24,7 @@ import {
   getXPath,
   getELementXpath,
   dispatchEventHandler,
+  mutationObserver,
 } from './util';
 
 export {
@@ -48,4 +50,6 @@ export {
   createNotifications,
   getChromeUrl,
   commandAddListener,
+  screenShot,
+  mutationObserver,
 };

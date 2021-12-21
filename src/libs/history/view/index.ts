@@ -1,6 +1,6 @@
 import { FileOrFolder } from '../../../source/store/script';
 import { NativeBase } from '../../types';
-import { IsurlExait } from './../../utils';
+import { IsurlExait, getChromeUrl } from './../../utils';
 // 记录提示倒计时
 export class NativeMask extends NativeBase {
   constructor() {
@@ -181,5 +181,24 @@ export class NativeTray extends NativeBase {
         }
       });
     }
+  }
+}
+
+export class NativeMouse extends NativeBase {
+  Mouse = new NativeBase('test-monster-mouse-icon', 'block', 'img');
+  x = undefined;
+  y = undefined;
+  constructor() {
+    super('test-monster-mouse', 'block');
+    if (this.Mouse.example) this.example?.appendChild(this.Mouse.example);
+  }
+  autoClick(x: string, y: string): void {
+    if (this.example) {
+      this.example.style.top = y + 'px';
+      this.example.style.left = x + 'px';
+    }
+    setTimeout(() => {
+      this.destroy();
+    }, 3000);
   }
 }

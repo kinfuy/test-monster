@@ -1,7 +1,8 @@
 // 该文件会注入到目标网站
+import 'babel-polyfill';
 import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
 import { EventMonsterList, EventMonster, runEventSleep, cancelEvent } from './history';
-import { addEventListener, removeEventListener, getXPath } from './utils';
+import { addEventListener, removeEventListener, getXPath, mutationObserver } from './utils';
 import { Eventkey } from './utils/const';
 import throttle from 'lodash.throttle';
 import { FileOrFolder } from '../source/store/script';
@@ -9,10 +10,15 @@ let mask: NativeMask;
 let tool: NativeTool;
 let tray: NativeTray;
 let eventMonsterList: EventMonsterList;
-addEventListener('click', (e: any) => {
-  if (e.target.dataset.testMonster) return; // 排除注入元素
-  if (tray) tray.destroy();
-});
+// mutationObserver(document.body, (mutationsList, observer) => {
+//   for (let mutation of mutationsList) {
+//     if (mutation.type === 'childList') {
+//       mutation.addedNodes.forEach((x) => {
+//         addEventListener('click', startListener, x);
+//       });
+//     }
+//   }
+// });
 addEventListener(
   'message',
   (info: any) => {
@@ -54,7 +60,15 @@ addEventListener(
               tool.destroy();
             },
             item.contentScript?.loop
-          );
+          )
+            .then(() => {
+              window.postMessage({ key: Eventkey.MONSTER_SCREEN_SHOT }, '*');
+            })
+            .catch((err) => {
+              const record = new NativeRecord(err, 'test-monster-record-error');
+              record.autoClose(3000);
+              tool.destroy();
+            });
         }
       });
     }
@@ -72,7 +86,7 @@ function maskInit() {
     mask.init(3).then(() => {
       tool && tool.show();
       initForm();
-      addEventListener('click', startListener);
+      addEventListener('click', startListener, document);
     });
   }
 }
@@ -129,6 +143,7 @@ function uninstallForm() {
 function handleChange(e: any) {
   const path = getXPath(e.target);
   const formValue = e.target.value || '';
+  if (!path) return;
   const event = new EventMonster({ xpath: path, eventType: 'INPUT', formValue });
   eventMonsterList.push(event);
   const record = new NativeRecord(`表单触发change事件（表单值：${e.target.value}）`, 'test-monster-record-warning');
@@ -137,6 +152,7 @@ function handleChange(e: any) {
 // 表单聚焦事件
 function handleFocus(e: any) {
   const path = getXPath(e.target);
+  if (!path) return;
   const event = new EventMonster({ xpath: path, eventType: 'FOCUS' });
   eventMonsterList.push(event);
   const record = new NativeRecord(`表单触发Focus事件（表单值：${e.target.value}）`, 'test-monster-record-warning');

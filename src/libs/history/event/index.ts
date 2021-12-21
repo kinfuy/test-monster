@@ -85,8 +85,12 @@ export const runEventSleep = async (
   while (count <= loop) {
     for (let i = 0; i < list.length; i++) {
       if (cancelKey) return;
-      await sleep(sleepTime);
-      await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
+      try {
+        await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
+        await sleep(sleepTime);
+      } catch (error) {
+        throw error;
+      }
     }
     count++;
   }

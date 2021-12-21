@@ -8,6 +8,7 @@ import {
   commandAddListener,
   setStore,
   getStoreKey,
+  screenShot,
 } from './utils';
 import { Eventkey } from './utils/const';
 createContextMenus('脚本检索', (info, tab) => {
@@ -27,6 +28,9 @@ chromeAddListenerMessage(async (request, sendResponse) => {
   if (request.key === Eventkey.MONSTER_RECORD_STOP) {
     window.open(getChromeUrl(`/libs/views/script.html`));
     setStore({ currectEventList: request.data });
+  }
+  if (request.key === Eventkey.MONSTER_SCREEN_SHOT) {
+    // screenShot();
   }
   if (request.key === Eventkey.MONSTER_SCRIPT_SEARCH) {
     const { folderModule } = await getStoreKey<{ folderModule: FolderStore }>(['folderModule']);

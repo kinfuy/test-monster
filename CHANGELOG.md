@@ -1,6 +1,16 @@
 ## 0.0.3 (2021-12-16)
 
 
+### ✨ Features | 新功能
+
+* event sleep ([04e931d](https://gitee.com/Y_onghu/test-monster/commit/04e931d))
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* detail ([25315ee](https://gitee.com/Y_onghu/test-monster/commit/25315ee))
+
+
 
 ## 0.0.3 (2021-12-16)
 

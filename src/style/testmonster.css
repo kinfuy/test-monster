@@ -218,3 +218,12 @@
 .test-monster-tray-option-btn:hover {
   opacity: 0.8;
 }
+.test-monster-mouse {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+}
+.test-monster-mouse-icon {
+  width: 100%;
+  height: 100%;
+}

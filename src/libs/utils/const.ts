@@ -14,4 +14,6 @@ export const Eventkey = {
   MONSTER_SCRIPT_SEARCH: 'monster_script_search',
   /** 脚本检索结果 */
   MONSTER_SCRIPT_SEARCH_RESULT: 'monster_script_search_result',
+  /** 脚本截图 */
+  MONSTER_SCREEN_SHOT: 'monster_screen_shot',
 };

@@ -14,6 +14,9 @@ addEventListener(
     if (info.data.key === Eventkey.MONSTER_SCRIPT_SEARCH) {
       sendMessageToExtension(Eventkey.MONSTER_SCRIPT_SEARCH, { url: info.data.url, inputValue: info.data.inputValue });
     }
+    if (info.data.key === Eventkey.MONSTER_SCREEN_SHOT) {
+      sendMessageToExtension(Eventkey.MONSTER_SCREEN_SHOT, {});
+    }
   },
   window
 );
