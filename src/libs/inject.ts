@@ -5,6 +5,7 @@ import { EventMonsterList, EventMonster, runEventSleep, cancelEvent } from './hi
 import { addEventListener, removeEventListener, getXPath, mutationObserver } from './utils';
 import { Eventkey } from './utils/const';
 import throttle from 'lodash.throttle';
+import clonedeep from 'lodash.clonedeep';
 import { FileOrFolder } from '../source/store/script';
 import { PositioningElement, bindChildElenemt } from '../libs/utils/element';
 let mask: NativeMask;
@@ -56,7 +57,7 @@ function maskInit() {
           }
         }
       });
-      addEventListener('click', startListener, document);
+      // addEventListener('click', startListener, document);
       addEventListener('mousedown', handleMouseDown, document);
       addEventListener('mouseup', handleMouseUp, document);
       // addEventListener('mousemove', startListener, document);
@@ -70,48 +71,57 @@ function maskInit() {
 
 // 缓存上次事件触发时间
 let lastRunTimeCache: undefined | Date = undefined;
+
+let mousedownTimeCache: undefined | Date = undefined;
+let mousdownEventCache: undefined | EventMonster = undefined;
+
 // 开始监听
 function startListener(e: any) {
-  if (tool) {
-    if (e.target.dataset.testMonster) return; // 排除注入元素
-    if (tool.status === 0) return; // 不需要监控
-    if (!lastRunTimeCache) lastRunTimeCache = new Date();
-    const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
-    lastRunTimeCache = new Date();
-    const path = getXPath(e.target);
-    if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
-    if (path) {
-      const event = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime });
-      eventMonsterList.push(event);
-      const record = new NativeRecord('元素触发了点击事件！', 'test-monster-record-warning');
-      record.autoClose(3000);
-    }
+  if (!checkNeedListener(e)) return;
+  console.log('startListener');
+  if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+  lastRunTimeCache = new Date();
+  const path = getXPath(e.target);
+  if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
+  if (path) {
+    const event = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime });
+    eventMonsterList.push(event);
+    const record = new NativeRecord('元素触发了点击事件！', 'test-monster-record-warning');
+    record.autoClose(3000);
   }
 }
 // 鼠标按下
 function handleMouseDown(e: any) {
-  if (tool) {
-    if (e.target.dataset.testMonster) return; // 排除注入元素
-    if (tool.status === 0) return; // 不需要监控
-    if (!lastRunTimeCache) lastRunTimeCache = new Date();
-    const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
-    lastRunTimeCache = new Date();
-    const path = getXPath(e.target);
-    if (path) {
-      const event = new EventMonster({ xpath: path, eventType: 'MOUSE_DOWN', formValue: '', lastRunTime: lastRunTime });
-      eventMonsterList.push(event);
-      const record = new NativeRecord('鼠标触发了mousedown事件！', 'test-monster-record-warning');
-      record.autoClose(3000);
-    }
+  if (!checkNeedListener(e)) return;
+  console.log('handleMouseDown');
+  if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+  mousedownTimeCache = new Date();
+  lastRunTimeCache = new Date();
+  const path = getXPath(e.target);
+  if (path) {
+    const event = new EventMonster({ xpath: path, eventType: 'MOUSE_DOWN', formValue: '', lastRunTime: lastRunTime });
+    eventMonsterList.push(event);
+    const record = new NativeRecord('鼠标触发了mousedown事件！', 'test-monster-record-warning');
+    record.autoClose(3000);
+    mousdownEventCache = event;
   }
 }
 
 // 鼠标抬起
 function handleMouseUp(e: any) {
-  if (tool) {
-    if (e.target.dataset.testMonster) return; // 排除注入元素
-    if (tool.status === 0) return; // 不需要监控
-    if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  if (!checkNeedListener(e)) return;
+  console.log('handleMouseUp');
+  if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  if (mousedownTimeCache && mousdownEventCache) {
+    if (new Date().getTime() - mousedownTimeCache.getTime() < 200) {
+      const clickEvent = clonedeep(mousdownEventCache);
+      clickEvent.eventType = 'CLICK';
+      eventMonsterList.push(clickEvent);
+      const record = new NativeRecord('元素触发了CLICK事件！', 'test-monster-record-warning');
+      record.autoClose(3000);
+    }
     const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
     lastRunTimeCache = new Date();
     const path = getXPath(e.target);
@@ -122,6 +132,8 @@ function handleMouseUp(e: any) {
       record.autoClose(3000);
     }
   }
+  mousedownTimeCache = undefined;
+  mousdownEventCache = undefined;
 }
 // 停止记录
 function handleStop() {
@@ -170,7 +182,7 @@ function handleBlur(e: any) {
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
   lastRunTimeCache = new Date();
-  const formValue = e.target.value || '';
+  const formValue = '';
   const event = new EventMonster({ xpath: path, eventType: 'BLUR', formValue, lastRunTime: lastRunTime });
   eventMonsterList.push(event);
   const record = new NativeRecord(`表单触发blur事件`, 'test-monster-record-warning');
@@ -266,3 +278,11 @@ function handleRun(item: FileOrFolder) {
 }
 // 脚本验证
 function handleVerify(item: FileOrFolder) {}
+
+//
+function checkNeedListener(e: any) {
+  if (!tool) return false;
+  if (e.target.dataset.testMonster) return false; // 排除注入元素
+  if (tool.status === 0) return false; // 不需要监控
+  return true;
+}

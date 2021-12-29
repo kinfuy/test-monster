@@ -44,7 +44,7 @@
             <el-option label="表单失焦" value="BLUR"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="formData.eventType === 'INPUT'" label="表单值">
+        <el-form-item v-if="formData.eventType === 'INPUT' || 'CHANGE'" label="表单值">
           <el-input placeholder="请输入表单值" v-model="formData.formValue"></el-input>
         </el-form-item>
         <el-form-item label="xpath" required>
@@ -106,6 +106,11 @@ export default defineComponent({
           desc: '表单聚焦',
         };
       if (type === 'INPUT')
+        return {
+          icon: 'week-zhongmingming',
+          desc: '表单赋值',
+        };
+      if (type === 'CHANGE')
         return {
           icon: 'week-zhongmingming',
           desc: '表单赋值',

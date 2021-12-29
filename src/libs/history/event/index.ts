@@ -56,12 +56,14 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
         dispatchEventHandler('mouseup', el as Element);
       }
       if (eventType === 'INPUT') {
+        if ((el as HTMLInputElement).type === 'checkbox' || 'radio') (el as HTMLInputElement).checked = !!formValue;
         (el as HTMLInputElement).value = formValue;
         dispatchEventHandler('input', el as HTMLInputElement);
       }
       if (eventType === 'CHANGE') {
         if ((el as HTMLInputElement).type === 'checkbox' || 'radio') (el as HTMLInputElement).checked = !!formValue;
         (el as HTMLInputElement).value = formValue;
+        dispatchEventHandler('input', el as HTMLInputElement);
         dispatchEventHandler('change', el as HTMLInputElement);
       }
       if (eventType === 'FOCUS') {
@@ -72,8 +74,8 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
       }
       resolve(true);
     } catch (error) {
-      if (eventType === 'BLUR') {
-        // 元素失焦不影响整体流程，某些元素可以会因为鼠标点击，元素remove，导致失去焦点找不到元素
+      if (eventType === 'BLUR' || 'MOUSE_UP') {
+        // 元素失焦,鼠标抬起不影响整体流程，某些元素可以会因为鼠标点击，元素remove，导致失去焦点找不到元素
         resolve(true);
       } else {
         const record = new NativeRecord(`${eventType}事件触发失败`, 'test-monster-record-error');

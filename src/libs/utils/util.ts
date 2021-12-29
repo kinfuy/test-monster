@@ -182,7 +182,7 @@ export const addEventListener = (
   callback: <T>(e: T | Event | MouseEvent) => void,
   source: Document | Window | Node = document
 ) => {
-  source.addEventListener(event, callback, { capture: true });
+  source.addEventListener(event, callback, { capture: true, passive: true });
 };
 /**
  * 移除事件监听

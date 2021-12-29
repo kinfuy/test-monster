@@ -1,6 +1,10 @@
 ## 0.0.4 (2021-12-29)
 
 
+
+## 0.0.4 (2021-12-29)
+
+
 ### ✨ Features | 新功能
 
 * 截屏 ([97a546a](https://gitee.com/Y_onghu/test-monster/commit/97a546a))
@@ -9,6 +13,7 @@
 
 ### 🐛 Bug Fixes | Bug 修复
 
+* 解决表单捕捉问题 ([de4bf77](https://gitee.com/Y_onghu/test-monster/commit/de4bf77))
 * change version ([b1de160](https://gitee.com/Y_onghu/test-monster/commit/b1de160))
 * detail ([2ec805c](https://gitee.com/Y_onghu/test-monster/commit/2ec805c))
 * detail ([25315ee](https://gitee.com/Y_onghu/test-monster/commit/25315ee))
@@ -65,16 +70,24 @@
 
 
 
-## 0.0.3 (2021-12-16)
+## 0.0.4 (2021-12-29)
+
+
+
+## 0.0.4 (2021-12-29)
 
 
 ### ✨ Features | 新功能
 
+* 截屏 ([97a546a](https://gitee.com/Y_onghu/test-monster/commit/97a546a))
 * event sleep ([04e931d](https://gitee.com/Y_onghu/test-monster/commit/04e931d))
 
 
 ### 🐛 Bug Fixes | Bug 修复
 
+* 解决表单捕捉问题 ([de4bf77](https://gitee.com/Y_onghu/test-monster/commit/de4bf77))
+* change version ([b1de160](https://gitee.com/Y_onghu/test-monster/commit/b1de160))
+* detail ([2ec805c](https://gitee.com/Y_onghu/test-monster/commit/2ec805c))
 * detail ([25315ee](https://gitee.com/Y_onghu/test-monster/commit/25315ee))
 
 
