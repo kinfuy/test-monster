@@ -9,10 +9,10 @@
         <el-icon class="menu-icon"><Promotion /></el-icon>
         <span class="menu-text">脚本</span>
       </div>
-      <div @click="handleClick('website')" :class="['menu-item', { 'menu-active': activeMenu === 'website' }]">
+      <!-- <div @click="handleClick('website')" :class="['menu-item', { 'menu-active': activeMenu === 'website' }]">
         <el-icon class="menu-icon"><Monitor /></el-icon>
         <span class="menu-text">站点</span>
-      </div>
+      </div> -->
       <div @click="handleClick('task')" :class="['menu-item', { 'menu-active': activeMenu === 'task' }]">
         <el-icon class="menu-icon"><AlarmClock /></el-icon>
         <span class="menu-text">任务</span>
@@ -25,10 +25,10 @@
         <el-icon class="menu-icon"><Setting /></el-icon>
         <span class="menu-text">设置</span>
       </div>
-      <div @click="handleClick('dustbin')" :class="['menu-item', { 'menu-active': activeMenu === 'dustbin' }]">
+      <!-- <div @click="handleClick('dustbin')" :class="['menu-item', { 'menu-active': activeMenu === 'dustbin' }]">
         <el-icon class="menu-icon"><DeleteFilled /></el-icon>
         <span class="menu-text">回收站</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

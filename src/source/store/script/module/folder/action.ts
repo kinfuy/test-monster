@@ -15,14 +15,23 @@ const syncFolderModule = () => {
 /**
  * 初始化FolderModule
  */
-const initFolderModule = () => {
-  getStoreKey<{ folderModule: FolderStore }>(['folderModule']).then(({ folderModule }) => {
-    if (folderModule) {
-      folderStore.value.currentID = folderModule.currentID;
-      folderStore.value.currentLevel = folderModule.currentLevel;
-      folderStore.value.flieList = folderModule.flieList;
-      folderStore.value.virtualCrumb = folderModule.virtualCrumb;
-    }
+const initFolderModule = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    getStoreKey<{ folderModule: FolderStore }>(['folderModule'])
+      .then(({ folderModule }) => {
+        if (folderModule) {
+          folderStore.value.currentID = folderModule.currentID;
+          folderStore.value.currentLevel = folderModule.currentLevel;
+          folderStore.value.flieList = folderModule.flieList;
+          folderStore.value.virtualCrumb = folderModule.virtualCrumb;
+        }
+      })
+      .then(() => {
+        resolve(true);
+      })
+      .catch((err) => {
+        reject(false);
+      });
   });
 };
 /**

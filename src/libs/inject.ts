@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 // 该文件会注入到目标网站
 import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
 import { EventMonsterList, EventMonster, runEventSleep, cancelEvent } from './history';
@@ -11,6 +12,9 @@ let tool: NativeTool;
 let tray: NativeTray;
 let eventMonsterList: EventMonsterList;
 let Observer: MutationObserver | undefined;
+// addEventListener('click', (e: any) => {
+//   PositioningElement(e.target);
+// });
 addEventListener(
   'message',
   (info: any) => {
@@ -21,7 +25,7 @@ addEventListener(
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_TRAY) {
       tray = new NativeTray({
-        input: throttle(handleInput, 500),
+        input: throttle(handleSearchInput, 500),
       });
       tray.show();
     }
@@ -53,6 +57,13 @@ function maskInit() {
         }
       });
       addEventListener('click', startListener, document);
+      addEventListener('mousedown', handleMouseDown, document);
+      addEventListener('mouseup', handleMouseUp, document);
+      // addEventListener('mousemove', startListener, document);
+      // addEventListener('mouseover', startListener, document);
+      // addEventListener('mouseleave', startListener, document);
+      // addEventListener('mouseout', startListener, document);
+      // addEventListener('mouseenter', startListener, document);
     });
   }
 }
@@ -73,7 +84,42 @@ function startListener(e: any) {
       const event = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime });
       eventMonsterList.push(event);
       const record = new NativeRecord('元素触发了点击事件！', 'test-monster-record-warning');
-      record.autoClose(5000);
+      record.autoClose(3000);
+    }
+  }
+}
+// 鼠标按下
+function handleMouseDown(e: any) {
+  if (tool) {
+    if (e.target.dataset.testMonster) return; // 排除注入元素
+    if (tool.status === 0) return; // 不需要监控
+    if (!lastRunTimeCache) lastRunTimeCache = new Date();
+    const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+    lastRunTimeCache = new Date();
+    const path = getXPath(e.target);
+    if (path) {
+      const event = new EventMonster({ xpath: path, eventType: 'MOUSE_DOWN', formValue: '', lastRunTime: lastRunTime });
+      eventMonsterList.push(event);
+      const record = new NativeRecord('鼠标触发了mousedown事件！', 'test-monster-record-warning');
+      record.autoClose(3000);
+    }
+  }
+}
+
+// 鼠标抬起
+function handleMouseUp(e: any) {
+  if (tool) {
+    if (e.target.dataset.testMonster) return; // 排除注入元素
+    if (tool.status === 0) return; // 不需要监控
+    if (!lastRunTimeCache) lastRunTimeCache = new Date();
+    const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+    lastRunTimeCache = new Date();
+    const path = getXPath(e.target);
+    if (path) {
+      const event = new EventMonster({ xpath: path, eventType: 'MOUSE_UP', formValue: '', lastRunTime: lastRunTime });
+      eventMonsterList.push(event);
+      const record = new NativeRecord('鼠标触发了mouseup事件！', 'test-monster-record-warning');
+      record.autoClose(3000);
     }
   }
 }
@@ -95,6 +141,7 @@ function initForm(target?: Node | Element) {
   if (target) {
     target.addEventListener('focus', handleFocus);
     target.addEventListener('change', handleChange);
+    target.addEventListener('blur', handleBlur);
   } else {
     const inputList = document.getElementsByTagName('input');
     const textareaList = document.getElementsByTagName('textarea');
@@ -102,6 +149,7 @@ function initForm(target?: Node | Element) {
     formList.forEach((val) => {
       val.addEventListener('focus', handleFocus);
       val.addEventListener('change', handleChange);
+      val.addEventListener('blur', handleBlur);
     });
   }
 }
@@ -113,7 +161,20 @@ function uninstallForm() {
   formList.forEach((val) => {
     val.removeEventListener('focus', handleFocus);
     val.removeEventListener('change', handleChange);
+    val.removeEventListener('blur', handleBlur);
   });
+}
+function handleBlur(e: any) {
+  const path = getXPath(e.target);
+  if (!path) return;
+  if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+  lastRunTimeCache = new Date();
+  const formValue = e.target.value || '';
+  const event = new EventMonster({ xpath: path, eventType: 'BLUR', formValue, lastRunTime: lastRunTime });
+  eventMonsterList.push(event);
+  const record = new NativeRecord(`表单触发blur事件`, 'test-monster-record-warning');
+  record.autoClose(3000);
 }
 // 表单值修改事件
 function handleChange(e: any) {
@@ -123,10 +184,22 @@ function handleChange(e: any) {
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
   lastRunTimeCache = new Date();
+  const event = new EventMonster({ xpath: path, eventType: 'CHANGE', formValue, lastRunTime: lastRunTime });
+  eventMonsterList.push(event);
+  const record = new NativeRecord(`表单触发change事件（表单值：${e.target.value}）`, 'test-monster-record-warning');
+  record.autoClose(3000);
+}
+function handleInput(e: any) {
+  const path = getXPath(e.target);
+  const formValue = e.target.value || '';
+  if (!path) return;
+  if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+  lastRunTimeCache = new Date();
   const event = new EventMonster({ xpath: path, eventType: 'INPUT', formValue, lastRunTime: lastRunTime });
   eventMonsterList.push(event);
   const record = new NativeRecord(`表单触发change事件（表单值：${e.target.value}）`, 'test-monster-record-warning');
-  record.autoClose(5000);
+  record.autoClose(3000);
 }
 // 表单聚焦事件
 function handleFocus(e: any) {
@@ -138,15 +211,17 @@ function handleFocus(e: any) {
   const event = new EventMonster({ xpath: path, eventType: 'FOCUS', formValue: '', lastRunTime: lastRunTime });
   eventMonsterList.push(event);
   const record = new NativeRecord(`表单触发Focus事件（表单值：${e.target.value}）`, 'test-monster-record-warning');
-  record.autoClose(5000);
+  record.autoClose(3000);
 }
 //清理事件监听器
 function clearEventListener() {
-  removeEventListener('click', startListener);
+  removeEventListener('click', startListener, document);
+  removeEventListener('mousedown', handleMouseDown, document);
+  removeEventListener('mouseup', handleMouseUp, document);
   uninstallForm();
 }
 //脚本检索input事件
-function handleInput(Event: any) {
+function handleSearchInput(Event: any) {
   window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH, url: window.location.href, inputValue: Event.target.value }, '*');
 }
 

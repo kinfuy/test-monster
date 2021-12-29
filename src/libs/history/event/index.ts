@@ -49,20 +49,37 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
       if (eventType === 'CLICK') {
         dispatchEventHandler('click', el as Element);
       }
+      if (eventType === 'MOUSE_DOWN') {
+        dispatchEventHandler('mousedown', el as Element);
+      }
+      if (eventType === 'MOUSE_UP') {
+        dispatchEventHandler('mouseup', el as Element);
+      }
       if (eventType === 'INPUT') {
         (el as HTMLInputElement).value = formValue;
         dispatchEventHandler('input', el as HTMLInputElement);
-        // dispatchEventHandler('blur', el as HTMLInputElement);
+      }
+      if (eventType === 'CHANGE') {
+        if ((el as HTMLInputElement).type === 'checkbox' || 'radio') (el as HTMLInputElement).checked = !!formValue;
+        (el as HTMLInputElement).value = formValue;
+        dispatchEventHandler('change', el as HTMLInputElement);
       }
       if (eventType === 'FOCUS') {
-        dispatchEventHandler('click', el as Element);
         dispatchEventHandler('focus', el as Element);
+      }
+      if (eventType === 'BLUR') {
+        dispatchEventHandler('blur', el as HTMLInputElement);
       }
       resolve(true);
     } catch (error) {
-      const record = new NativeRecord(`事件触发失败:${error}`, 'test-monster-record-error');
-      record.autoClose(5000);
-      reject('事件触发失败！');
+      if (eventType === 'BLUR') {
+        // 元素失焦不影响整体流程，某些元素可以会因为鼠标点击，元素remove，导致失去焦点找不到元素
+        resolve(true);
+      } else {
+        const record = new NativeRecord(`${eventType}事件触发失败`, 'test-monster-record-error');
+        record.autoClose(5000);
+        reject('事件触发失败！');
+      }
     }
   });
 };

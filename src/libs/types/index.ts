@@ -1,4 +1,39 @@
-export type IEventType = 'CLICK' | 'INPUT' | 'FOCUS' | 'SCORLL';
+export type IEventType =
+  | 'CLICK'
+  | 'DBLCLICK'
+  | 'CONTEXT_MENU'
+  // 表单事件
+  | 'INPUT'
+  | 'CHANGE'
+  | 'FOCUS'
+  | 'SCORLL'
+  | 'BLUR'
+  | 'SUBMIT'
+  | 'RESET'
+  // 鼠标事件
+  | 'MOUSE_DOWN'
+  | 'MOUSE_UP'
+  | 'MOUSE_MOVE'
+  | 'MOUSE_OVER'
+  | 'MOUSE_OUT'
+  | 'MOUSE_ENTER'
+  | 'MOUSE_LEAVE'
+  // 键盘事件
+  | 'KEY_DOWN'
+  | 'KEY_UP'
+  | 'KEY_PRESS'
+  // 剪贴板事件
+  | 'COPY'
+  | 'CUT'
+  | 'PASTE'
+  // 拖拽事件
+  | 'DRAG'
+  | 'DRAG_END'
+  | 'DRAG_ENTER'
+  | 'DRAG_LEAVE'
+  | 'DRAG_OVER'
+  | 'DRAG_START'
+  | 'DROP';
 
 export type FormType = 'INPUT' | 'TEXTAREA';
 // 操作记录

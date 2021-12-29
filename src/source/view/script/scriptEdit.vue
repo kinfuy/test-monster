@@ -7,7 +7,7 @@
     </div>
     <div v-if="stepEvent" class="edit-view">
       <div class="step-warper">
-        <el-steps :space="200" :active="stepEvent.eventList.length + 2" align-center>
+        <el-steps direction="vertical" :space="200" :active="stepEvent.eventList.length + 2" align-center>
           <el-step status="success" title="开始">
             <template #icon>
               <IconSvg name="week-fuwuleixing"></IconSvg>
@@ -30,12 +30,18 @@
       </div>
     </div>
     <el-drawer v-model="drawerVisible" title="编辑节点" direction="rtl">
-      <el-form ref="editorFormRef" :model="formData" label-width="120px" class="demo-ruleForm">
+      <el-form ref="editorFormRef" size="mini" :model="formData" label-width="120px" class="demo-ruleForm">
+        <el-form-item label="更多操作:">
+          <el-button size="mini" @click="handleAdd" plain type="primary">插入前置节点</el-button>
+          <el-button size="mini" @click="handleAdd" plain type="primary">插入后置节点</el-button>
+          <el-button size="mini" @click="handleDelete" plain type="danger">删除该节点</el-button>
+        </el-form-item>
         <el-form-item label="节点类型:" required>
           <el-select v-model="formData.eventType" placeholder="请选择节点类型">
-            <el-option label="点击元素" value="CLICK"> </el-option>
-            <el-option label="聚焦表单" value="FOCUS"> </el-option>
+            <el-option label="元素点击" value="CLICK"> </el-option>
+            <el-option label="表单聚焦" value="FOCUS"> </el-option>
             <el-option label="表单赋值" value="INPUT"> </el-option>
+            <el-option label="表单失焦" value="BLUR"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="formData.eventType === 'INPUT'" label="表单值">
@@ -46,7 +52,6 @@
         </el-form-item>
         <el-form-item>
           <el-button size="mini" type="primary" @click="handleSave()">保存</el-button>
-          <el-button size="mini" @click="handleDelete" plain type="danger">删除</el-button>
           <el-button size="mini" @click="resetForm()">取消</el-button>
         </el-form-item>
       </el-form>
@@ -69,6 +74,7 @@ export default defineComponent({
 
     const drawerVisible = ref(false);
     const { folderStoreModule } = useStore();
+
     const route = useRoute();
     const router = useRouter();
     const stepEvent = ref<EventMonsterList | undefined>(undefined);
@@ -78,28 +84,36 @@ export default defineComponent({
       eventType: undefined,
       formValue: undefined,
       xpath: undefined,
+      lastRunTime: 1000,
     });
     const init = (id: string) => {
-      const script = folderStoreModule.action.getFloder(id);
-      if (script && script.contentScript && script.contentScript.eventList.length > 0) {
-        stepEvent.value = script.contentScript;
-      }
+      folderStoreModule.action.initFolderModule().then(() => {
+        const script = folderStoreModule.action.getFloder(id);
+        if (script && script.contentScript && script.contentScript.eventList.length > 0) {
+          stepEvent.value = script.contentScript;
+        }
+      });
     };
     const getIcon = (type: string) => {
       if (type === 'CLICK')
         return {
           icon: 'week-fenxiang',
-          desc: '点击元素',
+          desc: '元素点击',
         };
       if (type === 'FOCUS')
         return {
           icon: 'week-dingwei',
-          desc: '聚焦表单',
+          desc: '表单聚焦',
         };
       if (type === 'INPUT')
         return {
           icon: 'week-zhongmingming',
           desc: '表单赋值',
+        };
+      if (type === 'BLUR')
+        return {
+          icon: 'week-zhongmingming',
+          desc: '表单失焦',
         };
     };
     const handleBack = () => {
@@ -126,6 +140,7 @@ export default defineComponent({
             eventType: formData.value.eventType || 'CLICK',
             formValue: formData.value.formValue || '',
             xpath: formData.value.xpath || '',
+            lastRunTime: formData.value.lastRunTime,
           });
         }
         folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: stepEvent.value }]);

@@ -97,7 +97,12 @@ export const getXPath = (el: Element) => {
     parts.push(prefix + nodeElem.localName + nth);
     if (nodeElem.parentNode) nodeElem = nodeElem.parentNode as Element;
   }
-  return parts.length ? '/' + parts.reverse().join('/') : '';
+  let rst = parts.length ? '/' + parts.reverse().join('/') : '';
+  rst = rst
+    .replace(/\/g/g, '/*[name()="g"]')
+    .replace(/\/svg/g, '/*[name()="svg"]')
+    .replace(/\/path/g, '/*[name()="path"]');
+  return rst;
 };
 /**
  * 根据xpath获取元素
@@ -130,8 +135,42 @@ export function image2Base64(img: any) {
  * @param el
  */
 export const dispatchEventHandler = (eventName: string, el: Element) => {
-  const event = new Event(eventName, { cancelable: true, bubbles: true });
-  el.dispatchEvent(event);
+  if (el) {
+    switch (eventName) {
+      case 'focus':
+        (el as HTMLInputElement).focus();
+        break;
+      case 'blur': {
+        (el as HTMLInputElement).blur();
+        break;
+      }
+      case 'input':
+        const inputEvent = new InputEvent('input');
+        el.dispatchEvent(inputEvent);
+        break;
+      case 'mousedown': {
+        const mouseEvent = new MouseEvent('mousedown', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        });
+        el.dispatchEvent(mouseEvent);
+        break;
+      }
+      case 'mouseup': {
+        const mouseEvent = new MouseEvent('mouseup', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        });
+        el.dispatchEvent(mouseEvent);
+        break;
+      }
+      default:
+        const event = new Event(eventName, { cancelable: false, bubbles: true });
+        el.dispatchEvent(event);
+    }
+  }
 };
 /**
  * 事件监听
