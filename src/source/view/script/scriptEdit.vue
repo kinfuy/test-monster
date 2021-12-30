@@ -1,13 +1,13 @@
 <template>
   <div v-height class="script-edit">
     <div class="edit-opreate">
-      <el-button size="mini" @click="handleAdd" type="primary">新建节点</el-button>
-      <el-button size="mini" @click="handleEdit" type="primary">配置节点</el-button>
+      <el-button size="mini" :disabled="!stepEvent" @click="handleAdd" type="primary">新建节点</el-button>
+      <el-button size="mini" @click="handleEdit" type="primary">配置脚本</el-button>
       <el-button size="mini" @click="handleBack">返回</el-button>
     </div>
     <div v-if="stepEvent" class="edit-view">
       <div class="step-warper">
-        <el-steps direction="vertical" :space="200" :active="stepEvent.eventList.length + 2" align-center>
+        <el-steps direction="vertical" :space="60" :active="stepEvent.eventList.length + 2" align-center>
           <el-step status="success" title="开始">
             <template #icon>
               <IconSvg name="week-fuwuleixing"></IconSvg>
@@ -29,33 +29,7 @@
         </el-steps>
       </div>
     </div>
-    <el-drawer v-model="drawerVisible" title="编辑节点" direction="rtl">
-      <el-form ref="editorFormRef" size="mini" :model="formData" label-width="120px" class="demo-ruleForm">
-        <el-form-item label="更多操作:">
-          <el-button size="mini" @click="handleAdd" plain type="primary">插入前置节点</el-button>
-          <el-button size="mini" @click="handleAdd" plain type="primary">插入后置节点</el-button>
-          <el-button size="mini" @click="handleDelete" plain type="danger">删除该节点</el-button>
-        </el-form-item>
-        <el-form-item label="节点类型:" required>
-          <el-select v-model="formData.eventType" placeholder="请选择节点类型">
-            <el-option label="元素点击" value="CLICK"> </el-option>
-            <el-option label="表单聚焦" value="FOCUS"> </el-option>
-            <el-option label="表单赋值" value="INPUT"> </el-option>
-            <el-option label="表单失焦" value="BLUR"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="formData.eventType === 'INPUT' || 'CHANGE'" label="表单值">
-          <el-input placeholder="请输入表单值" v-model="formData.formValue"></el-input>
-        </el-form-item>
-        <el-form-item label="xpath" required>
-          <el-input placeholder="请输入元素Xpath" v-model="formData.xpath"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="mini" type="primary" @click="handleSave()">保存</el-button>
-          <el-button size="mini" @click="resetForm()">取消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-drawer>
+    <node-edit ref="nodeEditRef" @finish="handleFinish" @delete="handleDelete"></node-edit>
   </div>
 </template>
 <script lang="ts">
@@ -64,13 +38,16 @@ import { useStore } from './../../store/script';
 import { useRoute, useRouter } from 'vue-router';
 import { EventMonsterList } from '../../../libs/history';
 import { ElMessage } from 'element-plus';
+import NodeEdit from './component/nodeEdit.vue';
+import { IEventType } from '../../../libs/types';
 import { UUID } from '../../../libs/utils';
+import clonedeep from 'lodash.clonedeep';
 export default defineComponent({
   name: 'scriptEdit',
-  components: {},
+  components: { NodeEdit },
   setup() {
     //表单
-    const editorFormRef = ref<null | ComputedRef>(null);
+    const nodeEditRef = ref<null | ComputedRef>(null);
 
     const drawerVisible = ref(false);
     const { folderStoreModule } = useStore();
@@ -79,22 +56,29 @@ export default defineComponent({
     const router = useRouter();
     const stepEvent = ref<EventMonsterList | undefined>(undefined);
 
-    const formData = ref({
-      id: undefined,
-      eventType: undefined,
-      formValue: undefined,
-      xpath: undefined,
-      lastRunTime: 1000,
-    });
     const init = (id: string) => {
       folderStoreModule.action.initFolderModule().then(() => {
         const script = folderStoreModule.action.getFloder(id);
         if (script && script.contentScript && script.contentScript.eventList.length > 0) {
-          stepEvent.value = script.contentScript;
+          stepEvent.value = script.contentScript || [];
         }
       });
     };
-    const getIcon = (type: string) => {
+    const handleBack = () => {
+      router.back();
+    };
+    const handleAdd = () => {
+      if (stepEvent.value) {
+        drawerVisible.value = true;
+      } else {
+        ElMessage.success('请先配置脚本消息');
+        return;
+      }
+    };
+    const handleClick = (item: any) => {
+      if (nodeEditRef.value) nodeEditRef.value.show(item);
+    };
+    const getIcon = (type: IEventType) => {
       if (type === 'CLICK')
         return {
           icon: 'week-fenxiang',
@@ -107,7 +91,7 @@ export default defineComponent({
         };
       if (type === 'INPUT')
         return {
-          icon: 'week-zhongmingming',
+          icon: 'week-wenben2',
           desc: '表单赋值',
         };
       if (type === 'CHANGE')
@@ -117,74 +101,67 @@ export default defineComponent({
         };
       if (type === 'BLUR')
         return {
-          icon: 'week-zhongmingming',
+          icon: 'week-fullscreen',
           desc: '表单失焦',
         };
+      if (type === 'KEY_DOWN')
+        return {
+          icon: 'week--jianpan',
+          desc: 'Enter按下',
+        };
+      if (type === 'KEY_UP')
+        return {
+          icon: 'week--jianpan',
+          desc: 'Enter抬起',
+        };
+      if (type === 'MOUSE_DOWN')
+        return {
+          icon: 'week-shubiao',
+          desc: '鼠标按下',
+        };
+      if (type === 'MOUSE_UP')
+        return {
+          icon: 'week-shubiao',
+          desc: '鼠标抬起',
+        };
     };
-    const handleBack = () => {
-      router.back();
+    const handleFinish = (formData: any) => {
+      if (formData.id) {
+        stepEvent.value?.eventList.forEach((x) => {
+          if (x.id === formData.id) {
+            if (formData.eventType) x.eventType = formData.eventType;
+            if (formData.formValue) x.formValue = formData.formValue;
+            if (formData.xpath) x.xpath = formData.xpath;
+          }
+        });
+      } else {
+        stepEvent.value?.eventList.push({
+          id: UUID(),
+          eventType: formData.eventType || 'CLICK',
+          formValue: formData.formValue || '',
+          xpath: formData.xpath || '',
+          lastRunTime: formData.lastRunTime,
+        });
+      }
+      folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: clonedeep(stepEvent.value) }]);
+      ElMessage.success('节点已修改');
+      init(route.query.id as string);
     };
-    const handleAdd = () => {
-      drawerVisible.value = true;
+    const handleEdit = () => {
+      if (nodeEditRef.value) nodeEditRef.value.show();
     };
-    const handleSave = () => {
-      if (!editorFormRef.value) return;
-      editorFormRef.value.validate((valid: boolean) => {
-        if (!valid && route.query.id) return false;
-        if (formData.value.id) {
-          stepEvent.value?.eventList.forEach((x) => {
-            if (x.id === formData.value.id) {
-              if (formData.value.eventType) x.eventType = formData.value.eventType;
-              if (formData.value.formValue) x.formValue = formData.value.formValue;
-              if (formData.value.xpath) x.xpath = formData.value.xpath;
-            }
-          });
-        } else {
-          stepEvent.value?.eventList.push({
-            id: UUID(),
-            eventType: formData.value.eventType || 'CLICK',
-            formValue: formData.value.formValue || '',
-            xpath: formData.value.xpath || '',
-            lastRunTime: formData.value.lastRunTime,
-          });
-        }
-        folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: stepEvent.value }]);
-        init(route.query.id as string);
-        resetForm();
-        ElMessage.success('节点已经修改');
-      });
-    };
-    const handleClick = (item: any) => {
-      formData.value.id = item.id;
-      formData.value.xpath = item.xpath;
-      formData.value.formValue = item.formValue;
-      formData.value.eventType = item.eventType;
-      drawerVisible.value = true;
-    };
-
-    const resetForm = () => {
-      drawerVisible.value = false;
-      formData.value.id = undefined;
-      formData.value.xpath = undefined;
-      formData.value.formValue = undefined;
-      formData.value.eventType = undefined;
-    };
-    const handleDelete = () => {
+    const handleDelete = (id: string) => {
       if (stepEvent.value) {
         for (let i = 0; i < stepEvent.value.eventList.length; i++) {
-          if (stepEvent.value.eventList[i].id === formData.value.id) {
+          if (stepEvent.value.eventList[i].id === id) {
             stepEvent.value.eventList.splice(i, 1);
             i--;
           }
         }
         folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: stepEvent.value }]);
-        init(route.query.id as string);
-        resetForm();
         ElMessage.success('节点已删除');
       }
     };
-
-    const handleEdit = () => {};
     onMounted(() => {
       if (!route.query.id) {
         router.back();
@@ -193,18 +170,15 @@ export default defineComponent({
       }
     });
     return {
-      editorFormRef,
-      drawerVisible,
       stepEvent,
-      formData,
+      nodeEditRef,
       getIcon,
       handleBack,
-      handleSave,
       handleClick,
-      resetForm,
-      handleDelete,
       handleAdd,
+      handleDelete,
       handleEdit,
+      handleFinish,
     };
   },
 });
@@ -214,6 +188,8 @@ export default defineComponent({
   width: 100%;
   box-sizing: border-box;
   .edit-opreate {
+    position: fixed;
+    top: 10px;
     padding: 10px 50px;
     display: flex;
     justify-content: flex-end;
@@ -225,12 +201,12 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 50px;
+    padding: 60px 50px 20px 50px;
     width: 100%;
     height: calc(100% - 50px);
     .step-warper {
       width: 100%;
-      max-width: 1400px;
+      max-width: 300px;
       &:deep(.el-step__icon) {
         cursor: pointer;
       }
@@ -239,6 +215,12 @@ export default defineComponent({
       }
       &:deep(.el-step__description) {
         cursor: pointer;
+      }
+      &:deep(.el-step) {
+        flex-shrink: 0;
+        .el-step__head {
+          height: 100%;
+        }
       }
     }
   }

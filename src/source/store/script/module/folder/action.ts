@@ -43,11 +43,17 @@ const createFolder = ({
   name,
   contentScript,
   icon,
+  level,
+  parentId,
+  scriptType,
 }: {
   type: 'file' | 'floder';
   name: string;
   contentScript?: EventMonsterList;
   icon?: string;
+  level?: number;
+  parentId?: string;
+  scriptType?: 'SCRIPT' | 'TASK' | 'SCRIPT_SET' | 'TASK_SET';
 }) => {
   folderStore.value.flieList.unshift({
     id: UUID(),
@@ -59,8 +65,9 @@ const createFolder = ({
     disabled: false,
     createTime: Dayjs().format('YYYY-MM-DD HH:mm:ss'),
     updateTime: Dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    level: unref(folderStore.value.currentLevel),
-    parentId: unref(folderStore.value.currentID),
+    level: level !== undefined ? level : unref(folderStore.value.currentLevel),
+    parentId: parentId !== undefined ? parentId : unref(folderStore.value.currentID),
+    scriptType: scriptType !== undefined ? scriptType : type === 'file' ? 'SCRIPT' : 'SCRIPT_SET',
   });
   syncFolderModule();
 };
@@ -75,6 +82,8 @@ const updateFloder = (id: string, info: Array<{ key: string; value: any }>) => {
     info.forEach((s) => {
       if (x.id === id) {
         x[s.key] = s.value;
+        console.log(s.key);
+        console.log(s.value);
         x.updateTime = Dayjs().format('YYYY-MM-DD HH:mm:ss');
         syncFolderModule();
       }

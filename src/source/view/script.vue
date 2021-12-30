@@ -36,7 +36,11 @@ export default defineComponent({
             type: 'file',
             name: '录制脚本',
             contentScript: currectEventList,
+            level: 0,
+            parentId: 'script_uuid',
           });
+          folderStoreModule.action.updateCurrent('script_uuid', 0);
+          folderStoreModule.action.goCrumb('script_uuid');
           setStore({ currectEventList: null });
         }
       });

@@ -72,6 +72,12 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
       if (eventType === 'BLUR') {
         dispatchEventHandler('blur', el as HTMLInputElement);
       }
+      if (eventType === 'KEY_DOWN') {
+        dispatchEventHandler('keydown', el as Element);
+      }
+      if (eventType === 'KEY_UP') {
+        dispatchEventHandler('keyup', el as Element);
+      }
       resolve(true);
     } catch (error) {
       if (eventType === 'BLUR' || 'MOUSE_UP') {

@@ -1,5 +1,5 @@
 import 'babel-polyfill';
-import { FolderStore } from '../source/store/script/module/folder';
+import { FolderStore, FileOrFolder } from '../source/store/script/module/folder';
 import {
   chromeAddListenerMessage,
   sendMessageToContentScript,
@@ -8,6 +8,7 @@ import {
   commandAddListener,
   setStore,
   getStoreKey,
+  IsurlExait,
   screenShot,
 } from './utils';
 import { Eventkey } from './utils/const';
@@ -34,9 +35,18 @@ chromeAddListenerMessage(async (request, sendResponse) => {
   }
   if (request.key === Eventkey.MONSTER_SCRIPT_SEARCH) {
     const { folderModule } = await getStoreKey<{ folderModule: FolderStore }>(['folderModule']);
-    const searchScript = folderModule.flieList.filter(
-      (x) => x.type === 'file' && x.name.includes(request.data.inputValue) && x.contentScript
-    );
+    const checkScript = (item: FileOrFolder) => {
+      if (item.type === 'file' && item.contentScript && IsurlExait(request.data.url, [item.contentScript.url])) {
+        return true;
+      }
+      if (item.type === 'floder') {
+        const childrenLength = folderModule.flieList.filter((x) => x.parentId === item.id).length;
+        console.log(childrenLength);
+        return childrenLength > 0 ? true : false;
+      }
+      return false;
+    };
+    const searchScript = folderModule.flieList.filter((x) => x.name.includes(request.data.inputValue) && checkScript(x));
     sendMessageToContentScript({
       key: Eventkey.MONSTER_SCRIPT_SEARCH_RESULT,
       data: searchScript,

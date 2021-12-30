@@ -64,7 +64,7 @@ const scriptMenuOptions: Array<Menuitem> = [
     id: '10',
     group: ['script'],
     icon: 'week-xinjianwenjianjia',
-    name: '新建分组',
+    name: '新建脚本集',
     key: 'CREATE_GROUP',
   },
   {

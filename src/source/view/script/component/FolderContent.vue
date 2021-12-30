@@ -44,7 +44,7 @@ export default defineComponent({
           folderStoreModule.action.createFolder({ type: 'file', name: '新建脚本' });
         }
         if (code === 'CREATE_GROUP') {
-          folderStoreModule.action.createFolder({ type: 'floder', name: '新建分组' });
+          folderStoreModule.action.createFolder({ type: 'floder', name: '新建脚本集' });
         }
         if (code === 'SORT_NAME') folderStoreModule.action.sortFloder('name');
         if (code === 'SORT_TIME') folderStoreModule.action.sortFloder('time');

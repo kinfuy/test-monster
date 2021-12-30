@@ -1,4 +1,9 @@
-## 0.0.4 (2021-12-29)
+## 0.0.4 (2021-12-30)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* mousedown与click冲突 ([f08864f](https://gitee.com/Y_onghu/test-monster/commit/f08864f))
 
 
 
@@ -71,6 +76,11 @@
 
 
 ## 0.0.4 (2021-12-29)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* mousedown与click冲突 ([f08864f](https://gitee.com/Y_onghu/test-monster/commit/f08864f))
 
 
 

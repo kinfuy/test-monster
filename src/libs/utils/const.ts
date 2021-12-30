@@ -17,3 +17,22 @@ export const Eventkey = {
   /** 脚本截图 */
   MONSTER_SCREEN_SHOT: 'monster_screen_shot',
 };
+
+export const ScriptType = [
+  {
+    key: 'SCRIPT',
+    value: '脚本',
+  },
+  {
+    key: 'TASK',
+    value: '任务',
+  },
+  {
+    key: 'SCRIPT_SET',
+    value: '脚本集',
+  },
+  {
+    key: 'TASK_SET',
+    value: '任务集',
+  },
+];

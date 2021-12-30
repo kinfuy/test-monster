@@ -25,6 +25,7 @@ export interface FileOrFolder extends Record<string, any> {
   parentId: string | null;
   contentScript?: EventMonsterList;
   verify?: boolean;
+  scriptType: 'SCRIPT' | 'TASK' | 'SCRIPT_SET' | 'TASK_SET';
 }
 export interface FolderStore {
   flieList: Array<FileOrFolder>;

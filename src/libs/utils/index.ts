@@ -25,6 +25,7 @@ import {
   getELementXpath,
   dispatchEventHandler,
   mutationObserver,
+  getEnumDisplay,
 } from './util';
 
 export {
@@ -52,4 +53,5 @@ export {
   commandAddListener,
   screenShot,
   mutationObserver,
+  getEnumDisplay,
 };

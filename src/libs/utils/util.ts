@@ -134,7 +134,7 @@ export function image2Base64(img: any) {
  * @param eventName
  * @param el
  */
-export const dispatchEventHandler = (eventName: string, el: Element) => {
+export const dispatchEventHandler = (eventName: string, el: Element | Document) => {
   if (el) {
     switch (eventName) {
       case 'focus':
@@ -145,8 +145,10 @@ export const dispatchEventHandler = (eventName: string, el: Element) => {
         break;
       }
       case 'input':
-        const inputEvent = new InputEvent('input');
-        el.dispatchEvent(inputEvent);
+        {
+          const inputEvent = new InputEvent('input');
+          el.dispatchEvent(inputEvent);
+        }
         break;
       case 'mousedown': {
         const mouseEvent = new MouseEvent('mousedown', {
@@ -157,6 +159,32 @@ export const dispatchEventHandler = (eventName: string, el: Element) => {
         el.dispatchEvent(mouseEvent);
         break;
       }
+      case 'keyup': {
+        const keyboardEvent = new KeyboardEvent('keyup', {
+          key: 'Enter',
+          code: 'Enter',
+          keyCode: 13,
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+        });
+        el.dispatchEvent(keyboardEvent);
+        break;
+      }
+
+      case 'keydown': {
+        const keyboardEvent = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          code: 'Enter',
+          keyCode: 13,
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+        });
+        el.dispatchEvent(keyboardEvent);
+        break;
+      }
+
       case 'mouseup': {
         const mouseEvent = new MouseEvent('mouseup', {
           bubbles: true,
@@ -177,9 +205,9 @@ export const dispatchEventHandler = (eventName: string, el: Element) => {
  * @param event
  * @param callback
  */
-export const addEventListener = (
+export const addEventListener = <T>(
   event: string,
-  callback: <T>(e: T | Event | MouseEvent) => void,
+  callback: (e: T extends Event ? Event : any) => void,
   source: Document | Window | Node = document
 ) => {
   source.addEventListener(event, callback, { capture: true, passive: true });
@@ -189,7 +217,11 @@ export const addEventListener = (
  * @param event
  * @param callback
  */
-export const removeEventListener = (event: string, callback: (e: Event) => void, source: Document | Window | Node = document) => {
+export const removeEventListener = <T>(
+  event: string,
+  callback: (e: T extends Event ? Event : any) => void,
+  source: Document | Window | Node = document
+) => {
   source.removeEventListener(event, callback);
 };
 
@@ -218,3 +250,16 @@ export const mutationObserver = (target: Element, callback: MutationCallback) =>
   observer.observe(target, config);
   return observer;
 };
+
+/**
+ * 枚举数组值转显示
+ * @param value 枚举id值
+ * @param source 数据源，目前限定 {value,label} 为item的数据源
+ */
+export function getEnumDisplay(value: string, source: Array<Record<string, string>>, option = { value: 'key', label: 'value' }) {
+  if (value !== null && value !== undefined && source && Array.isArray(source)) {
+    const s = source.find((x) => x[option.value].toString() === value.toString());
+    return s ? s[option.label] : value;
+  }
+  return value;
+}

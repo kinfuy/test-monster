@@ -1,0 +1,93 @@
+<template>
+  <el-drawer v-model="drawerVisible" :title="title" direction="rtl">
+    <el-form ref="editorFormRef" size="mini" :model="formData" label-width="120px" class="demo-ruleForm">
+      <el-form-item v-if="formData.id" label="更多操作:">
+        <el-button size="mini" @click="handleAdd" plain type="primary">插入前置节点</el-button>
+        <el-button size="mini" @click="handleAdd" plain type="primary">插入后置节点</el-button>
+        <el-button size="mini" @click="handleDelete" plain type="danger">删除该节点</el-button>
+      </el-form-item>
+      <el-form-item label="节点类型:" required>
+        <el-select v-model="formData.eventType" placeholder="请选择节点类型">
+          <el-option v-for="item in EventOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="formData.eventType === 'INPUT' || formData.eventType === 'CHANGE'" label="表单值">
+        <el-input placeholder="请输入表单值" v-model="formData.formValue"></el-input>
+      </el-form-item>
+      <el-form-item label="xpath" required>
+        <el-input placeholder="请输入元素Xpath" v-model="formData.xpath"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="mini" type="primary" @click="handleSave()">保存</el-button>
+        <el-button size="mini" @click="resetForm()">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </el-drawer>
+</template>
+<script lang="ts">
+import { defineComponent, ref, ComputedRef, computed } from 'vue';
+import { EventOptions } from './../../../lib/config/event';
+export default defineComponent({
+  name: 'NodeEdit',
+  emits: ['finish', 'delete'],
+  setup(props, { emit }) {
+    const drawerVisible = ref(false);
+    //表单
+    const editorFormRef = ref<null | ComputedRef>(null);
+    const title = computed(() => {
+      return formData.value.id ? '编辑节点' : '新建节点';
+    });
+    const show = (item: any) => {
+      formData.value.id = item.id || undefined;
+      formData.value.xpath = item.xpath || undefined;
+      formData.value.formValue = item.formValue || undefined;
+      formData.value.eventType = item.eventType || undefined;
+      drawerVisible.value = true;
+    };
+    const handleAdd = () => {
+      drawerVisible.value = true;
+    };
+
+    const handleSave = () => {
+      if (!editorFormRef.value) return;
+      editorFormRef.value.validate((valid: boolean) => {
+        if (valid) {
+          emit('finish', formData.value);
+        }
+      });
+    };
+
+    const resetForm = () => {
+      drawerVisible.value = false;
+      formData.value.id = undefined;
+      formData.value.xpath = undefined;
+      formData.value.formValue = undefined;
+      formData.value.eventType = undefined;
+    };
+    const handleDelete = () => {
+      emit('delete', formData.value.id);
+      resetForm();
+    };
+    const formData = ref({
+      id: undefined,
+      eventType: undefined,
+      formValue: undefined,
+      xpath: undefined,
+      lastRunTime: 1000,
+    });
+    return {
+      drawerVisible,
+      EventOptions,
+      editorFormRef,
+      formData,
+      title,
+      handleAdd,
+      handleDelete,
+      show,
+      resetForm,
+      handleSave,
+    };
+  },
+});
+</script>
+<style lang="less" scoped></style>

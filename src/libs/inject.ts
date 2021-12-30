@@ -13,9 +13,6 @@ let tool: NativeTool;
 let tray: NativeTray;
 let eventMonsterList: EventMonsterList;
 let Observer: MutationObserver | undefined;
-// addEventListener('click', (e: any) => {
-//   PositioningElement(e.target);
-// });
 addEventListener(
   'message',
   (info: any) => {
@@ -25,13 +22,16 @@ addEventListener(
       maskInit();
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_TRAY) {
+      if (tray) tray.destroy();
       tray = new NativeTray({
         input: throttle(handleSearchInput, 500),
       });
       tray.show();
+      addEventListener('click', checkTray, document);
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_SEARCH_RESULT) {
-      tray.updateOptions(info.data.data, handleRun, handleVerify);
+      console.log(info.data.data);
+      tray.updateOptions(info.data.data, handleRun);
     }
   },
   window
@@ -59,6 +59,8 @@ function maskInit() {
       });
       // addEventListener('click', startListener, document);
       addEventListener('mousedown', handleMouseDown, document);
+      addEventListener('keydown', handleKeyDown, document);
+      addEventListener('keyup', handleKeyUp, document);
       addEventListener('mouseup', handleMouseUp, document);
       // addEventListener('mousemove', startListener, document);
       // addEventListener('mouseover', startListener, document);
@@ -78,7 +80,6 @@ let mousdownEventCache: undefined | EventMonster = undefined;
 // 开始监听
 function startListener(e: any) {
   if (!checkNeedListener(e)) return;
-  console.log('startListener');
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
   lastRunTimeCache = new Date();
@@ -94,7 +95,7 @@ function startListener(e: any) {
 // 鼠标按下
 function handleMouseDown(e: any) {
   if (!checkNeedListener(e)) return;
-  console.log('handleMouseDown');
+  if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
   mousedownTimeCache = new Date();
@@ -112,7 +113,6 @@ function handleMouseDown(e: any) {
 // 鼠标抬起
 function handleMouseUp(e: any) {
   if (!checkNeedListener(e)) return;
-  console.log('handleMouseUp');
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   if (mousedownTimeCache && mousdownEventCache) {
     if (new Date().getTime() - mousedownTimeCache.getTime() < 200) {
@@ -134,6 +134,34 @@ function handleMouseUp(e: any) {
   }
   mousedownTimeCache = undefined;
   mousdownEventCache = undefined;
+}
+// 键盘按下 键盘仅监听回车键
+function handleKeyDown(e: KeyboardEvent) {
+  let keyCode = e.keyCode || e.key;
+  if (keyCode === 13 && e.target && e.target instanceof HTMLElement) {
+    const path = getXPath(e.target);
+    if (!lastRunTimeCache) lastRunTimeCache = new Date();
+    const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+    lastRunTimeCache = new Date();
+    const event = new EventMonster({ xpath: path, eventType: 'KEY_DOWN', formValue: '', lastRunTime: lastRunTime });
+    eventMonsterList.push(event);
+    const record = new NativeRecord('键盘触发了keydown事件！', 'test-monster-record-warning');
+    record.autoClose(3000);
+  }
+}
+// 键盘抬起 键盘仅监听回车键
+function handleKeyUp(e: KeyboardEvent) {
+  let keyCode = e.keyCode || e.key;
+  if (keyCode === 13 && e.target && e.target instanceof HTMLElement) {
+    const path = getXPath(e.target);
+    if (!lastRunTimeCache) lastRunTimeCache = new Date();
+    const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+    lastRunTimeCache = new Date();
+    const event = new EventMonster({ xpath: path, eventType: 'KEY_UP', formValue: '', lastRunTime: lastRunTime });
+    eventMonsterList.push(event);
+    const record = new NativeRecord('键盘触发了keyup事件！', 'test-monster-record-warning');
+    record.autoClose(3000);
+  }
 }
 // 停止记录
 function handleStop() {
@@ -227,62 +255,71 @@ function handleFocus(e: any) {
 }
 //清理事件监听器
 function clearEventListener() {
-  removeEventListener('click', startListener, document);
   removeEventListener('mousedown', handleMouseDown, document);
   removeEventListener('mouseup', handleMouseUp, document);
+  removeEventListener('keydown', handleKeyDown, document);
+  removeEventListener('keyup', handleKeyUp, document);
   uninstallForm();
 }
 //脚本检索input事件
 function handleSearchInput(Event: any) {
-  window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH, url: window.location.href, inputValue: Event.target.value }, '*');
+  if (Event.target.value)
+    window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH, url: window.location.href, inputValue: Event.target.value }, '*');
 }
 
 // 脚本执行
 function handleRun(item: FileOrFolder) {
-  const eventList = item.contentScript?.eventList.map((x) => {
-    return {
-      xpath: x.xpath,
-      eventType: x.eventType,
-      formValue: x.formValue,
-      lastRunTime: x.lastRunTime,
-    };
-  });
-  if (eventList) {
-    tray.destroy();
-    const tool = new NativeTool(() => {
-      const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
-      record.autoClose(3000);
-      cancelEvent();
-      tool.destroy();
-    }, '脚本执行中');
-    tool.show();
-    runEventSleep(
-      eventList,
-      1000,
-      () => {
+  if (item.scriptType === 'SCRIPT') {
+    const eventList = item.contentScript?.eventList.map((x) => {
+      return {
+        xpath: x.xpath,
+        eventType: x.eventType,
+        formValue: x.formValue,
+        lastRunTime: x.lastRunTime,
+      };
+    });
+    if (eventList) {
+      tray.destroy();
+      removeEventListener('click', checkTray, document);
+      const tool = new NativeTool(() => {
         const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
         record.autoClose(3000);
+        cancelEvent();
         tool.destroy();
-      },
-      item.contentScript?.loop
-    )
-      .then(() => {
-        window.postMessage({ key: Eventkey.MONSTER_SCREEN_SHOT }, '*');
-      })
-      .catch((err) => {
-        const record = new NativeRecord(err, 'test-monster-record-error');
-        record.autoClose(3000);
-        tool.destroy();
-      });
+      }, '脚本执行中');
+      tool.show();
+      runEventSleep(
+        eventList,
+        1000,
+        () => {
+          const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
+          record.autoClose(3000);
+          tool.destroy();
+        },
+        item.contentScript?.loop
+      )
+        .then(() => {
+          window.postMessage({ key: Eventkey.MONSTER_SCREEN_SHOT }, '*');
+        })
+        .catch((err) => {
+          const record = new NativeRecord(err, 'test-monster-record-error');
+          record.autoClose(3000);
+          tool.destroy();
+        });
+    }
   }
 }
-// 脚本验证
-function handleVerify(item: FileOrFolder) {}
 
-//
+// 检查是否需要监听
 function checkNeedListener(e: any) {
   if (!tool) return false;
   if (e.target.dataset.testMonster) return false; // 排除注入元素
   if (tool.status === 0) return false; // 不需要监控
   return true;
+}
+// 检查托盘是否需要销毁
+function checkTray(e: any) {
+  if (tray && !e.target.dataset.testMonster)
+    // 点击非注入元素脚本检索remove
+    tray.destroy();
 }

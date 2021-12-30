@@ -45,7 +45,7 @@ export default defineComponent({
     },
     fileTitle: {
       type: String,
-      default: '新建分组',
+      default: '新建脚本集',
     },
     fixIconClass: {
       type: String,
@@ -69,8 +69,8 @@ export default defineComponent({
     );
     const headleBlur = () => {
       emit('blur', {
-        value: (edit.value && edit.value.innerText) || '新建分组',
-        html: (edit.value && edit.value.innerHTML) || '新建分组',
+        value: (edit.value && edit.value.innerText) || '新建脚本集',
+        html: (edit.value && edit.value.innerHTML) || '新建脚本集',
       });
     };
     const isDrag = computed(() => {
