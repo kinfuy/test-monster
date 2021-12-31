@@ -56,13 +56,18 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
         dispatchEventHandler('mouseup', el as Element);
       }
       if (eventType === 'INPUT') {
-        if ((el as HTMLInputElement).type === 'checkbox' || 'radio') (el as HTMLInputElement).checked = !!formValue;
+        if ((el as HTMLInputElement).type === 'checkbox' || (el as HTMLInputElement).type === 'radio')
+          (el as HTMLInputElement).checked = formValue;
         (el as HTMLInputElement).value = formValue;
         dispatchEventHandler('input', el as HTMLInputElement);
       }
       if (eventType === 'CHANGE') {
-        if ((el as HTMLInputElement).type === 'checkbox' || 'radio') (el as HTMLInputElement).checked = !!formValue;
-        (el as HTMLInputElement).value = formValue;
+        if ((el as HTMLInputElement).type === 'checkbox' || (el as HTMLInputElement).type === 'radio') {
+          (el as HTMLInputElement).checked = formValue;
+          (el as HTMLInputElement).value = formValue ? 'on' : '';
+        } else {
+          (el as HTMLInputElement).value = formValue;
+        }
         dispatchEventHandler('input', el as HTMLInputElement);
         dispatchEventHandler('change', el as HTMLInputElement);
       }

@@ -29,6 +29,7 @@
         </el-steps>
       </div>
     </div>
+    <script-config ref="scriptConfigRef" @finish="handleFinish"></script-config>
     <node-edit ref="nodeEditRef" @finish="handleFinish" @delete="handleDelete"></node-edit>
   </div>
 </template>
@@ -39,16 +40,17 @@ import { useRoute, useRouter } from 'vue-router';
 import { EventMonsterList } from '../../../libs/history';
 import { ElMessage } from 'element-plus';
 import NodeEdit from './component/nodeEdit.vue';
+import ScriptConfig from './component/scriptConfig.vue';
 import { IEventType } from '../../../libs/types';
 import { UUID } from '../../../libs/utils';
 import clonedeep from 'lodash.clonedeep';
 export default defineComponent({
   name: 'scriptEdit',
-  components: { NodeEdit },
+  components: { NodeEdit, ScriptConfig },
   setup() {
     //表单
     const nodeEditRef = ref<null | ComputedRef>(null);
-
+    const scriptConfigRef = ref<null | ComputedRef>(null);
     const drawerVisible = ref(false);
     const { folderStoreModule } = useStore();
 
@@ -148,7 +150,7 @@ export default defineComponent({
       init(route.query.id as string);
     };
     const handleEdit = () => {
-      if (nodeEditRef.value) nodeEditRef.value.show();
+      if (scriptConfigRef.value) scriptConfigRef.value.show();
     };
     const handleDelete = (id: string) => {
       if (stepEvent.value) {
@@ -172,6 +174,7 @@ export default defineComponent({
     return {
       stepEvent,
       nodeEditRef,
+      scriptConfigRef,
       getIcon,
       handleBack,
       handleClick,

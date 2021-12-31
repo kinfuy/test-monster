@@ -95,7 +95,7 @@ function startListener(e: any) {
 // 鼠标按下
 function handleMouseDown(e: any) {
   if (!checkNeedListener(e)) return;
-  if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
+  // if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
   mousedownTimeCache = new Date();
@@ -106,7 +106,7 @@ function handleMouseDown(e: any) {
     eventMonsterList.push(event);
     const record = new NativeRecord('鼠标触发了mousedown事件！', 'test-monster-record-warning');
     record.autoClose(3000);
-    mousdownEventCache = event;
+    mousdownEventCache = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime + 100 });
   }
 }
 
@@ -115,15 +115,7 @@ function handleMouseUp(e: any) {
   if (!checkNeedListener(e)) return;
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
   if (mousedownTimeCache && mousdownEventCache) {
-    if (new Date().getTime() - mousedownTimeCache.getTime() < 200) {
-      const clickEvent = clonedeep(mousdownEventCache);
-      clickEvent.eventType = 'CLICK';
-      eventMonsterList.push(clickEvent);
-      const record = new NativeRecord('元素触发了CLICK事件！', 'test-monster-record-warning');
-      record.autoClose(3000);
-    }
     const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
-    lastRunTimeCache = new Date();
     const path = getXPath(e.target);
     if (path) {
       const event = new EventMonster({ xpath: path, eventType: 'MOUSE_UP', formValue: '', lastRunTime: lastRunTime });
@@ -131,6 +123,14 @@ function handleMouseUp(e: any) {
       const record = new NativeRecord('鼠标触发了mouseup事件！', 'test-monster-record-warning');
       record.autoClose(3000);
     }
+    if (new Date().getTime() - mousedownTimeCache.getTime() < 200) {
+      if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
+      const clickEvent = clonedeep(mousdownEventCache);
+      eventMonsterList.push(clickEvent);
+      const record = new NativeRecord('元素触发了CLICK事件！', 'test-monster-record-warning');
+      record.autoClose(3000);
+    }
+    lastRunTimeCache = new Date();
   }
   mousedownTimeCache = undefined;
   mousdownEventCache = undefined;
@@ -219,9 +219,13 @@ function handleBlur(e: any) {
 // 表单值修改事件
 function handleChange(e: any) {
   const path = getXPath(e.target);
-  const formValue = e.target.value || '';
+  let checked = undefined;
   if (!path) return;
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
+  if ((e.target as HTMLInputElement).type === 'checkbox' || (e.target as HTMLInputElement).type === 'radio') {
+    checked = (e.target as HTMLInputElement).checked;
+  }
+  const formValue = checked !== undefined ? checked : e.target.value || '';
   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
   lastRunTimeCache = new Date();
   const event = new EventMonster({ xpath: path, eventType: 'CHANGE', formValue, lastRunTime: lastRunTime });
