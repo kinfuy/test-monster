@@ -1,8 +1,8 @@
 import { createApp, h } from 'vue';
 import ContextMenuConstructor from './ContextMenu.vue';
-import { getWindowSize } from './../../lib/utils';
-import { PositionType, ContextMenuConfigType, ContextMenueProps, ContextMenuInstance } from './contextMenuType';
-export { PositionType, ContextMenuConfigType, ContextMenueProps, ContextMenuInstance, Menuitem } from './contextMenuType';
+import { getWindowSize } from '../../lib/utils';
+import { PositionType, ContextMenuConfigType, ContextMenueProps, ContextMenuInstance } from './contextMenu.type';
+export { PositionType, ContextMenuConfigType, ContextMenueProps, ContextMenuInstance, Menuitem } from './contextMenu.type';
 const defaultConfig = { width: 160, height: 200 };
 /**
  *

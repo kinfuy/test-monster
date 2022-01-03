@@ -1,6 +1,6 @@
 <template>
-  <el-drawer v-model="drawerVisible" :title="title" direction="rtl">
-    <el-form ref="editorFormRef" size="mini" :model="formData" label-width="120px" class="demo-ruleForm">
+  <el-drawer v-model="drawerVisible" :title="title" size="520" direction="rtl">
+    <el-form ref="editorFormRef" size="mini" :model="formData" label-width="120px">
       <el-form-item v-if="formData.id" label="更多操作:">
         <el-button size="mini" @click="handleAdd" plain type="primary">插入前置节点</el-button>
         <el-button size="mini" @click="handleAdd" plain type="primary">插入后置节点</el-button>
@@ -38,10 +38,12 @@ export default defineComponent({
       return formData.value.id ? '编辑节点' : '新建节点';
     });
     const show = (item: any) => {
-      formData.value.id = item.id || undefined;
-      formData.value.xpath = item.xpath || undefined;
-      formData.value.formValue = item.formValue || undefined;
-      formData.value.eventType = item.eventType || undefined;
+      if (item) {
+        formData.value.id = item.id;
+        formData.value.xpath = item.xpath;
+        formData.value.formValue = item.formValue;
+        formData.value.eventType = item.eventType;
+      }
       drawerVisible.value = true;
     };
     const handleAdd = () => {
@@ -53,6 +55,7 @@ export default defineComponent({
       editorFormRef.value.validate((valid: boolean) => {
         if (valid) {
           emit('finish', formData.value);
+          resetForm();
         }
       });
     };

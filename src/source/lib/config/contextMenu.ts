@@ -1,4 +1,4 @@
-import { Menuitem } from './../../components/contextMenu/contextMenuType';
+import { Menuitem } from '../../components/ContextMenu/contextMenu.type';
 // 有key就会响应click事件
 
 const commonMenuOptions: Array<Menuitem> = [

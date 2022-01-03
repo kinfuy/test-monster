@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Menuitem, ContextMenueProps, StyleParams } from './contextMenuType';
+import { Menuitem, ContextMenueProps, StyleParams } from './contextMenu.type';
 import IconSvg from './../Icon/IconSvg.vue';
 import Render from './../Render/Render';
 export default defineComponent({

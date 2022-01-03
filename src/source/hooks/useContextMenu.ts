@@ -1,4 +1,4 @@
-import { ContextMenu, ContextMenuInstance, Menuitem } from '../components/contextMenu';
+import { ContextMenu, ContextMenuInstance } from '../components/ContextMenu';
 import { useStore } from '../store/script';
 import { getContextMenu } from '../lib/config/contextMenu';
 import { computed } from 'vue';

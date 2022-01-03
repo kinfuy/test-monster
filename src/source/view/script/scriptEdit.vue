@@ -29,7 +29,7 @@
         </el-steps>
       </div>
     </div>
-    <script-config ref="scriptConfigRef" @finish="handleFinish"></script-config>
+    <script-config ref="scriptConfigRef" @finish="handleConfigFinish"></script-config>
     <node-edit ref="nodeEditRef" @finish="handleFinish" @delete="handleDelete"></node-edit>
   </div>
 </template>
@@ -51,7 +51,6 @@ export default defineComponent({
     //表单
     const nodeEditRef = ref<null | ComputedRef>(null);
     const scriptConfigRef = ref<null | ComputedRef>(null);
-    const drawerVisible = ref(false);
     const { folderStoreModule } = useStore();
 
     const route = useRoute();
@@ -61,21 +60,17 @@ export default defineComponent({
     const init = (id: string) => {
       folderStoreModule.action.initFolderModule().then(() => {
         const script = folderStoreModule.action.getFloder(id);
-        if (script && script.contentScript && script.contentScript.eventList.length > 0) {
-          stepEvent.value = script.contentScript || [];
+        if (script) {
+          stepEvent.value = script.contentScript;
         }
+        console.log('🔥log=>scriptEdit=>66:stepEvent.value ', stepEvent.value);
       });
     };
     const handleBack = () => {
       router.back();
     };
     const handleAdd = () => {
-      if (stepEvent.value) {
-        drawerVisible.value = true;
-      } else {
-        ElMessage.success('请先配置脚本消息');
-        return;
-      }
+      if (nodeEditRef.value) nodeEditRef.value.show();
     };
     const handleClick = (item: any) => {
       if (nodeEditRef.value) nodeEditRef.value.show(item);
@@ -149,8 +144,16 @@ export default defineComponent({
       ElMessage.success('节点已修改');
       init(route.query.id as string);
     };
+    const handleConfigFinish = (formData: any) => {
+      console.log('🔥log=>scriptEdit=>149:stepEvent.value ', stepEvent.value);
+      if (!stepEvent.value) stepEvent.value = new EventMonsterList(formData.url);
+      stepEvent.value.loop = formData.loop;
+      folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: clonedeep(stepEvent.value) }]);
+      ElMessage.success('脚本配置更新');
+      init(route.query.id as string);
+    };
     const handleEdit = () => {
-      if (scriptConfigRef.value) scriptConfigRef.value.show();
+      if (scriptConfigRef.value) scriptConfigRef.value.show(stepEvent.value);
     };
     const handleDelete = (id: string) => {
       if (stepEvent.value) {
@@ -182,6 +185,7 @@ export default defineComponent({
       handleDelete,
       handleEdit,
       handleFinish,
+      handleConfigFinish,
     };
   },
 });
