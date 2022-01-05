@@ -10,9 +10,19 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('./../view/script/scriptBase.vue'),
       },
       {
-        path: 'website',
-        name: 'website',
-        component: () => import('./../view/script/website.vue'),
+        path: 'task',
+        name: 'task',
+        component: () => import('../view/script/scriptTask.vue'),
+      },
+      {
+        path: 'log',
+        name: 'log',
+        component: () => import('../view/script/scriptLog.vue'),
+      },
+      {
+        path: 'set',
+        name: 'set',
+        component: () => import('../view/script/scriptSet.vue'),
       },
     ],
   },

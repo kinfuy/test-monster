@@ -68,6 +68,7 @@ const createFolder = ({
     level: level !== undefined ? level : unref(folderStore.value.currentLevel),
     parentId: parentId !== undefined ? parentId : unref(folderStore.value.currentID),
     scriptType: scriptType !== undefined ? scriptType : type === 'file' ? 'SCRIPT' : 'SCRIPT_SET',
+    sort: getSort(scriptType, type),
   });
   syncFolderModule();
 };
@@ -82,8 +83,6 @@ const updateFloder = (id: string, info: Array<{ key: string; value: any }>) => {
     info.forEach((s) => {
       if (x.id === id) {
         x[s.key] = s.value;
-        console.log(s.key);
-        console.log(s.value);
         x.updateTime = Dayjs().format('YYYY-MM-DD HH:mm:ss');
         syncFolderModule();
       }
@@ -97,7 +96,7 @@ const updateFloder = (id: string, info: Array<{ key: string; value: any }>) => {
 const sortFloder = (sortType: 'time' | 'type' | 'name') => {
   folderStore.value.flieList = folderStore.value.flieList.sort((a, b) => {
     if (sortType === 'name') return a.name.localeCompare(b.name);
-    if (sortType === 'time') return new Date(a.createTime).getTime() - new Date(b.createTime).getTime();
+    if (sortType === 'time') return new Date(a.updateTime).getTime() - new Date(b.updateTime).getTime();
     if (sortType === 'type') return -a.type.localeCompare(b.type);
     return 1;
   });
@@ -210,4 +209,26 @@ function getIcon(type: string) {
   if (type === 'file') return 'week-daimaxiang';
   if (type === 'floder') return 'week-wenjianjia';
   return '';
+}
+
+function getSort(scriptType: string | undefined, type: string) {
+  const localType = scriptType !== undefined ? scriptType : type === 'file' ? 'SCRIPT' : 'SCRIPT_SET';
+  let sort = 0;
+  switch (localType) {
+    case 'SCRIPT':
+      sort = 0;
+      break;
+    case 'TASK':
+      sort = 1;
+      break;
+    case 'SCRIPT_SET':
+      sort = 2;
+      break;
+    case 'TASK_SET':
+      sort = 3;
+      break;
+    default:
+      break;
+  }
+  return sort;
 }

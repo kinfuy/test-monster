@@ -34,22 +34,28 @@ chromeAddListenerMessage(async (request, sendResponse) => {
     // screenShot();
   }
   if (request.key === Eventkey.MONSTER_SCRIPT_SEARCH) {
-    const { folderModule } = await getStoreKey<{ folderModule: FolderStore }>(['folderModule']);
-    const checkScript = (item: FileOrFolder) => {
-      if (item.type === 'file' && item.contentScript && IsurlExait(request.data.url, [item.contentScript.url])) {
-        return true;
-      }
-      if (item.type === 'floder') {
-        const childrenLength = folderModule.flieList.filter((x) => x.parentId === item.id).length;
-        console.log(childrenLength);
-        return childrenLength > 0 ? true : false;
-      }
-      return false;
-    };
-    const searchScript = folderModule.flieList.filter((x) => x.name.includes(request.data.inputValue) && checkScript(x));
+    let searchScript = await getSearchScript(request.data.url, request.data.inputValue);
     sendMessageToContentScript({
       key: Eventkey.MONSTER_SCRIPT_SEARCH_RESULT,
       data: searchScript,
     });
   }
 });
+
+async function getSearchScript(url: string, inputValue?: string) {
+  const { folderModule } = await getStoreKey<{ folderModule: FolderStore }>(['folderModule']);
+  const checkScript = (item: FileOrFolder) => {
+    if (item.type === 'file' && item.contentScript && IsurlExait(url, [item.contentScript.url])) {
+      return true;
+    }
+    return false;
+  };
+  let searchScript;
+  if (!inputValue) {
+    searchScript = folderModule.flieList.filter((x) => checkScript(x));
+  } else {
+    searchScript = folderModule.flieList.filter((x) => x.name.includes(inputValue) && checkScript(x));
+  }
+
+  return searchScript.sort((a, b) => a.sort - b.sort);
+}

@@ -150,6 +150,10 @@ export const dispatchEventHandler = (eventName: string, el: Element | Document) 
           el.dispatchEvent(inputEvent);
         }
         break;
+      case 'change': {
+        const changeEvent = new InputEvent('change');
+        el.dispatchEvent(changeEvent);
+      }
       case 'mousedown': {
         const mouseEvent = new MouseEvent('mousedown', {
           bubbles: true,
@@ -195,7 +199,7 @@ export const dispatchEventHandler = (eventName: string, el: Element | Document) 
         break;
       }
       default:
-        const event = new Event(eventName, { cancelable: false, bubbles: true });
+        const event = new MouseEvent(eventName, { cancelable: false, bubbles: true });
         el.dispatchEvent(event);
     }
   }

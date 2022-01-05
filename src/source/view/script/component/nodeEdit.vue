@@ -2,9 +2,18 @@
   <el-drawer v-model="drawerVisible" :title="title" size="520" direction="rtl">
     <el-form ref="editorFormRef" size="mini" :model="formData" label-width="120px">
       <el-form-item v-if="formData.id" label="更多操作:">
-        <el-button size="mini" @click="handleAdd" plain type="primary">插入前置节点</el-button>
-        <el-button size="mini" @click="handleAdd" plain type="primary">插入后置节点</el-button>
-        <el-button size="mini" @click="handleDelete" plain type="danger">删除该节点</el-button>
+        <!-- <el-button size="mini" @click="handleAdd" plain type="primary">插入前置节点</el-button>
+        <el-button size="mini" @click="handleAdd" plain type="primary">插入后置节点</el-button> -->
+        <el-popover v-model:visible="popoverVisible" placement="top" :width="160">
+          <p>是否删除该节点?</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="popoverVisible = false">取消</el-button>
+            <el-button size="mini" type="primary" plain @click="handleDelete">确认</el-button>
+          </div>
+          <template #reference>
+            <el-button size="mini" @click="popoverVisible = true" plain type="danger">删除该节点</el-button>
+          </template>
+        </el-popover>
       </el-form-item>
       <el-form-item label="节点类型:" required>
         <el-select v-model="formData.eventType" placeholder="请选择节点类型">
@@ -67,9 +76,11 @@ export default defineComponent({
       formData.value.formValue = undefined;
       formData.value.eventType = undefined;
     };
+    const popoverVisible = ref(false);
     const handleDelete = () => {
       emit('delete', formData.value.id);
       resetForm();
+      popoverVisible.value = false;
     };
     const formData = ref({
       id: undefined,
@@ -83,6 +94,7 @@ export default defineComponent({
       EventOptions,
       editorFormRef,
       formData,
+      popoverVisible,
       title,
       handleAdd,
       handleDelete,

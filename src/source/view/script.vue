@@ -6,10 +6,10 @@
     <div class="script-right">
       <div class="content-header">
         <div class="menu-item">
-          <span>Githup</span>
+          <span>使用手册</span>
         </div>
         <div class="menu-item">
-          <span>帮助</span>
+          <span>常见问题</span>
         </div>
       </div>
       <div class="constent-body">
@@ -65,6 +65,10 @@ export default defineComponent({
       height: 66px;
       .menu-item {
         margin: 0 10px;
+        cursor: pointer;
+        :hover {
+          color: #ee68b2;
+        }
       }
     }
     .constent-body {

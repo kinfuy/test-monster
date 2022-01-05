@@ -131,6 +131,7 @@ export class NativeTray extends NativeBase {
       (this.trayInput.example as HTMLInputElement).placeholder = 'Hi，Test-Monster！';
       (this.trayInput.example as HTMLInputElement).autofocus = true;
       this.trayOption = new NativeBase('test-monster-tray-options', 'block', 'div', this.example);
+      this.example.appendChild(this.trayInput.example);
       if (change) {
         this.trayInput.example.addEventListener('change', (Event) => {
           change(Event);
@@ -142,22 +143,18 @@ export class NativeTray extends NativeBase {
         if (trayInput.example) {
           trayInput.example.addEventListener('input', (Event) => {
             if (Tray && trayOption.example) {
-              if ((Event.target as HTMLInputElement).value) {
-                Tray.appendChild(trayOption.example);
-              } else {
-                Tray.removeChild(trayOption.example);
-              }
+              Tray.appendChild(trayOption.example);
               input(Event);
             }
           });
         }
+        input('init');
       }
-      this.example.appendChild(this.trayInput.example);
     }
   }
   updateOptions(options: Array<FileOrFolder>, handleRun: (value: FileOrFolder) => void) {
     const trayOption = this.trayOption;
-    if (trayOption && trayOption.example) {
+    if (options && trayOption && trayOption.example) {
       trayOption.example.innerHTML = '';
       options.forEach((x) => {
         const trayOptionItem = new NativeBase('test-monster-tray-option-item', 'flex');
@@ -176,7 +173,6 @@ export class NativeTray extends NativeBase {
           trayOptionConetnt.example.innerText = x.name;
           trayOptionTip.example.innerText = getEnumDisplay(x.scriptType, ScriptType);
           trayOptionItem.example.appendChild(trayOptionConetnt.example);
-          x;
           trayOptionConetnt.example.appendChild(trayOptionTip.example);
           trayOptionRunBtn.example.innerText = '执行';
           trayOptionRunBtn.example.addEventListener('click', () => {

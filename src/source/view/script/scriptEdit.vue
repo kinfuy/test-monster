@@ -63,7 +63,6 @@ export default defineComponent({
         if (script) {
           stepEvent.value = script.contentScript;
         }
-        console.log('🔥log=>scriptEdit=>66:stepEvent.value ', stepEvent.value);
       });
     };
     const handleBack = () => {
@@ -145,8 +144,11 @@ export default defineComponent({
       init(route.query.id as string);
     };
     const handleConfigFinish = (formData: any) => {
-      console.log('🔥log=>scriptEdit=>149:stepEvent.value ', stepEvent.value);
-      if (!stepEvent.value) stepEvent.value = new EventMonsterList(formData.url);
+      if (!stepEvent.value) {
+        stepEvent.value = new EventMonsterList(formData.url);
+      } else {
+        stepEvent.value.url = formData.url;
+      }
       stepEvent.value.loop = formData.loop;
       folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: clonedeep(stepEvent.value) }]);
       ElMessage.success('脚本配置更新');

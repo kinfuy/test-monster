@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+// import 'babel-polyfill';
 // 该文件会注入到目标网站
 import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
 import { EventMonsterList, EventMonster, runEventSleep, cancelEvent } from './history';
@@ -26,11 +26,11 @@ addEventListener(
       tray = new NativeTray({
         input: throttle(handleSearchInput, 500),
       });
+      tray.updateOptions(info.data.data, handleRun);
       tray.show();
       addEventListener('click', checkTray, document);
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_SEARCH_RESULT) {
-      console.log(info.data.data);
       tray.updateOptions(info.data.data, handleRun);
     }
   },
@@ -124,7 +124,7 @@ function handleMouseUp(e: any) {
       record.autoClose(3000);
     }
     if (new Date().getTime() - mousedownTimeCache.getTime() < 200) {
-      if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
+      // if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
       const clickEvent = clonedeep(mousdownEventCache);
       eventMonsterList.push(clickEvent);
       const record = new NativeRecord('元素触发了CLICK事件！', 'test-monster-record-warning');
@@ -267,8 +267,11 @@ function clearEventListener() {
 }
 //脚本检索input事件
 function handleSearchInput(Event: any) {
-  if (Event.target.value)
+  if (Event === 'init') {
+    window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH, url: window.location.href, inputValue: '' }, '*');
+  } else {
     window.postMessage({ key: Eventkey.MONSTER_SCRIPT_SEARCH, url: window.location.href, inputValue: Event.target.value }, '*');
+  }
 }
 
 // 脚本执行

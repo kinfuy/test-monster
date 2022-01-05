@@ -139,6 +139,8 @@
   z-index: 9999999;
 }
 .test-monster-tray-input {
+  position: absolute;
+  top: 0;
   height: 100%;
   width: 100%;
   outline: none;
@@ -147,6 +149,7 @@
   padding-left: 20px;
 }
 .test-monster-tray-options {
+  margin-top: 50px;
   display: block;
   box-sizing: border-box;
   background-color: #fff;

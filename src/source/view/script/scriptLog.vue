@@ -1,10 +1,10 @@
 <template>
-  <div class="web-site">WebSite</div>
+  <div class="script-log">scriptLog</div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'WebSite',
+  name: 'scriptLog',
 });
 </script>
 <style lang="less" scoped></style>
