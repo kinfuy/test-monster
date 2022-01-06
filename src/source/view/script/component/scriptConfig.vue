@@ -4,9 +4,6 @@
       <el-form-item label="url" required>
         <el-input placeholder="请输入url" v-model="formData.url"></el-input>
       </el-form-item>
-      <el-form-item label="循环次数" required>
-        <el-input placeholder="请输入元素Xpath" v-model="formData.loop"></el-input>
-      </el-form-item>
       <el-form-item>
         <el-button size="mini" type="primary" @click="handleSave()">保存</el-button>
         <el-button size="mini" @click="resetForm()">取消</el-button>
@@ -24,13 +21,11 @@ export default defineComponent({
     const formData = ref({
       id: undefined,
       url: undefined,
-      loop: 1,
       eventList: [],
     });
     const show = (item: any) => {
       if (item) {
         formData.value.id = item.id;
-        formData.value.loop = item.loop;
         formData.value.eventList = item.eventList;
         formData.value.url = item.url;
       }

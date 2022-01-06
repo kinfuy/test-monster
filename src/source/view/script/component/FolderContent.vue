@@ -24,7 +24,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useContextMenu } from './../../../hooks/useContextMenu';
 import { useStore, FileOrFolder } from './../../../store/script';
 import FolderOrFile from './../../../components/FolderOrFile/FolderOrFile.vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'FolderContent',
@@ -86,8 +86,16 @@ export default defineComponent({
             clipboardStoreModule.action.updateCurrectClipboard(item.id, 'cut', item);
           }
           if (code === 'DELETE') {
-            folderStoreModule.action.deleteFloder(item.id);
-            ElMessage.success('删除成功');
+            ElMessageBox.confirm('删除后不可恢复，是否继续?', '温馨提示', {
+              confirmButtonText: '确认',
+              cancelButtonText: '取消',
+              type: 'warning',
+            })
+              .then(() => {
+                folderStoreModule.action.deleteFloder(item.id);
+                ElMessage.success('删除成功');
+              })
+              .catch(() => {});
           }
           closeContextMenu();
         },

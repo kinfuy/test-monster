@@ -34,7 +34,7 @@ chromeAddListenerMessage(async (request, sendResponse) => {
   if (request.key === Eventkey.MONSTER_EVENTS_RUN) {
     const { EventList } = await getStoreKey<{ EventList: EventMonsterList }>(['EventList']);
     EventList.eventList.forEach(async (x) => {
-      await runEvent(x.xpath, x.eventType, x.formValue);
+      await runEvent(x.xpath, x.eventType, x.formValue, { mouseEventConfig: x.config });
     });
   }
 });

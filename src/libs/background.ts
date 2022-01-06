@@ -59,3 +59,8 @@ async function getSearchScript(url: string, inputValue?: string) {
 
   return searchScript.sort((a, b) => a.sort - b.sort);
 }
+
+let time = setInterval(() => {
+  window.open('http://www.baidu.com', '_blank');
+  clearInterval(time);
+}, 5000);

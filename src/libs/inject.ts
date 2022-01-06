@@ -106,7 +106,19 @@ function handleMouseDown(e: any) {
     eventMonsterList.push(event);
     const record = new NativeRecord('鼠标触发了mousedown事件！', 'test-monster-record-warning');
     record.autoClose(3000);
-    mousdownEventCache = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime + 100 });
+    // 13:enter 16:shift 18:alt 17:ctrl
+    const eventConfig = {
+      ctrlKey: !!mapKeyCode.get(17),
+      altKey: !!mapKeyCode.get(18),
+      shiftKey: !!mapKeyCode.get(16),
+    };
+    mousdownEventCache = new EventMonster({
+      xpath: path,
+      eventType: 'CLICK',
+      formValue: '',
+      lastRunTime: lastRunTime + 100,
+      config: clonedeep(eventConfig),
+    });
   }
 }
 
@@ -135,39 +147,54 @@ function handleMouseUp(e: any) {
   mousedownTimeCache = undefined;
   mousdownEventCache = undefined;
 }
-// 键盘按下 键盘仅监听回车键
+
+// keycodemap
+// 1：当前键按下后未抬起
+// 0：当前建按下后抬起
+let mapKeyCode = new Map();
+// 键盘按下 键盘仅监听回车键,shift，alt ctrl
 function handleKeyDown(e: KeyboardEvent) {
-  let keyCode = e.keyCode || e.key;
-  if (keyCode === 13 && e.target && e.target instanceof HTMLElement) {
+  let keyCode = e.keyCode;
+  // 13:enter 16:shift 18:alt 17:ctrl
+  let keyCodeList = [13, 16, 18, 17];
+  if (!keyCodeList.includes(keyCode)) return;
+  if (mapKeyCode.get(keyCode) === 1) return;
+  if (e.target && e.target instanceof HTMLElement) {
     const path = getXPath(e.target);
     if (!lastRunTimeCache) lastRunTimeCache = new Date();
     const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
     lastRunTimeCache = new Date();
-    const event = new EventMonster({ xpath: path, eventType: 'KEY_DOWN', formValue: '', lastRunTime: lastRunTime });
+    const event = new EventMonster({ xpath: path, eventType: 'KEY_DOWN', formValue: keyCode, lastRunTime: lastRunTime });
     eventMonsterList.push(event);
     const record = new NativeRecord('键盘触发了keydown事件！', 'test-monster-record-warning');
     record.autoClose(3000);
   }
+  mapKeyCode.set(keyCode, 1);
 }
-// 键盘抬起 键盘仅监听回车键
+
+// 键盘抬起 键盘仅监听回车键,shift，alt ctrl
 function handleKeyUp(e: KeyboardEvent) {
-  let keyCode = e.keyCode || e.key;
-  if (keyCode === 13 && e.target && e.target instanceof HTMLElement) {
+  let keyCode = e.keyCode;
+  // 13:enter 16:shift 18:alt 17:ctrl
+  let keyCodeList = [13, 16, 18, 17];
+  if (!keyCodeList.includes(keyCode)) return;
+  if (mapKeyCode.get(keyCode) === 0) return;
+  if (e.target && e.target instanceof HTMLElement) {
     const path = getXPath(e.target);
     if (!lastRunTimeCache) lastRunTimeCache = new Date();
     const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
     lastRunTimeCache = new Date();
-    const event = new EventMonster({ xpath: path, eventType: 'KEY_UP', formValue: '', lastRunTime: lastRunTime });
+    const event = new EventMonster({ xpath: path, eventType: 'KEY_UP', formValue: keyCode, lastRunTime: lastRunTime });
     eventMonsterList.push(event);
     const record = new NativeRecord('键盘触发了keyup事件！', 'test-monster-record-warning');
     record.autoClose(3000);
   }
+  mapKeyCode.set(keyCode, 0);
 }
 // 停止记录
 function handleStop() {
   if (tool) {
     window.postMessage({ key: Eventkey.MONSTER_RECORD_STOP, eventMonsterList: eventMonsterList }, '*');
-    clearEventListener();
     tool.hidden();
     eventMonsterList.clear();
     if (Observer) {
@@ -175,6 +202,7 @@ function handleStop() {
       Observer = undefined;
     }
   }
+  clearEventListener();
 }
 // 初始化表单，给每个表单添加focus，change监听事件
 function initForm(target?: Node | Element) {
@@ -283,6 +311,9 @@ function handleRun(item: FileOrFolder) {
         eventType: x.eventType,
         formValue: x.formValue,
         lastRunTime: x.lastRunTime,
+        config: {
+          mouseEventConfig: x.config,
+        },
       };
     });
     if (eventList) {
@@ -295,16 +326,11 @@ function handleRun(item: FileOrFolder) {
         tool.destroy();
       }, '脚本执行中');
       tool.show();
-      runEventSleep(
-        eventList,
-        1000,
-        () => {
-          const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
-          record.autoClose(3000);
-          tool.destroy();
-        },
-        item.contentScript?.loop
-      )
+      runEventSleep(eventList, 1000, () => {
+        const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
+        record.autoClose(3000);
+        tool.destroy();
+      })
         .then(() => {
           window.postMessage({ key: Eventkey.MONSTER_SCREEN_SHOT }, '*');
         })

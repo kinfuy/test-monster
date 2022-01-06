@@ -134,8 +134,22 @@ export function image2Base64(img: any) {
  * @param eventName
  * @param el
  */
-export const dispatchEventHandler = (eventName: string, el: Element | Document) => {
-  if (el) {
+interface KeyboardConfig {
+  key: string;
+  code: string;
+  keyCode: number;
+}
+interface MouseEventConfig {
+  ctrlKey: boolean;
+  altKey: boolean;
+  shiftKey: boolean;
+}
+export const dispatchEventHandler = (
+  eventName: string,
+  el: Element | Document,
+  config?: { keyboardConfig?: KeyboardConfig; mouseEventConfig?: MouseEventConfig }
+) => {
+  if (el || eventName === 'keyup' || eventName === 'keydown') {
     switch (eventName) {
       case 'focus':
         (el as HTMLInputElement).focus();
@@ -164,28 +178,32 @@ export const dispatchEventHandler = (eventName: string, el: Element | Document) 
         break;
       }
       case 'keyup': {
-        const keyboardEvent = new KeyboardEvent('keyup', {
-          key: 'Enter',
-          code: 'Enter',
-          keyCode: 13,
-          bubbles: true,
-          cancelable: true,
-          composed: true,
-        });
-        el.dispatchEvent(keyboardEvent);
+        if (config && config.keyboardConfig) {
+          const keyboardEvent = new KeyboardEvent('keyup', {
+            ...config.keyboardConfig,
+            location: 1,
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+          });
+          document.body.dispatchEvent(keyboardEvent);
+        }
         break;
       }
 
       case 'keydown': {
-        const keyboardEvent = new KeyboardEvent('keydown', {
-          key: 'Enter',
-          code: 'Enter',
-          keyCode: 13,
-          bubbles: true,
-          cancelable: true,
-          composed: true,
-        });
-        el.dispatchEvent(keyboardEvent);
+        if (config && config.keyboardConfig) {
+          const keyboardEvent = new KeyboardEvent('keydown', {
+            ...config.keyboardConfig,
+            shiftKey: config.keyboardConfig.keyCode === 16,
+            altKey: config.keyboardConfig.keyCode === 18,
+            location: 1,
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+          });
+          document.body.dispatchEvent(keyboardEvent);
+        }
         break;
       }
 
@@ -199,8 +217,13 @@ export const dispatchEventHandler = (eventName: string, el: Element | Document) 
         break;
       }
       default:
-        const event = new MouseEvent(eventName, { cancelable: false, bubbles: true });
-        el.dispatchEvent(event);
+        if (config && config.mouseEventConfig) {
+          const event = new MouseEvent(eventName, { ...config.mouseEventConfig, cancelable: false, bubbles: true });
+          el.dispatchEvent(event);
+        } else {
+          const event = new MouseEvent(eventName, { cancelable: false, bubbles: true });
+          el.dispatchEvent(event);
+        }
     }
   }
 };
@@ -239,7 +262,7 @@ export const sleep = (time: number): Promise<void> => {
     try {
       let tirmer = setTimeout(() => {
         reslove();
-        clearInterval(tirmer);
+        clearTimeout(tirmer);
       }, time);
     } catch (error) {
       reject();

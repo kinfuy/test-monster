@@ -23,6 +23,9 @@
       <el-form-item v-if="formData.eventType === 'INPUT' || formData.eventType === 'CHANGE'" label="表单值">
         <el-input placeholder="请输入表单值" v-model="formData.formValue"></el-input>
       </el-form-item>
+      <el-form-item required v-if="formData.eventType === 'KEY_DOWN' || formData.eventType === 'KEY_UP'" label="KeyCode">
+        <el-input placeholder="请输入KeyCode" v-model="formData.formValue"></el-input>
+      </el-form-item>
       <el-form-item label="xpath" required>
         <el-input placeholder="请输入元素Xpath" v-model="formData.xpath"></el-input>
       </el-form-item>

@@ -5,7 +5,7 @@
       <el-button size="mini" @click="handleEdit" type="primary">配置脚本</el-button>
       <el-button size="mini" @click="handleBack">返回</el-button>
     </div>
-    <div v-if="stepEvent" class="edit-view">
+    <div v-if="stepEvent && stepEvent.eventList.length > 0" class="edit-view">
       <div class="step-warper">
         <el-steps direction="vertical" :space="60" :active="stepEvent.eventList.length + 2" align-center>
           <el-step status="success" title="开始">
@@ -103,12 +103,12 @@ export default defineComponent({
       if (type === 'KEY_DOWN')
         return {
           icon: 'week--jianpan',
-          desc: 'Enter按下',
+          desc: '键盘按下',
         };
       if (type === 'KEY_UP')
         return {
           icon: 'week--jianpan',
-          desc: 'Enter抬起',
+          desc: '键盘抬起',
         };
       if (type === 'MOUSE_DOWN')
         return {
@@ -149,7 +149,6 @@ export default defineComponent({
       } else {
         stepEvent.value.url = formData.url;
       }
-      stepEvent.value.loop = formData.loop;
       folderStoreModule.action.updateFloder(route.query.id as string, [{ key: 'contentScript', value: clonedeep(stepEvent.value) }]);
       ElMessage.success('脚本配置更新');
       init(route.query.id as string);

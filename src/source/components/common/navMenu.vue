@@ -25,14 +25,15 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { Promotion, Monitor, AlarmClock, Setting, Calendar, DeleteFilled } from '@element-plus/icons';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 export default defineComponent({
   name: 'NavMenu',
   components: { Promotion, Monitor, AlarmClock, Setting, Calendar, DeleteFilled },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const activeMenu = ref('script');
     const handleClick = (val: string) => {
       router.push({
@@ -40,6 +41,9 @@ export default defineComponent({
       });
       activeMenu.value = val;
     };
+    watchEffect(() => {
+      activeMenu.value = (route.name as string) || route.path;
+    });
     return {
       activeMenu,
       handleClick,

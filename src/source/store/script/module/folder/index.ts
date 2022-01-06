@@ -24,7 +24,7 @@ export interface FileOrFolder extends Record<string, any> {
   size?: Number;
   parentId: string | null;
   contentScript?: EventMonsterList;
-  verify?: boolean;
+  verify?: boolean; // 脚本是否验证正确 该属性暂时弃用
   scriptType: 'SCRIPT' | 'TASK' | 'SCRIPT_SET' | 'TASK_SET';
   sort: number;
 }

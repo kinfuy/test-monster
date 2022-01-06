@@ -20,11 +20,11 @@ export const EventOptions = [
     value: 'BLUR',
   },
   {
-    label: 'Enter按下',
+    label: '键盘按下',
     value: 'KEY_DOWN',
   },
   {
-    label: 'Enter抬起',
+    label: '键盘抬起',
     value: 'KEY_UP',
   },
   {

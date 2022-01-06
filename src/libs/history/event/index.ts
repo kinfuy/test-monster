@@ -7,17 +7,34 @@ export class EventMonster {
   formValue = '';
   eventType: IEventType = 'CLICK';
   lastRunTime = 1000;
-  constructor({ xpath, eventType, formValue, lastRunTime }: { xpath: string; eventType: IEventType; formValue: any; lastRunTime: number }) {
+  config = {
+    ctrlKey: false,
+    altKey: false,
+    shiftKey: false,
+  };
+  constructor({
+    xpath,
+    eventType,
+    formValue,
+    lastRunTime,
+    config,
+  }: {
+    xpath: string;
+    eventType: IEventType;
+    formValue: any;
+    lastRunTime: number;
+    config?: { ctrlKey: boolean; altKey: boolean; shiftKey: boolean };
+  }) {
     this.xpath = xpath;
     this.eventType = eventType;
     this.formValue = formValue;
     this.lastRunTime = lastRunTime;
+    if (config) this.config = config;
   }
 }
 export class EventMonsterList {
   id = UUID();
   url = '';
-  loop = 1;
   constructor(url: string) {
     this.url = url;
   }
@@ -41,13 +58,24 @@ export class EventMonsterList {
     this.eventList = [];
   }
 }
-export const runEvent = (xpath: string, eventType: IEventType, formValue: any): Promise<boolean | string> => {
+export const runEvent = (
+  xpath: string,
+  eventType: IEventType,
+  formValue: any,
+  config?: {
+    mouseEventConfig: {
+      ctrlKey: boolean;
+      altKey: boolean;
+      shiftKey: boolean;
+    };
+  }
+): Promise<boolean | string> => {
   return new Promise((resolve, reject) => {
     try {
       const el = getELementXpath(xpath);
       if (!el) throw new Error(`${xpath}的元素没有找到`);
       if (eventType === 'CLICK') {
-        dispatchEventHandler('click', el as Element);
+        dispatchEventHandler('click', el as Element, { mouseEventConfig: config?.mouseEventConfig });
       }
       if (eventType === 'MOUSE_DOWN') {
         dispatchEventHandler('mousedown', el as Element);
@@ -81,10 +109,14 @@ export const runEvent = (xpath: string, eventType: IEventType, formValue: any): 
         dispatchEventHandler('blur', el as HTMLInputElement);
       }
       if (eventType === 'KEY_DOWN') {
-        dispatchEventHandler('keydown', el as Element);
+        const { key, code } = getKeyCode(Number(formValue));
+        const config = { keyboardConfig: { key, code, keyCode: formValue } };
+        dispatchEventHandler('keydown', el as Element, config);
       }
       if (eventType === 'KEY_UP') {
-        dispatchEventHandler('keyup', el as Element);
+        const { key, code } = getKeyCode(Number(formValue));
+        const config = { keyboardConfig: { key, code, keyCode: formValue } };
+        dispatchEventHandler('keyup', el as Element, config);
       }
       resolve(true);
     } catch (error) {
@@ -107,28 +139,34 @@ let cancelKey = false;
  * @param list
  * @param sleepTime 事件延迟时间
  * @param callback
- * @param loop 循环次数
  * @returns
  */
 export const runEventSleep = async (
-  list: Array<{ xpath: string; eventType: IEventType; formValue: any; lastRunTime: number }>,
+  list: Array<{
+    xpath: string;
+    eventType: IEventType;
+    formValue: any;
+    lastRunTime: number;
+    config: {
+      mouseEventConfig: {
+        ctrlKey: boolean;
+        altKey: boolean;
+        shiftKey: boolean;
+      };
+    };
+  }>,
   sleepTime: number,
-  callback: Function,
-  loop: number = 1
+  callback: Function
 ) => {
   cancelKey = false;
-  let count = 1;
-  while (count <= loop) {
-    for (let i = 0; i < list.length; i++) {
-      if (cancelKey) return;
-      try {
-        await sleep(list[i].lastRunTime || sleepTime);
-        await runEvent(list[i].xpath, list[i].eventType, list[i].formValue);
-      } catch (error) {
-        throw error;
-      }
+  for (let i = 0; i < list.length; i++) {
+    if (cancelKey) return;
+    try {
+      await sleep(list[i].lastRunTime || sleepTime);
+      await runEvent(list[i].xpath, list[i].eventType, list[i].formValue, { mouseEventConfig: list[i].config.mouseEventConfig });
+    } catch (error) {
+      throw error;
     }
-    count++;
   }
   callback();
 };
@@ -138,3 +176,29 @@ export const runEventSleep = async (
 export const cancelEvent = () => {
   cancelKey = true;
 };
+/**
+ * 获取keycode code key
+ * @param formValue keycode
+ * @returns
+ */
+function getKeyCode(formValue: number) {
+  let key = '';
+  let code = '';
+  if (formValue === 13) {
+    key = 'Enter';
+    code = 'Enter';
+  }
+  if (formValue === 16) {
+    key = 'Shift';
+    code = 'ShiftLeft';
+  }
+  if (formValue === 18) {
+    key = 'Alt';
+    code = 'AltLeft';
+  }
+  if (formValue === 17) {
+    key = 'Control';
+    code = 'ControlLeft';
+  }
+  return { key, code };
+}
