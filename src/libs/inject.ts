@@ -41,6 +41,7 @@ addEventListener(
  * 开始录制mask
  */
 function maskInit() {
+  if (tray) tray.destroy();
   if (tool && mask) {
     if (tool.status === 1) tool.hidden();
     eventMonsterList = new EventMonsterList(window.location.href);
@@ -71,27 +72,38 @@ function maskInit() {
   }
 }
 
+// 初始化中间值
+function initEvent() {
+  lastRunTimeCache = undefined;
+  mousedownTimeCache = undefined;
+  mousdownEventeCacheElement = undefined;
+  mapKeyCode = new Map();
+  if (eventMonsterList) eventMonsterList.clear();
+}
 // 缓存上次事件触发时间
 let lastRunTimeCache: undefined | Date = undefined;
 
 let mousedownTimeCache: undefined | Date = undefined;
-let mousdownEventCache: undefined | EventMonster = undefined;
-
+let mousdownEventeCacheElement: undefined | Element = undefined;
+// keycodemap
+// 1：当前键按下后未抬起
+// 0：当前建按下后抬起
+let mapKeyCode = new Map();
 // 开始监听
-function startListener(e: any) {
-  if (!checkNeedListener(e)) return;
-  if (!lastRunTimeCache) lastRunTimeCache = new Date();
-  const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
-  lastRunTimeCache = new Date();
-  const path = getXPath(e.target);
-  if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
-  if (path) {
-    const event = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime });
-    eventMonsterList.push(event);
-    const record = new NativeRecord('元素触发了点击事件！', 'test-monster-record-warning');
-    record.autoClose(3000);
-  }
-}
+// function startListener(e: any) {
+//   if (!checkNeedListener(e)) return;
+//   if (!lastRunTimeCache) lastRunTimeCache = new Date();
+//   const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
+//   lastRunTimeCache = new Date();
+//   const path = getXPath(e.target);
+//   if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
+//   if (path) {
+//     const event = new EventMonster({ xpath: path, eventType: 'CLICK', formValue: '', lastRunTime: lastRunTime });
+//     eventMonsterList.push(event);
+//     const record = new NativeRecord('元素触发了点击事件！', 'test-monster-record-warning');
+//     record.autoClose(3000);
+//   }
+// }
 // 鼠标按下
 function handleMouseDown(e: any) {
   if (!checkNeedListener(e)) return;
@@ -106,27 +118,15 @@ function handleMouseDown(e: any) {
     eventMonsterList.push(event);
     const record = new NativeRecord('鼠标触发了mousedown事件！', 'test-monster-record-warning');
     record.autoClose(3000);
-    // 13:enter 16:shift 18:alt 17:ctrl
-    const eventConfig = {
-      ctrlKey: !!mapKeyCode.get(17),
-      altKey: !!mapKeyCode.get(18),
-      shiftKey: !!mapKeyCode.get(16),
-    };
-    mousdownEventCache = new EventMonster({
-      xpath: path,
-      eventType: 'CLICK',
-      formValue: '',
-      lastRunTime: lastRunTime + 100,
-      config: clonedeep(eventConfig),
-    });
   }
+  mousdownEventeCacheElement = e.target;
 }
 
 // 鼠标抬起
 function handleMouseUp(e: any) {
   if (!checkNeedListener(e)) return;
   if (!lastRunTimeCache) lastRunTimeCache = new Date();
-  if (mousedownTimeCache && mousdownEventCache) {
+  if (mousedownTimeCache && mousdownEventeCacheElement) {
     const lastRunTime = new Date().getTime() - lastRunTimeCache.getTime();
     const path = getXPath(e.target);
     if (path) {
@@ -136,22 +136,33 @@ function handleMouseUp(e: any) {
       record.autoClose(3000);
     }
     if (new Date().getTime() - mousedownTimeCache.getTime() < 200) {
-      // if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
-      const clickEvent = clonedeep(mousdownEventCache);
-      eventMonsterList.push(clickEvent);
-      const record = new NativeRecord('元素触发了CLICK事件！', 'test-monster-record-warning');
-      record.autoClose(3000);
+      // 13:enter 16:shift 18:alt 17:ctrl
+      const eventConfig = {
+        ctrlKey: !!mapKeyCode.get(17),
+        altKey: !!mapKeyCode.get(18),
+        shiftKey: !!mapKeyCode.get(16),
+      };
+      const clickPath = getXPath(mousdownEventeCacheElement);
+      if (clickPath) {
+        const mousdownEvent = new EventMonster({
+          xpath: clickPath,
+          eventType: 'CLICK',
+          formValue: '',
+          lastRunTime: lastRunTime,
+          config: clonedeep(eventConfig),
+        });
+        // if (e.target.nodeName && e.target.nodeName === 'INPUT') return;
+        eventMonsterList.push(mousdownEvent);
+        const record = new NativeRecord('元素触发了CLICK事件！', 'test-monster-record-warning');
+        record.autoClose(3000);
+      }
     }
     lastRunTimeCache = new Date();
   }
   mousedownTimeCache = undefined;
-  mousdownEventCache = undefined;
+  mousdownEventeCacheElement = undefined;
 }
 
-// keycodemap
-// 1：当前键按下后未抬起
-// 0：当前建按下后抬起
-let mapKeyCode = new Map();
 // 键盘按下 键盘仅监听回车键,shift，alt ctrl
 function handleKeyDown(e: KeyboardEvent) {
   let keyCode = e.keyCode;
@@ -201,8 +212,9 @@ function handleStop() {
       Observer.disconnect();
       Observer = undefined;
     }
+    clearEventListener();
+    initEvent();
   }
-  clearEventListener();
 }
 // 初始化表单，给每个表单添加focus，change监听事件
 function initForm(target?: Node | Element) {
@@ -324,12 +336,14 @@ function handleRun(item: FileOrFolder) {
         record.autoClose(3000);
         cancelEvent();
         tool.destroy();
+        initEvent();
       }, '脚本执行中');
       tool.show();
       runEventSleep(eventList, 1000, () => {
         const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
         record.autoClose(3000);
         tool.destroy();
+        initEvent();
       })
         .then(() => {
           window.postMessage({ key: Eventkey.MONSTER_SCREEN_SHOT }, '*');
@@ -338,6 +352,7 @@ function handleRun(item: FileOrFolder) {
           const record = new NativeRecord(err, 'test-monster-record-error');
           record.autoClose(3000);
           tool.destroy();
+          initEvent();
         });
     }
   }
