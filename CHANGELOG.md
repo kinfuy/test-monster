@@ -1,10 +1,17 @@
-## 0.0.5 (2022-01-06)
+## 0.0.5 (2022-01-07)
+
+
+
+## 0.0.6 (2022-01-07)
 
 
 ### 🐛 Bug Fixes | Bug 修复
 
+* 多悬浮tips找不到元素问题 ([bf2150e](https://gitee.com/Y_onghu/test-monster/commit/bf2150e))
 * 兼容键盘组合键 ([23e8294](https://gitee.com/Y_onghu/test-monster/commit/23e8294))
+* 事件异常监听 ([e7a5468](https://gitee.com/Y_onghu/test-monster/commit/e7a5468))
 * change version ([0a923c6](https://gitee.com/Y_onghu/test-monster/commit/0a923c6))
+* mutationObserver 异常 ([5977acc](https://gitee.com/Y_onghu/test-monster/commit/5977acc))
 
 
 
