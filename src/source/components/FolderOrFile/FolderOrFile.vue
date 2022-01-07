@@ -1,5 +1,5 @@
 <template>
-  <div :data-drag="isDrag" :class="['file', fixClass, { 'file-cutting': cutting }]">
+  <div canChecked :data-drag="isDrag" :class="['file', fixClass, { 'file-cutting': cutting }]">
     <IconSvg :fix-class="fixIconClass" :name="icon"></IconSvg>
     <div
       ref="edit"

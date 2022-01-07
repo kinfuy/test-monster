@@ -1,5 +1,5 @@
 <template>
-  <div class="folder-content" @click="closeContextMenu()" @contextmenu="createContextMenu($event)">
+  <div class="folder-content edit-area" @click="closeContextMenu()" @contextmenu="createContextMenu($event)">
     <folder-or-file
       v-for="item in folderList"
       :key="item.id"
@@ -182,5 +182,6 @@ export default defineComponent({
 <style lang="less" scoped>
 .folder-content {
   height: 100%;
+  padding: 20px;
 }
 </style>

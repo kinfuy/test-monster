@@ -17,10 +17,20 @@ createContextMenus('脚本检索', (info, tab) => {
     key: Eventkey.MONSTER_SCRIPT_TRAY,
   });
 });
+createContextMenus('脚本录制', (info, tab) => {
+  sendMessageToContentScript({
+    key: Eventkey.MONSTER_RECORD_INIT,
+  });
+});
 commandAddListener((name: string) => {
   if (name === 'script-search') {
     sendMessageToContentScript({
       key: Eventkey.MONSTER_SCRIPT_TRAY,
+    });
+  }
+  if (name === 'script-recording') {
+    sendMessageToContentScript({
+      key: Eventkey.MONSTER_RECORD_INIT,
     });
   }
 });

@@ -25,6 +25,7 @@ export default defineComponent({
       folderStoreModule.action.goCrumb(data.id);
       folderStoreModule.action.updateCurrent(data.id, data.level);
     };
+
     onUnmounted(() => {
       folderStoreModule.action.updateCurrent('script_uuid', 0);
       folderStoreModule.action.goCrumb('script_uuid');
@@ -39,7 +40,6 @@ export default defineComponent({
 </script>
 <style lang="less" scoped>
 .script-base {
-  padding: 10px;
   height: 100%;
   .bread-crumb {
     padding: 0 10px;

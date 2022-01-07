@@ -1,8 +1,8 @@
 import { SelectAreaInstance, SelectAreaProps } from '../components/SelectArea/selectArea.type';
 import { SelectArea } from '../components/SelectArea';
 let instence: SelectAreaInstance | undefined = undefined;
-export const useSelectArea = (options: SelectAreaProps) => {
-  const createSelect = () => {
+export const useSelectArea = () => {
+  const createSelect = (options: SelectAreaProps) => {
     if (instence) closeSelect();
     instence = SelectArea({
       startPoint: options.startPoint,

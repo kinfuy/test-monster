@@ -12,7 +12,7 @@
  * @param keyCode 可选元素标识
  * @returns
  */
-const getChildrens = function(parentElement: HTMLElement, keyCode: string) {
+const getChildrens = function (parentElement: HTMLElement, keyCode: string) {
   const ary = [];
   const childs = parentElement.childNodes;
   for (let i = 0; i < childs.length; i++) {
@@ -30,20 +30,12 @@ const getChildrens = function(parentElement: HTMLElement, keyCode: string) {
  * @param {Array<HTMLElement>} canCheckedElements 可选中元素列表
  * @return {Array<HTMLElement>} 包含元素列表
  */
-const judgeContainElement = function(
-  selectBoxElement: HTMLElement,
-  canCheckedElements: Array<HTMLElement>
-): Array<HTMLElement> {
+const judgeContainElement = function (selectBoxElement: HTMLElement, canCheckedElements: Array<HTMLElement>): Array<HTMLElement> {
   const ContainElement: Array<HTMLElement> = [];
   const { left, right, bottom, top } = selectBoxElement.getBoundingClientRect();
   canCheckedElements.forEach((item) => {
     const child = item.getBoundingClientRect();
-    if (
-      child.left > left &&
-      child.top > top &&
-      child.bottom < bottom &&
-      child.right < right
-    ) {
+    if (child.left > left && child.top > top && child.bottom < bottom && child.right < right) {
       ContainElement.push(item);
     }
   });
@@ -57,18 +49,11 @@ const judgeContainElement = function(
  * @param keyCode 可选元素标识
  * @returns
  */
-const selectElement = function(
-  parentElement: HTMLElement,
-  selectBoxElement: HTMLElement,
-  keyCode: string
-) {
+const selectElement = function (parentElement: HTMLElement, selectBoxElement: HTMLElement, keyCode: string) {
   if (keyCode) {
   }
   const canCheckedElements = getChildrens(parentElement, keyCode);
-  const containElements = judgeContainElement(
-    selectBoxElement,
-    canCheckedElements
-  );
+  const containElements = judgeContainElement(selectBoxElement, canCheckedElements);
   return {
     containElements,
     canCheckedElements,

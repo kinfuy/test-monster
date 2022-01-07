@@ -17,7 +17,7 @@ export const SelectArea = function (props: SelectAreaProps) {
     },
   });
   const instance = app.mount(vm);
-  const SelectAreaInstance = instance.$refs.contextMenuRef as SelectAreaInstance;
+  const SelectAreaInstance = instance.$refs.selectAreaRef as SelectAreaInstance;
   document.body.appendChild(SelectAreaInstance.$el);
   return SelectAreaInstance;
 };

@@ -49,6 +49,13 @@
         "mac": "Command+Space"
       },
       "description": "唤醒脚本检索"
+    },
+    "script-recording": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Space",
+        "mac": "Command+Shift+Space"
+      },
+      "description": "唤醒脚本录制"
     }
   },
   "options_page": "/libs/views/options.html",
