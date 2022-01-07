@@ -12,7 +12,6 @@ let mask: NativeMask | undefined;
 let tool: NativeTool | undefined;
 let tray: NativeTray | undefined;
 let eventMonsterList: EventMonsterList | undefined;
-let Observer: MutationObserver | undefined;
 addEventListener(
   'message',
   (info: any) => {
@@ -22,7 +21,10 @@ addEventListener(
       maskInit();
     }
     if (info.data.key === Eventkey.MONSTER_SCRIPT_TRAY) {
-      if (tray) tray.destroy();
+      if (tray) {
+        removeEventListener('click', checkTray, document);
+        tray.destroy();
+      }
       tray = new NativeTray({
         input: throttle(handleSearchInput, 500),
       });
@@ -41,7 +43,10 @@ addEventListener(
  * 开始录制mask
  */
 function maskInit() {
-  if (tray) tray.destroy();
+  if (tray) {
+    removeEventListener('click', checkTray, document);
+    tray.destroy();
+  }
   if (tool && mask) {
     if (tool.status === 1) tool.hidden();
     eventMonsterList = new EventMonsterList(window.location.href);
@@ -49,12 +54,15 @@ function maskInit() {
       tool && tool.show();
       initForm();
       mutationObserver(document.body, (mutationsList, observer) => {
-        Observer = observer;
-        for (let mutation of mutationsList) {
-          if (mutation.type === 'childList') {
-            mutation.addedNodes.forEach((x) => {
-              bindChildElenemt([x], initForm);
-            });
+        if (!tool) observer.disconnect();
+        console.log('🔥log=>inject=>59:observer:%o', observer);
+        if (tool) {
+          for (let mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+              mutation.addedNodes.forEach((x) => {
+                bindChildElenemt([x], initForm);
+              });
+            }
           }
         }
       });
@@ -72,18 +80,18 @@ function maskInit() {
   }
 }
 
-// 初始化中间值
+// 录制结束后清理
 function initEvent() {
-  if (eventMonsterList) eventMonsterList.clear();
-  mask = undefined;
-  tool = undefined;
-  tray = undefined;
-  eventMonsterList = undefined;
-  Observer = undefined;
   lastRunTimeCache = undefined;
   mousedownTimeCache = undefined;
   mousdownEventeCacheElement = undefined;
   mapKeyCode = new Map();
+  if (mask) mask.destroy();
+  if (tool) tool.destroy();
+  if (tray) tray.destroy();
+  mask = undefined;
+  tool = undefined;
+  tray = undefined;
   clearEventListener();
 }
 // 缓存上次事件触发时间
@@ -210,15 +218,12 @@ function handleKeyUp(e: KeyboardEvent) {
 }
 // 停止记录
 function handleStop() {
+  console.log('🔥log=>inject=>223:handleStop:%o', 'handleStop');
   if (tool && eventMonsterList) {
     window.postMessage({ key: Eventkey.MONSTER_RECORD_STOP, eventMonsterList: eventMonsterList }, '*');
-    tool.hidden();
-    eventMonsterList.clear();
-    if (Observer) {
-      Observer.disconnect();
-      Observer = undefined;
-    }
+    if (eventMonsterList) eventMonsterList.clear();
     initEvent();
+    eventMonsterList = undefined;
   }
 }
 // 初始化表单，给每个表单添加focus，change监听事件
@@ -313,7 +318,6 @@ function clearEventListener() {
   removeEventListener('mouseup', handleMouseUp, window);
   removeEventListener('keydown', handleKeyDown, window);
   removeEventListener('keyup', handleKeyUp, document);
-  removeEventListener('click', checkTray, document);
   uninstallForm();
 }
 //脚本检索input事件
@@ -340,20 +344,21 @@ function handleRun(item: FileOrFolder) {
       };
     });
     if (eventList) {
-      if (tray) tray.destroy();
-      const tool = new NativeTool(() => {
+      if (tray) {
+        removeEventListener('click', checkTray, document);
+        tray.destroy();
+      }
+      const runTool = new NativeTool(() => {
         const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
         record.autoClose(3000);
         cancelEvent();
-        tool.destroy();
-        initEvent();
+        runTool.destroy();
       }, '脚本执行中');
-      tool.show();
+      runTool.show();
       runEventSleep(eventList, 1000, () => {
         const record = new NativeRecord('脚本执行结束！', 'test-monster-record-success');
         record.autoClose(3000);
-        tool.destroy();
-        initEvent();
+        runTool.destroy();
       })
         .then(() => {
           window.postMessage({ key: Eventkey.MONSTER_SCREEN_SHOT }, '*');
@@ -361,8 +366,7 @@ function handleRun(item: FileOrFolder) {
         .catch((err) => {
           const record = new NativeRecord(err, 'test-monster-record-error');
           record.autoClose(3000);
-          tool.destroy();
-          initEvent();
+          runTool.destroy();
         });
     }
   }
@@ -380,4 +384,5 @@ function checkTray(e: any) {
   if (tray && !e.target.dataset.testMonster)
     // 点击非注入元素脚本检索remove
     tray.destroy();
+  removeEventListener('click', checkTray, document);
 }
