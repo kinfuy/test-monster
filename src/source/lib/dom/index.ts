@@ -1,11 +1,4 @@
 /**
- * @Author: jinhu.yang
- * @Date: 2021-07-14 17:39:44
- * @LastEditors: jinhu.yang
- * @LastEditTime: 2021-07-15 13:08:29
- * @Description:dom相关操作
- */
-/**
  *
  * 获取该元素下可以被选中的元素集合
  * @param parentElement 父元素

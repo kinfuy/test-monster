@@ -9,17 +9,7 @@ const rl = readline.createInterface({
 });
 rl.question(`是否需要修改(当前:${pkg.version})版本号:(Y/N)：`, (answer) => {
   if (answer === 'Y' || answer === 'y') {
-    rl.question('请输入版本号：', (version) => {
-      let reg = /^([0-9]\d|[0-9])(\.([1-9]\d|\d)){2}$/;
-      if (reg.test(version)) {
-        rl.close();
-        fileList.forEach((x) => {
-          changeVersion(version, x);
-        });
-      } else {
-        console.log(chalk.red(`请输入正确的版本号`));
-      }
-    });
+    getVersion(rl);
   } else {
     rl.close();
   }
@@ -39,5 +29,20 @@ function changeVersion(version, source) {
       if (err) throw err;
       console.log(chalk.green(`${source}文件，version更改为:${version}`));
     });
+  });
+}
+
+function getVersion(rl) {
+  rl.question('请输入版本号：', (version) => {
+    let reg = /^([0-9]\d|[0-9])(\.([0-9]\d|\d)){2}$/;
+    if (reg.test(version)) {
+      rl.close();
+      fileList.forEach((x) => {
+        changeVersion(version, x);
+      });
+    } else {
+      console.log(chalk.red(`请输入正确的版本号!`));
+      getVersion(rl);
+    }
   });
 }

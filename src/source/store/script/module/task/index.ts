@@ -1,23 +1,42 @@
 interface TaskStore {
-  taskList: Array<Task>;
+  taskList: Array<TaskFlow>;
 }
-interface Task {
+interface BaseTask {
+  taskId: string;
+}
+interface DelayTask extends BaseTask {
+  type: 'delay';
+  elayTime: number;
+}
+interface RunScriptTask extends BaseTask {
+  type: 'run_script';
+  relationScriptId: String;
+}
+interface OpenUrlTask extends BaseTask {
+  type: 'open_url';
+  openUrl: string;
+}
+interface ShotCutTask extends BaseTask {
+  type: 'shot_cut';
+  download?: string;
+}
+
+type Task = DelayTask | RunScriptTask | OpenUrlTask | ShotCutTask;
+interface TaskFlow {
   id: string;
-  preCondition: any; // 前置条件
-  relationScripts: Array<String>; // 关联脚本，执行顺序按数组id顺序
-  verifyResult: VerifyResult; // 执行结果验证
-  verifyState: boolean; // 验证状态
+  task: Array<Task>;
   loop: number; // 任务循环次数
   runTime: Date;
   intervalTime: string;
   taskName: string;
   createTime: Date;
+  lastRunTime: Date; // 上次执行时间
+  runCount: number; // 执行次数统计
   updateTime: Date;
   taskState: number;
 }
-interface Condition {
-  openUrl: string; // 打开网页
-}
-interface VerifyResult {
-  screenShot: boolean; // 是否截屏
-}
+
+import { Ref, ref } from 'vue';
+export const taskStore: Ref<TaskStore> = ref({
+  taskList: [],
+});

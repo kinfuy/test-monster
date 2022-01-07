@@ -37,13 +37,13 @@ const commonMenuOptions: Array<Menuitem> = [
     group: ['paste'],
     key: 'PASTE',
   },
-  {
-    id: '6',
-    icon: 'week-shezhi-',
-    group: ['folder', 'file'],
-    name: '设置',
-    key: 'SET',
-  },
+  // {
+  //   id: '6',
+  //   icon: 'week-shezhi-',
+  //   group: ['folder', 'file'],
+  //   name: '设置',
+  //   key: 'SET',
+  // },
   {
     id: '7',
     icon: 'week-shanchu1',
