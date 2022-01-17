@@ -1,6 +1,9 @@
 # TestMonster
 
 极简的操作复现插件!
+## demo
+![TsetMonster](https://user-images.githubusercontent.com/37766068/149703164-3971f3cf-ebde-4110-9a86-4b7a2901e8d2.gif)
+
 
 ## 简介
 
