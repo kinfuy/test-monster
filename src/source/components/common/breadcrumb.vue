@@ -49,6 +49,7 @@ export default defineComponent({
 </script>
 <style lang="less" scoped>
 .el-breadcrumb {
+  background-color: #fff;
   margin-bottom: 20px;
   .el-breadcrumb__item:last-child {
     .breadcrumb-text {

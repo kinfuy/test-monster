@@ -1,4 +1,4 @@
-// import 'babel-polyfill';
+import 'babel-polyfill';
 // 该文件会注入到目标网站
 import { NativeMask, NativeTool, NativeRecord, NativeTray } from './history/view';
 import { EventMonsterList, EventMonster, runEventSleep, cancelEvent } from './history';
