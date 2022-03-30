@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import { FolderStore, FileOrFolder } from '../source/store/script/module/folder';
 import {
   chromeAddListenerMessage,

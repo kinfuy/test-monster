@@ -8,7 +8,8 @@
     "serve": "webpack serve --config build/webpack.dev.conf.js",
     "build": "yarn cg:version && webpack --config build/webpack.prod.conf.js",
     "cg:version": "node script/version.js",
-    "log": "conventional-changelog -p custom-config  -i CHANGELOG.md -s -n ./changelog-option.js"
+    "log": "conventional-changelog -p custom-config  -i CHANGELOG.md -s -n ./changelog-option.js",
+    "push": "git push origin master && git push githup master"
   },
   "husky": {
     "hooks": {
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-angular": "^8.3.4",
@@ -69,7 +71,6 @@
     "last 3 iOS versions"
   ],
   "dependencies": {
-    "@babel/plugin-transform-runtime": "^7.15.0",
     "@element-plus/icons": "^0.0.11",
     "babel-polyfill": "^6.26.0",
     "dayjs": "^1.10.7",

@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import { injectCustomJs, addEventListener, chromeAddListenerMessage, sendMessageToExtension, getStoreKey } from './utils';
 import { Eventkey } from './utils/const';
 import { EventMonsterList, runEvent } from './history';
