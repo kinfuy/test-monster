@@ -9,7 +9,7 @@
         <el-icon class="menu-icon"><Promotion /></el-icon>
         <span class="menu-text">脚本</span>
       </div>
-      <div @click="handleClick('task')" :class="['menu-item', { 'menu-active': activeMenu === 'task' }]">
+      <!-- <div @click="handleClick('task')" :class="['menu-item', { 'menu-active': activeMenu === 'task' }]">
         <el-icon class="menu-icon"><AlarmClock /></el-icon>
         <span class="menu-text">任务</span>
       </div>
@@ -20,7 +20,7 @@
       <div @click="handleClick('set')" :class="['menu-item', { 'menu-active': activeMenu === 'set' }]">
         <el-icon class="menu-icon"><Setting /></el-icon>
         <span class="menu-text">设置</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

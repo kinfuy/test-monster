@@ -9,21 +9,21 @@ const routes: Array<RouteRecordRaw> = [
         name: 'script',
         component: () => import('./../view/script/scriptBase.vue'),
       },
-      {
-        path: 'task',
-        name: 'task',
-        component: () => import('../view/script/scriptTask.vue'),
-      },
-      {
-        path: 'log',
-        name: 'log',
-        component: () => import('../view/script/scriptLog.vue'),
-      },
-      {
-        path: 'set',
-        name: 'set',
-        component: () => import('../view/script/scriptSet.vue'),
-      },
+      // {
+      //   path: 'task',
+      //   name: 'task',
+      //   component: () => import('../view/script/scriptTask.vue'),
+      // },
+      // {
+      //   path: 'log',
+      //   name: 'log',
+      //   component: () => import('../view/script/scriptLog.vue'),
+      // },
+      // {
+      //   path: 'set',
+      //   name: 'set',
+      //   component: () => import('../view/script/scriptSet.vue'),
+      // },
     ],
   },
   {
